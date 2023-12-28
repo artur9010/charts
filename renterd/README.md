@@ -1,12 +1,14 @@
 # Basic Sia renterd helm chart
 
+[![Artifact Hub](https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/artur9010)](https://artifacthub.io/packages/search?repo=artur9010)
+
 Simple helm chart containing [Sia renterd software](https://sia.tech/software/renterd).
 
 ## Helm repository
 
 ```
 helm repo add artur9010 https://charts.motyka.pro
-helm install renterd artur9010/renterd --version 1.0.0
+helm install renterd artur9010/renterd --version 1.0.1
 ```
 
 ## Requirements

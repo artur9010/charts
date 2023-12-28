@@ -64,6 +64,18 @@ spec:
               value: {{ include "renterd.workerAddrs" . | quote }}
           resources:
             {{- toYaml .Values.renterd.autopilot.resources | nindent 12 }}
+          {{- if .Values.renterd.autopilot.nodeSelector }}
+          nodeSelector: {{- .Values.renterd.autopilot.nodeSelector | toYaml | nindent 12 }}
+          {{- end }}
+          {{- if .Values.renterd.autopilot.affinity }}
+          affinity: {{- .Values.renterd.autopilot.affinity | toYaml | nindent 12 }}
+          {{- end }}
+          {{- if .Values.renterd.autopilot.tolerations }}
+          tolerations: {{- .Values.renterd.autopilot.tolerations | toYaml | nindent 12 }}
+          {{- end }}
+          {{- if .Values.renterd.autopilot.topologySpreadConstraints }}
+          topologySpreadConstraints: {{- .Values.renterd.autopilot.topologySpreadConstraints | toYaml | nindent 12 }}
+          {{- end }}
       volumes:
         - name: renterd-config
           configMap:

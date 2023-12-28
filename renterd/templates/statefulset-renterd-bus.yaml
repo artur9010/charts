@@ -64,6 +64,18 @@ spec:
               value: "false"
           resources:
             {{- toYaml .Values.renterd.bus.resources | nindent 12 }}
+          {{- if .Values.renterd.bus.nodeSelector }}
+          nodeSelector: {{- .Values.renterd.bus.nodeSelector | toYaml | nindent 12 }}
+          {{- end }}
+          {{- if .Values.renterd.bus.affinity }}
+          affinity: {{- .Values.renterd.bus.affinity | toYaml | nindent 12 }}
+          {{- end }}
+          {{- if .Values.renterd.bus.tolerations }}
+          tolerations: {{- .Values.renterd.bus.tolerations | toYaml | nindent 12 }}
+          {{- end }}
+          {{- if .Values.renterd.workers.topologySpreadConstraints }}
+          topologySpreadConstraints: {{- .Values.renterd.workers.topologySpreadConstraints | toYaml | nindent 12 }}
+          {{- end }}
       volumes:
         - name: renterd-config
           configMap:

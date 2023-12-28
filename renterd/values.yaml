@@ -35,6 +35,10 @@ renterd:
       # requests:
       #   cpu: 100m
       #   memory: 128Mi
+    nodeSelector: {}
+    affinity: {}
+    tolerations: {}
+    topologySpreadConstraints: {}
     volume:
       accessModes: [ "ReadWriteOnce" ]
       storageClassName: "longhorn"
@@ -45,11 +49,19 @@ renterd:
     vpa:
       enabled: false
     resources: {}
+    nodeSelector: {}
+    affinity: {}
+    tolerations: {}
+    topologySpreadConstraints: {}
   workers:
     replicas: 5
     vpa:
       enabled: false
     resources: {}
+    nodeSelector: {}
+    affinity: {}
+    tolerations: {}
+    topologySpreadConstraints: {}
       
 # automatic testnet faucet cron
 autofaucet:

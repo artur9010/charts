@@ -66,6 +66,18 @@ spec:
                 name: renterd-env
           resources:
             {{- toYaml .Values.renterd.workers.resources | nindent 12 }}
+          {{- if .Values.renterd.workers.nodeSelector }}
+          nodeSelector: {{- .Values.renterd.workers.nodeSelector | toYaml | nindent 12 }}
+          {{- end }}
+          {{- if .Values.renterd.workers.affinity }}
+          affinity: {{- .Values.renterd.workers.affinity | toYaml | nindent 12 }}
+          {{- end }}
+          {{- if .Values.renterd.workers.tolerations }}
+          tolerations: {{- .Values.renterd.workers.tolerations | toYaml | nindent 12 }}
+          {{- end }}
+          {{- if .Values.renterd.workers.topologySpreadConstraints }}
+          topologySpreadConstraints: {{- .Values.renterd.workers.topologySpreadConstraints | toYaml | nindent 12 }}
+          {{- end }}
       volumes:
         - name: renterd-config
           configMap:

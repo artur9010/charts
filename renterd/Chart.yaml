@@ -2,11 +2,19 @@ apiVersion: v2
 name: renterd
 description: Sia renterd helm chart
 type: application
-version: 1.0.0
+version: 1.0.1
 appVersion: "1.0.0"
 icon: https://i.imgur.com/pWg0PRK.png
+keywords:
+- storage
+- distributed
+- blockchain
+- sia
+- renter
+- s3
+- webui
 dependencies:
   - name: mysql
-    version: 9.14.4
+    version: 9.16.0
     repository: https://charts.bitnami.com/bitnami
     condition: mysql.enabled
