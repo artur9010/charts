@@ -1,0 +1,111 @@
+image:
+  repository: ghcr.io/siafoundation/renterd
+  pullPolicy: IfNotPresent
+  tag: "1.0.0-zen"
+
+service:
+  bus:
+    type: ClusterIP
+    port: 9981
+  http:
+    type: ClusterIP
+    port: 9980
+  s3:
+    type: ClusterIP
+    port: 8080
+
+renterd:
+  # You can generate seed here: https://iancoleman.io/bip39/, make sure to select 24 words.
+  # ...or use an example one
+  seed: "clutch polar sail margin what liquid zero current safe horse alert same fortune disorder cousin angle bid give leg muscle slam rifle camp power"
+  api:
+    password: "renterdApiPassowrd2"
+  s3:
+    enabled: true
+    keys:
+      - accessKey: "key_must_be_at_least_40_chars_CHANGE_ME_NOW"
+        secretKey: "key_must_be_at_least_40_chars_CHANGE_ME_NOW"
+  bus:
+    vpa:
+      enabled: false
+    resources: {}
+      # limits:
+      #   cpu: 2000m
+      #   memory: 8Gi
+      # requests:
+      #   cpu: 100m
+      #   memory: 128Mi
+    volume:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: "longhorn"
+      resources:
+        requests:
+          storage: 10Gi
+  autopilot:
+    vpa:
+      enabled: false
+    resources: {}
+  workers:
+    replicas: 5
+    vpa:
+      enabled: false
+    resources: {}
+      
+# automatic testnet faucet cron
+autofaucet:
+  enabled: false
+  address: "68bf48e81536f2221f3809aa9d1c89c1c869a17c6f186a088e49fd2605e4bfaaa24f26e4c42c"
+  amount: "1000000000000000000000000000" # 1000 SC
+  cron: "0 */4 * * *"
+  restartPolicy: Never
+
+ingress:
+  enabled: true
+  className: "traefik"
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt
+  hosts:
+    - host: renterd.example.com
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+          svcName: renterd-bus
+          svcPort: 9980
+        - path: /api/worker
+          pathType: ImplementationSpecific
+          svcName: renterd-worker
+          svcPort: 9980
+        - path: /api/autopilot
+          pathType: ImplementationSpecific
+          svcName: renterd-autopilot
+          svcPort: 9980
+    - host: s3.example.com
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+          svcName: renterd-worker
+          svcPort: 8080
+  tls:
+    - secretName: ingress-tls
+      hosts:
+        - renterd.example.com
+        - s3.example.com
+
+# Bitnami mysql chart
+mysql:
+  enabled: true
+  fullnameOverride: "mysql"
+  auth:
+    database: "renterd"
+    # database for metrics isn't created automatically
+    databaseMetrics: "renterd_metrics"
+    username: "renterd"
+    password: "renterd"
+
+# Only used if mysql.enabled==false
+mysqlExternal:
+  address: "mysql.example.com:3306"
+  username: "renterd"
+  password: "renterd123"
+  database: "renterd"
+  databaseMetrics: "renterd_metrics"

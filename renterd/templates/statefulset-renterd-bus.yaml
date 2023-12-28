@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: renterd-bus
+  labels:
+    {{- include "renterd.labels" . | nindent 4 }}
+    app.kubernetes.io/component: bus
+spec:
+  serviceName: "renterd-bus"
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "renterd.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: bus
+  template:
+    metadata:
+      labels:
+        {{- include "renterd.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: bus
+      annotations:
+        checksum/configmap-renterd: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+        checksum/secret-renterd-env: {{ include (print $.Template.BasePath "/secrets/renterd-env.yaml") . | sha256sum }}
+        checksum/secret-renterd-bus-env: {{ include (print $.Template.BasePath "/secrets/renterd-bus-env.yaml") . | sha256sum }}
+    spec:
+      containers:
+        - name: renterd
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: bus
+              containerPort: {{ .Values.service.bus.port }}
+              protocol: TCP
+            - name: http
+              containerPort: {{ .Values.service.http.port }}
+              protocol: TCP
+          readinessProbe:
+            tcpSocket:
+              port: {{ .Values.service.http.port }}
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: {{ .Values.service.http.port }}
+            initialDelaySeconds: 15
+            periodSeconds: 10
+          volumeMounts:
+            - mountPath: "/data"
+              name: renterd-bus-data
+            - mountPath: "/data/renterd.yml"
+              name: renterd-config
+              subPath: "renterd.yml"
+            - mountPath: "/entrypoint.sh"
+              name: renterd-config
+              subPath: "entrypoint.sh"
+          envFrom:
+            - secretRef:
+                name: renterd-env
+            - secretRef:
+                name: renterd-bus-env
+          env:
+            - name: RENTERD_AUTOPILOT_ENABLED
+              value: "false"
+            - name: RENTERD_WORKER_ENABLED
+              value: "false"
+          resources:
+            {{- toYaml .Values.renterd.bus.resources | nindent 12 }}
+      volumes:
+        - name: renterd-config
+          configMap:
+            name: renterd
+            defaultMode: 0755
+  volumeClaimTemplates:
+    - metadata:
+        name: renterd-bus-data
+      spec:
+        {{- toYaml .Values.renterd.bus.volume | nindent 8 }}

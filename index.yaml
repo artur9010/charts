@@ -1,0 +1,20 @@
+apiVersion: v1
+entries:
+  renterd:
+  - apiVersion: v2
+    appVersion: 1.0.0
+    created: "2023-12-28T15:51:44.009961795Z"
+    dependencies:
+    - condition: mysql.enabled
+      name: mysql
+      repository: https://charts.bitnami.com/bitnami
+      version: 9.14.4
+    description: Sia renterd helm chart
+    digest: 9e13392ae7db3931e8c10c2875a732e26d95fb821ec566090b9313c87e58a9af
+    icon: https://i.imgur.com/pWg0PRK.png
+    name: renterd
+    type: application
+    urls:
+    - https://charts.motyka.pro/renterd-1.0.0.tgz
+    version: 1.0.0
+generated: "2023-12-28T15:51:44.00600694Z"

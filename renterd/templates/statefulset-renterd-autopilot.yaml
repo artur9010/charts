@@ -1,0 +1,71 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: renterd-autopilot
+  labels:
+    {{- include "renterd.labels" . | nindent 4 }}
+    app.kubernetes.io/component: autopilot
+spec:
+  serviceName: "renterd-autopilot"
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "renterd.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: autopilot
+  template:
+    metadata:
+      labels:
+        {{- include "renterd.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: autopilot
+      annotations:
+        checksum/configmap-renterd: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+        checksum/secret-renterd-env: {{ include (print $.Template.BasePath "/secrets/renterd-env.yaml") . | sha256sum }}
+    spec:
+      containers:
+        - name: renterd
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: bus
+              containerPort: {{ .Values.service.bus.port }}
+              protocol: TCP
+            - name: http
+              containerPort: {{ .Values.service.http.port }}
+              protocol: TCP
+          readinessProbe:
+            tcpSocket:
+              port: {{ .Values.service.http.port }}
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: {{ .Values.service.http.port }}
+            initialDelaySeconds: 15
+            periodSeconds: 10
+          volumeMounts:
+            # Autopilot does not save anything other than logs on /data
+            - mountPath: "/data/renterd.yml"
+              name: renterd-config
+              subPath: "renterd.yml"
+            - mountPath: "/entrypoint.sh"
+              name: renterd-config
+              subPath: "entrypoint.sh"
+          envFrom:
+            - secretRef:
+                name: renterd-env
+          env:
+            - name: RENTERD_AUTOPILOT_ENABLED
+              value: "true"
+            - name: RENTERD_WORKER_ENABLED
+              value: "false"
+            - name: RENTERD_BUS_REMOTE_ADDR
+              value: {{ include "renterd.busAddr" . | quote }}
+            - name: RENTERD_WORKER_REMOTE_ADDRS
+              value: {{ include "renterd.workerAddrs" . | quote }}
+          resources:
+            {{- toYaml .Values.renterd.autopilot.resources | nindent 12 }}
+      volumes:
+        - name: renterd-config
+          configMap:
+            name: renterd
+            defaultMode: 0755

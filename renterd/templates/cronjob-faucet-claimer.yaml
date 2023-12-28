@@ -1,0 +1,22 @@
+{{- if .Values.autofaucet.enabled -}}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: faucet-claimer
+spec:
+  schedule: "{{.Values.autofaucet.cron}}"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: curl
+            image: quay.io/curl/curl:latest
+            imagePullPolicy: IfNotPresent
+            command:
+            - curl
+            - "https://faucet.zen.sia.tech/api/request"
+            - --data-raw
+            - '{"unlockHash":"{{.Values.autofaucet.address}}","amount":"{{.Values.autofaucet.amount}}"}'
+          restartPolicy: {{.Values.autofaucet.restartPolicy}}
+{{- end }}
