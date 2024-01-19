@@ -1,7 +1,7 @@
 image:
   repository: ghcr.io/siafoundation/renterd
   pullPolicy: IfNotPresent
-  tag: "1.0.0-zen"
+  tag: "1.0.2-zen"
 
 service:
   bus:
@@ -39,6 +39,8 @@ renterd:
     affinity: {}
     tolerations: {}
     topologySpreadConstraints: {}
+    # as renterd does not need to access k8s api, I recommend leaving it off
+    automountServiceAccountToken: false
     volume:
       accessModes: [ "ReadWriteOnce" ]
       storageClassName: "longhorn"
@@ -53,8 +55,10 @@ renterd:
     affinity: {}
     tolerations: {}
     topologySpreadConstraints: {}
+    # as renterd does not need to access k8s api, I recommend leaving it off
+    automountServiceAccountToken: false
   workers:
-    replicas: 5
+    replicas: 1
     vpa:
       enabled: false
     resources: {}
@@ -62,6 +66,8 @@ renterd:
     affinity: {}
     tolerations: {}
     topologySpreadConstraints: {}
+    # as renterd does not need to access k8s api, I recommend leaving it off
+    automountServiceAccountToken: false
       
 # automatic testnet faucet cron
 autofaucet:
@@ -113,6 +119,8 @@ mysql:
     databaseMetrics: "renterd_metrics"
     username: "renterd"
     password: "renterd"
+  primary:
+    extraFlags: "--max_connections=1024 --log_bin_trust_function_creators=1"
 
 # Only used if mysql.enabled==false
 mysqlExternal:

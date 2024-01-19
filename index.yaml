@@ -3,7 +3,31 @@ entries:
   renterd:
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2023-12-28T19:21:27.499300395Z"
+    created: "2024-01-19T12:36:10.531255932Z"
+    dependencies:
+    - condition: mysql.enabled
+      name: mysql
+      repository: https://charts.bitnami.com/bitnami
+      version: 9.16.0
+    description: Sia renterd helm chart
+    digest: fd4168d4b5f1dbf4e0e17f4a599bd22f1379a7dec605671a9dfd1f7c13b5b4c1
+    icon: https://i.imgur.com/pWg0PRK.png
+    keywords:
+    - storage
+    - distributed
+    - blockchain
+    - sia
+    - renter
+    - s3
+    - webui
+    name: renterd
+    type: application
+    urls:
+    - https://charts.motyka.pro/renterd-1.0.2.tgz
+    version: 1.0.2
+  - apiVersion: v2
+    appVersion: 1.0.0
+    created: "2024-01-19T12:36:10.526421531Z"
     dependencies:
     - condition: mysql.enabled
       name: mysql
@@ -27,7 +51,7 @@ entries:
     version: 1.0.1
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2023-12-28T19:21:27.49286681Z"
+    created: "2024-01-19T12:36:10.516465275Z"
     dependencies:
     - condition: mysql.enabled
       name: mysql
@@ -41,4 +65,4 @@ entries:
     urls:
     - https://charts.motyka.pro/renterd-1.0.0.tgz
     version: 1.0.0
-generated: "2023-12-28T19:21:27.487055354Z"
+generated: "2024-01-19T12:36:10.509394918Z"

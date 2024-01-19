@@ -22,6 +22,14 @@ spec:
         checksum/configmap-renterd: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
         checksum/secret-renterd-env: {{ include (print $.Template.BasePath "/secrets/renterd-env.yaml") . | sha256sum }}
     spec:
+      automountServiceAccountToken: {{ .Values.renterd.workers.automountServiceAccountToken }}
+      initContainers:
+        - name: wait-for
+          image: ghcr.io/patrickdappollonio/wait-for:v1.0.0
+          args:
+            - --verbose
+            # Wait for bus before starting autopilot
+            - --host="renterd-bus:{{$.Values.service.http.port}}"
       containers:
         - name: renterd
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"

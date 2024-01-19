@@ -8,7 +8,7 @@ Simple helm chart containing [Sia renterd software](https://sia.tech/software/re
 
 ```
 helm repo add artur9010 https://charts.motyka.pro
-helm install renterd artur9010/renterd --version 1.0.1
+helm install renterd artur9010/renterd --version 1.0.2
 ```
 
 ## Requirements
