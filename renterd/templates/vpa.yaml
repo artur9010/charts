@@ -1,4 +1,4 @@
-{{- if .Values.renterd.bus.vpa.enabled -}}
+{{ if .Values.renterd.bus.vpa.enabled -}}
 apiVersion: "autoscaling.k8s.io/v1"
 kind: VerticalPodAutoscaler
 metadata:
@@ -8,9 +8,9 @@ spec:
     apiVersion: "apps/v1"
     kind: StatefulSet
     name: renterd-bus
-{{- end }}
+{{ end }}
 ---
-{{- if .Values.renterd.autopilot.vpa.enabled -}}
+{{ if .Values.renterd.autopilot.vpa.enabled }}
 apiVersion: "autoscaling.k8s.io/v1"
 kind: VerticalPodAutoscaler
 metadata:
@@ -20,9 +20,9 @@ spec:
     apiVersion: "apps/v1"
     kind: StatefulSet
     name: renterd-autopilot
-{{- end }}
+{{ end }}
 ---
-{{- if .Values.renterd.workers.vpa.enabled -}}
+{{ if .Values.renterd.workers.vpa.enabled }}
 apiVersion: "autoscaling.k8s.io/v1"
 kind: VerticalPodAutoscaler
 metadata:
@@ -32,4 +32,4 @@ spec:
     apiVersion: "apps/v1"
     kind: StatefulSet
     name: renterd-worker
-{{- end }}
+{{ end }}

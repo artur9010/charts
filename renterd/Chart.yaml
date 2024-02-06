@@ -2,7 +2,7 @@ apiVersion: v2
 name: renterd
 description: Sia renterd helm chart
 type: application
-version: 1.0.2
+version: 1.0.3
 appVersion: "1.0.0"
 icon: https://i.imgur.com/pWg0PRK.png
 keywords:
@@ -15,6 +15,6 @@ keywords:
 - webui
 dependencies:
   - name: mysql
-    version: 9.16.0
+    version: 9.19.1
     repository: https://charts.bitnami.com/bitnami
     condition: mysql.enabled

@@ -30,9 +30,9 @@ spec:
             # Wait for bus before starting autopilot
             - --host="renterd-bus:{{$.Values.service.http.port}}"
             # Make sure all workers are online before starting autopilot
-            {{range $i, $e := until (int .Values.renterd.workers.replicas) }}
+            {{ range $i, $e := until (int .Values.renterd.workers.replicas) }}
             - --host="renterd-worker-{{$i}}.renterd-worker:{{$.Values.service.http.port}}"
-            {{end}}
+            {{ end }}
       containers:
         - name: renterd
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"

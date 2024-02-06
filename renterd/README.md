@@ -1,20 +1,20 @@
-# Basic Sia renterd helm chart
+# Unofficial Sia renterd helm chart
 
 [![Artifact Hub](https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/artur9010)](https://artifacthub.io/packages/search?repo=artur9010)
 
-Simple helm chart containing [Sia renterd software](https://sia.tech/software/renterd).
+Helm chart for [Sia renterd software](https://sia.tech/software/renterd).
 
 ## Helm repository
 
 ```
 helm repo add artur9010 https://charts.motyka.pro
-helm install renterd artur9010/renterd --version 1.0.2
+helm install renterd artur9010/renterd --version 1.0.3
 ```
 
 ## Requirements
 
-- Kubernetes 1.28+ cluster, nodes should have at least 8GB of ram.
-- Some kind of persistent storage solution (longhorn, ceph, aws-ebs etc.). It's only required by `renterd-bus` pod which contains consensus (blockchain) copy and partial slabs. There is no support for hostPath for now.
+- Kubernetes 1.28+ cluster, nodes should have at least 16GB of ram as renterd is memory hungry. It should work with older versions of k8s but I haven't tested it.
+- Some kind of persistent storage solution (longhorn, ceph, aws-ebs etc.) and 50GB of available storage (mostly for blockchain copy). It's only required by `renterd-bus` pod which contains consensus (blockchain) copy and partial slabs. There is no support for hostPath, but [rancher local path provisioner](https://github.com/rancher/local-path-provisioner) should work fine
 - (Optional) VerticalPodAutoscaler, [there is a nice chart for it](https://artifacthub.io/packages/helm/cowboysysop/vertical-pod-autoscaler)
 
 renterd can run with sqlite or mysql database, due to performance issues on sqlite one I decided to not include an option to use sqlite. This chart includes bitnami mysql chart that you can enable by setting `mysql.enabled` to `true`. If you already have a mysql databse - create two databases (eq. `renterd` and `renterd_metrics`) and grant all privileges on them to renterd user. Provide credentials to external database in section `mysqlExternal` in values
@@ -28,13 +28,40 @@ mysqlExternal:
   databaseMetrics: "renterd_metrics"
 ```
 
+Additional requirements for external mysql database:
+- `max_connections` a bit higher than default 151, 1024 works fine
+- `log_bin_trust_function_creators` set to 1 (as long as your db user dosen't have SUPER privilage, see https://github.com/SiaFoundation/renterd/issues/910)
+
+And while it's not a requirement, please increase innodb_buffer_pool_size from default 128MB, 4G should be ok for 16GB node. I've tested it with those params and it works fine for me, those are also a defaults if you enable built-in mysql chart (Values.mysql.primary.configuration)
+```
+[mysqld]
+innodb_buffer_pool_size=4G
+```
+## Changes
+
+### 1.0.3
+- Removed renterd.s3.keys from values as keypairs can now be managed inside webUI.
+- mysql: changed default authentication plugin from `mysql_native_password` to `caching_sha2_password` due to massive spam in container logs, see https://github.com/bitnami/charts/issues/18606
+
+## CPU and memory requirements
+Tested on Ryzen zen1 platform (Ryzen 5 2200G, 2400G), while uploading files to s3 api via rclone, max 4 uploads at once. As database gets bigger it will probably require more memory, renterd holds uploaded data in memory.
+```
+NAME                  CPU(cores)   MEMORY(bytes)
+mysql-0               52m          875Mi
+renterd-autopilot-0   8m           10Mi
+renterd-bus-0         538m         112Mi
+renterd-worker-0      215m         3314Mi
+renterd-worker-1      196m         3415Mi
+renterd-worker-2      1447m        1867Mi
+```
+
 ## Looking for perfect server to run renterd? Check netcup
 
-[![netcup](https://i.imgur.com/2Sjxas5.png)](https://www.netcup.eu/?ref=IHREKUNDENNUMMER)
+[![netcup](https://i.imgur.com/2Sjxas5.png)](https://www.netcup.eu/?ref=200705)
 
-ARM servers are available from 7 eur per month. [Check netcup for more info.](https://www.netcup.eu/?ref=IHREKUNDENNUMMER)
+ARM servers are available from 7 eur per month. [Check netcup for more info.](https://www.netcup.eu/?ref=200705)
 
-Use code `36nc16697741959` to get [5 EUR off](https://www.netcup.eu/bestellen/gutschein_einloesen.php?gutschein=36nc16697741959&ref=IHREKUNDENNUMMER).
+Use code `36nc16697741959` to get [5 EUR off](https://www.netcup.eu/bestellen/gutschein_einloesen.php?gutschein=36nc16697741959&ref=200705).
 
 ## [Experimental] VerticalPodAutoscaler support
 
@@ -83,33 +110,27 @@ ingress:
         - path: /
           pathType: ImplementationSpecific
           svcName: renterd-bus
-          svcPort: 9880
+          svcPort: 9980
         - path: /api/worker
           pathType: ImplementationSpecific
           svcName: renterd-worker
-          svcPort: 9880
+          svcPort: 9980
         - path: /api/autopilot
           pathType: ImplementationSpecific
           svcName: renterd-autopilot
-          svcPort: 9880
+          svcPort: 9980
     - host: s3.example.com
       paths:
         - path: /
           pathType: ImplementationSpecific
           svcName: renterd-worker
-          svcPort: 7070
+          svcPort: 8080
   tls:
     - secretName: ingress-tls
       hosts:
         - renterd.example.com
         - s3.example.com
 ```
-
-## Cloudflared tunnel
-
-It also should work fine with cloudflared tunnel, just make sure to point /api/worker and /api/autopilot to renterd-worker and renterd-autopilot services, all other traffic should go to renterd-bus.
-
-All traffic from s3 domain should go to `renterd-worker:7070`
 
 ## Values
 

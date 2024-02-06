@@ -1,7 +1,7 @@
 image:
   repository: ghcr.io/siafoundation/renterd
   pullPolicy: IfNotPresent
-  tag: "1.0.2-zen"
+  tag: "1.0.3-zen"
 
 service:
   bus:
@@ -22,9 +22,6 @@ renterd:
     password: "renterdApiPassowrd2"
   s3:
     enabled: true
-    keys:
-      - accessKey: "key_must_be_at_least_40_chars_CHANGE_ME_NOW"
-        secretKey: "key_must_be_at_least_40_chars_CHANGE_ME_NOW"
   bus:
     vpa:
       enabled: false
@@ -119,8 +116,46 @@ mysql:
     databaseMetrics: "renterd_metrics"
     username: "renterd"
     password: "renterd"
+    rootPassword: "renterd"
   primary:
+    resources:
+      requests:
+        cpu: 250m
+        memory: 3072Mi
     extraFlags: "--max_connections=1024 --log_bin_trust_function_creators=1"
+    configuration: |-
+      [mysqld]
+      default_authentication_plugin=caching_sha2_password
+      skip-name-resolve
+      explicit_defaults_for_timestamp
+      basedir=/opt/bitnami/mysql
+      plugin_dir=/opt/bitnami/mysql/lib/plugin
+      port=3306
+      socket=/opt/bitnami/mysql/tmp/mysql.sock
+      datadir=/bitnami/mysql/data
+      tmpdir=/opt/bitnami/mysql/tmp
+      max_allowed_packet=16M
+      bind-address=*
+      pid-file=/opt/bitnami/mysql/tmp/mysqld.pid
+      log-error=/opt/bitnami/mysql/logs/mysqld.log
+      character-set-server=UTF8
+      slow_query_log=0
+      long_query_time=10.0
+
+      # renterd chart
+      innodb_buffer_pool_size=4G
+
+      [client]
+      port=3306
+      socket=/opt/bitnami/mysql/tmp/mysql.sock
+      default-character-set=UTF8
+      plugin_dir=/opt/bitnami/mysql/lib/plugin
+
+      [manager]
+      port=3306
+      socket=/opt/bitnami/mysql/tmp/mysql.sock
+      pid-file=/opt/bitnami/mysql/tmp/mysqld.pid
+
 
 # Only used if mysql.enabled==false
 mysqlExternal:

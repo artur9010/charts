@@ -8,10 +8,6 @@ data:
       gatewayAddr: "0.0.0.0:{{ .Values.service.bus.port }}"
     s3:
       enabled: {{ .Values.renterd.s3.enabled }}
-      keypairsV4:
-        {{- range $v := .Values.renterd.s3.keys }}
-        {{ $v.accessKey }}: "{{ $v.secretKey }}"
-        {{- end }}
   entrypoint.sh: |
     #!/bin/sh
     exec renterd -http=':{{ .Values.service.http.port }}' -s3.address=':{{ .Values.service.s3.port }}' "$@"
