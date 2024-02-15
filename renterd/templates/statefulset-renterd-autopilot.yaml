@@ -19,7 +19,6 @@ spec:
         app.kubernetes.io/component: autopilot
       annotations:
         checksum/configmap-renterd: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
-        checksum/secret-renterd-env: {{ include (print $.Template.BasePath "/secrets/renterd-env.yaml") . | sha256sum }}
     spec:
       automountServiceAccountToken: {{ .Values.renterd.autopilot.automountServiceAccountToken }}
       initContainers:
@@ -64,7 +63,7 @@ spec:
               subPath: "entrypoint.sh"
           envFrom:
             - secretRef:
-                name: renterd-env
+                name: {{ .Values.renterd.secretName | quote }}
           env:
             - name: RENTERD_AUTOPILOT_ENABLED
               value: "true"

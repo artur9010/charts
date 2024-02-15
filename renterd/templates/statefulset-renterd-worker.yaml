@@ -20,7 +20,6 @@ spec:
         app.kubernetes.io/component: worker
       annotations:
         checksum/configmap-renterd: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
-        checksum/secret-renterd-env: {{ include (print $.Template.BasePath "/secrets/renterd-env.yaml") . | sha256sum }}
     spec:
       automountServiceAccountToken: {{ .Values.renterd.workers.automountServiceAccountToken }}
       initContainers:
@@ -71,7 +70,7 @@ spec:
               value: {{ include "renterd.busAddr" . | quote }}
           envFrom:
             - secretRef:
-                name: renterd-env
+                name: {{ .Values.renterd.secretName | quote }}
           resources:
             {{- toYaml .Values.renterd.workers.resources | nindent 12 }}
           {{- if .Values.renterd.workers.nodeSelector }}

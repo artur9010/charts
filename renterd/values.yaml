@@ -1,7 +1,7 @@
 image:
   repository: ghcr.io/siafoundation/renterd
   pullPolicy: IfNotPresent
-  tag: "1.0.3-zen"
+  tag: "1.0.5-zen"
 
 service:
   bus:
@@ -15,11 +15,8 @@ service:
     port: 8080
 
 renterd:
-  # You can generate seed here: https://iancoleman.io/bip39/, make sure to select 24 words.
-  # ...or use an example one
-  seed: "clutch polar sail margin what liquid zero current safe horse alert same fortune disorder cousin angle bid give leg muscle slam rifle camp power"
-  api:
-    password: "renterdApiPassowrd2"
+  # You need to create secret manually, check README.md for more info.
+  secretName: "renterd"
   s3:
     enabled: true
   bus:

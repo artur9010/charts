@@ -8,7 +8,7 @@ Helm chart for [Sia renterd software](https://sia.tech/software/renterd).
 
 ```
 helm repo add artur9010 https://charts.motyka.pro
-helm install renterd artur9010/renterd --version 1.0.3
+helm install renterd artur9010/renterd --version 1.0.4
 ```
 
 ## Requirements
@@ -39,9 +39,29 @@ innodb_buffer_pool_size=4G
 ```
 ## Changes
 
+### 1.0.4
+- Changed default image to `renterd:1.0.5-zen`
+- Removed option to specify wallet seed and passwords in values.
+- Added an option to specify name of secret containing 
+
 ### 1.0.3
 - Removed renterd.s3.keys from values as keypairs can now be managed inside webUI.
 - mysql: changed default authentication plugin from `mysql_native_password` to `caching_sha2_password` due to massive spam in container logs, see https://github.com/bitnami/charts/issues/18606
+
+## Creating secret
+
+Create an .txt file named secret.txt and containing:
+```
+RENTERD_SEED=24 words
+RENTERD_API_PASSWORD=secure_api_password
+RENTERD_BUS_API_PASSWORD=secure_api_password
+RENTERD_WORKER_API_PASSWORD=secure_api_password
+```
+
+Seed: You can generate seed here: https://iancoleman.io/bip39/, make sure to select 24 words.
+Password: API password, use the same value for all 3 of them.
+
+Now run `kubectl create secret generic <secret name from values> -n <your namespace> --from-env-file=secret.txt`
 
 ## CPU and memory requirements
 Tested on Ryzen zen1 platform (Ryzen 5 2200G, 2400G), while uploading files to s3 api via rclone, max 4 uploads at once. As database gets bigger it will probably require more memory, renterd holds uploaded data in memory.

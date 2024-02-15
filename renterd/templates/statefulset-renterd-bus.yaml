@@ -19,20 +19,9 @@ spec:
         app.kubernetes.io/component: bus
       annotations:
         checksum/configmap-renterd: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
-        checksum/secret-renterd-env: {{ include (print $.Template.BasePath "/secrets/renterd-env.yaml") . | sha256sum }}
         checksum/secret-renterd-bus-env: {{ include (print $.Template.BasePath "/secrets/renterd-bus-env.yaml") . | sha256sum }}
     spec:
       automountServiceAccountToken: {{ .Values.renterd.bus.automountServiceAccountToken }}
-      # initContainers:
-      #   - name: wait-for
-      #     image: ghcr.io/patrickdappollonio/wait-for:v1.0.0
-      #     args:
-      #       - --verbose
-      #       # Wait for mysql before starting
-      #       - --host="$(RENTERD_DB_URI)"
-      #     envFrom:
-      #       - secretRef:
-      #           name: renterd-env
       containers:
         - name: renterd
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
@@ -65,7 +54,7 @@ spec:
               subPath: "entrypoint.sh"
           envFrom:
             - secretRef:
-                name: renterd-env
+                name: {{ .Values.renterd.secretName | quote }}
             - secretRef:
                 name: renterd-bus-env
           env:
