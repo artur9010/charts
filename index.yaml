@@ -3,7 +3,31 @@ entries:
   renterd:
   - apiVersion: v2
     appVersion: 1.0.5
-    created: "2024-02-15T16:57:57.190118449Z"
+    created: "2024-03-07T22:31:11.687240034Z"
+    dependencies:
+    - condition: mysql.enabled
+      name: mysql
+      repository: https://charts.bitnami.com/bitnami
+      version: 9.22.0
+    description: Sia renterd helm chart
+    digest: 90d0f2bf3c9c2569ef3d1016194c4f2b5e0479e0cfa71d46368eeee63bd36b55
+    icon: https://i.imgur.com/pWg0PRK.png
+    keywords:
+    - storage
+    - distributed
+    - blockchain
+    - sia
+    - renter
+    - s3
+    - webui
+    name: renterd
+    type: application
+    urls:
+    - https://charts.motyka.pro/renterd-1.0.5.tgz
+    version: 1.0.5
+  - apiVersion: v2
+    appVersion: 1.0.5
+    created: "2024-03-07T22:31:11.683559739Z"
     dependencies:
     - condition: mysql.enabled
       name: mysql
@@ -27,7 +51,7 @@ entries:
     version: 1.0.4
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2024-02-15T16:57:57.186249509Z"
+    created: "2024-03-07T22:31:11.66968001Z"
     dependencies:
     - condition: mysql.enabled
       name: mysql
@@ -51,7 +75,7 @@ entries:
     version: 1.0.3
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2024-02-15T16:57:57.169480553Z"
+    created: "2024-03-07T22:31:11.655689622Z"
     dependencies:
     - condition: mysql.enabled
       name: mysql
@@ -75,7 +99,7 @@ entries:
     version: 1.0.2
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2024-02-15T16:57:57.142236768Z"
+    created: "2024-03-07T22:31:11.644462703Z"
     dependencies:
     - condition: mysql.enabled
       name: mysql
@@ -99,7 +123,7 @@ entries:
     version: 1.0.1
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2024-02-15T16:57:57.128435198Z"
+    created: "2024-03-07T22:31:11.631519918Z"
     dependencies:
     - condition: mysql.enabled
       name: mysql
@@ -113,4 +137,4 @@ entries:
     urls:
     - https://charts.motyka.pro/renterd-1.0.0.tgz
     version: 1.0.0
-generated: "2024-02-15T16:57:57.111908868Z"
+generated: "2024-03-07T22:31:11.605182103Z"

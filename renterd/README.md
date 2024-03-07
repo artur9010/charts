@@ -8,14 +8,13 @@ Helm chart for [Sia renterd software](https://sia.tech/software/renterd).
 
 ```
 helm repo add artur9010 https://charts.motyka.pro
-helm install renterd artur9010/renterd --version 1.0.4
+helm install renterd artur9010/renterd --version 1.0.5
 ```
 
 ## Requirements
 
-- Kubernetes 1.28+ cluster, nodes should have at least 16GB of ram as renterd is memory hungry. It should work with older versions of k8s but I haven't tested it.
+- Kubernetes 1.28+ cluster, nodes should have at least 8GB of ram as renterd is memory hungry. It should work with older versions of k8s but I haven't tested it.
 - Some kind of persistent storage solution (longhorn, ceph, aws-ebs etc.) and 50GB of available storage (mostly for blockchain copy). It's only required by `renterd-bus` pod which contains consensus (blockchain) copy and partial slabs. There is no support for hostPath, but [rancher local path provisioner](https://github.com/rancher/local-path-provisioner) should work fine
-- (Optional) VerticalPodAutoscaler, [there is a nice chart for it](https://artifacthub.io/packages/helm/cowboysysop/vertical-pod-autoscaler)
 
 renterd can run with sqlite or mysql database, due to performance issues on sqlite one I decided to not include an option to use sqlite. This chart includes bitnami mysql chart that you can enable by setting `mysql.enabled` to `true`. If you already have a mysql databse - create two databases (eq. `renterd` and `renterd_metrics`) and grant all privileges on them to renterd user. Provide credentials to external database in section `mysqlExternal` in values
 
@@ -37,16 +36,6 @@ And while it's not a requirement, please increase innodb_buffer_pool_size from d
 [mysqld]
 innodb_buffer_pool_size=4G
 ```
-## Changes
-
-### 1.0.4
-- Changed default image to `renterd:1.0.5-zen`
-- Removed option to specify wallet seed and passwords in values.
-- Added an option to specify name of secret containing 
-
-### 1.0.3
-- Removed renterd.s3.keys from values as keypairs can now be managed inside webUI.
-- mysql: changed default authentication plugin from `mysql_native_password` to `caching_sha2_password` due to massive spam in container logs, see https://github.com/bitnami/charts/issues/18606
 
 ## Creating secret
 
@@ -65,14 +54,19 @@ Now run `kubectl create secret generic <secret name from values> -n <your namesp
 
 ## CPU and memory requirements
 Tested on Ryzen zen1 platform (Ryzen 5 2200G, 2400G), while uploading files to s3 api via rclone, max 4 uploads at once. As database gets bigger it will probably require more memory, renterd holds uploaded data in memory.
+
+While uploading files via s3 api using rclone (--transfers 20)
 ```
-NAME                  CPU(cores)   MEMORY(bytes)
-mysql-0               52m          875Mi
-renterd-autopilot-0   8m           10Mi
-renterd-bus-0         538m         112Mi
-renterd-worker-0      215m         3314Mi
-renterd-worker-1      196m         3415Mi
-renterd-worker-2      1447m        1867Mi
+➜  ~ kubectl top pod -n renterd-zen
+NAME                                 CPU(cores)   MEMORY(bytes)   
+mysql-0                              127m         2105Mi          
+renterd-autopilot-859cb75986-hws2g   13m          12Mi            
+renterd-bus-0                        902m         1118Mi          
+renterd-worker-0                     319m         2755Mi          
+renterd-worker-1                     119m         2254Mi          
+renterd-worker-2                     887m         2125Mi          
+renterd-worker-3                     267m         2655Mi          
+renterd-worker-4                     131m         2388Mi  
 ```
 
 ## Looking for perfect server to run renterd? Check netcup
@@ -83,13 +77,34 @@ ARM servers are available from 7 eur per month. [Check netcup for more info.](ht
 
 Use code `36nc16697741959` to get [5 EUR off](https://www.netcup.eu/bestellen/gutschein_einloesen.php?gutschein=36nc16697741959&ref=200705).
 
-## [Experimental] VerticalPodAutoscaler support
+## Changelog
 
-This helm chart supports VerticalPodAutoscaler, it can be enabled by setting `renterd.{bus,autopilot,worker}.vpa.enabled` to `true` in values.
+### 1.0.5
+- Removed support for `VerticalPodAutoscaler`
+- Upgraded `bitnami/mysql` chart to `9.22.0`
+- Added option to specify `autopilot`, `worker` and `bus` settings inside values - `Values.renterd.{autopilot,workers,bus}.config`.
+- Changed user inside renterd containers from root to unnamed one with id 1000.
+- Changed autopilot to Deployment as it is stateless.
+
+### 1.0.4
+- Changed default image to `renterd:1.0.5-zen`
+- Removed option to specify wallet seed and passwords in values.
+- Added an option to specify name of secret containing seed and password
+
+### 1.0.3
+- Removed renterd.s3.keys from values as keypairs can now be managed inside webUI.
+- mysql: changed default authentication plugin from `mysql_native_password` to `caching_sha2_password` due to massive spam in container logs, see https://github.com/bitnami/charts/issues/18606
+
+## Components
+This chart runs all 3 of renterd components as separate pods - bus, autopilot and workers.
+There can be only one bus, probably multiple autopilots and multiple workers. Bus also requires some kind of persistent storage for consensus (blockchain) and partial or not uploaded yet slabs.
+Workers are stateless, but autopilot dosen't have any kind of service discovery - it need to have workers specified in env - that means we can't easily scale workers without restarting autopilot each time (it also dosen't like to scale down number of workers).
+
+Workers requires bus to start, autopilot requires workers, bus requires database.
 
 ## Testnet automatic faucet claimer
 
-This helm chart has built-in automatic faucet claimer for Sia Zen testnet, you can enable it in `autofaucet` section in values. You can claim up to 5000 SC per day.
+This helm chart has built-in automatic faucet claimer for Sia Zen testnet, you can enable it in `autofaucet` section in values. You can claim up to 5000 ZenSC per day.
 
 Example:
 ```yaml

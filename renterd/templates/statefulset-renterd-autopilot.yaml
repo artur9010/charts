@@ -1,12 +1,11 @@
 apiVersion: apps/v1
-kind: StatefulSet
+kind: Deployment
 metadata:
   name: renterd-autopilot
   labels:
     {{- include "renterd.labels" . | nindent 4 }}
     app.kubernetes.io/component: autopilot
 spec:
-  serviceName: "renterd-autopilot"
   replicas: 1
   selector:
     matchLabels:
@@ -21,6 +20,10 @@ spec:
         checksum/configmap-renterd: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
     spec:
       automountServiceAccountToken: {{ .Values.renterd.autopilot.automountServiceAccountToken }}
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
       initContainers:
         - name: wait-for
           image: ghcr.io/patrickdappollonio/wait-for:v1.0.0
@@ -55,9 +58,11 @@ spec:
             periodSeconds: 10
           volumeMounts:
             # Autopilot does not save anything other than logs on /data
+            - mountPath: "/data"
+              name: renterd-data-emptydir
             - mountPath: "/data/renterd.yml"
               name: renterd-config
-              subPath: "renterd.yml"
+              subPath: "renterd.autopilot.yml"
             - mountPath: "/entrypoint.sh"
               name: renterd-config
               subPath: "entrypoint.sh"
@@ -92,3 +97,7 @@ spec:
           configMap:
             name: renterd
             defaultMode: 0755
+        - name: renterd-data-emptydir
+          emptyDir:
+            medium: "Memory"
+            sizeLimit: 128Mi

@@ -22,6 +22,17 @@ spec:
         checksum/secret-renterd-bus-env: {{ include (print $.Template.BasePath "/secrets/renterd-bus-env.yaml") . | sha256sum }}
     spec:
       automountServiceAccountToken: {{ .Values.renterd.bus.automountServiceAccountToken }}
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+      # initContainers:
+      #   - name: wait-for
+      #     image: ghcr.io/patrickdappollonio/wait-for:v1.0.0
+      #     args:
+      #       - --verbose
+      #       # Wait for db before starting bus
+      #       - --host=""
       containers:
         - name: renterd
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
@@ -48,7 +59,7 @@ spec:
               name: renterd-bus-data
             - mountPath: "/data/renterd.yml"
               name: renterd-config
-              subPath: "renterd.yml"
+              subPath: "renterd.bus.yml"
             - mountPath: "/entrypoint.sh"
               name: renterd-config
               subPath: "entrypoint.sh"
