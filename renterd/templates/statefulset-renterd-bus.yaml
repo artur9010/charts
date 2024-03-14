@@ -18,10 +18,12 @@ spec:
         {{- include "renterd.selectorLabels" . | nindent 8 }}
         app.kubernetes.io/component: bus
       annotations:
-        checksum/configmap-renterd: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
-        checksum/secret-renterd-bus-env: {{ include (print $.Template.BasePath "/secrets/renterd-bus-env.yaml") . | sha256sum }}
+        checksum/configmap-renterd: {{ include (print $.Template.BasePath "/configmaps/renterd.yaml") . | sha256sum }}
+        checksum/configmap-renterd-bus: {{ include (print $.Template.BasePath "/configmaps/renterd-bus.yaml") . | sha256sum }}
+        checksum/secret-renterd-mysql: {{ include (print $.Template.BasePath "/secrets/renterd-mysql.yaml") . | sha256sum }}
     spec:
       automountServiceAccountToken: {{ .Values.renterd.bus.automountServiceAccountToken }}
+      enableServiceLinks: {{ .Values.renterd.bus.enableServiceLinks }}
       securityContext:
         runAsUser: 1000
         runAsGroup: 1000
@@ -58,8 +60,8 @@ spec:
             - mountPath: "/data"
               name: renterd-bus-data
             - mountPath: "/data/renterd.yml"
-              name: renterd-config
-              subPath: "renterd.bus.yml"
+              name: renterd-bus-config
+              subPath: "renterd.yml"
             - mountPath: "/entrypoint.sh"
               name: renterd-config
               subPath: "entrypoint.sh"
@@ -67,7 +69,7 @@ spec:
             - secretRef:
                 name: {{ .Values.renterd.secretName | quote }}
             - secretRef:
-                name: renterd-bus-env
+                name: renterd-mysql
           env:
             - name: RENTERD_AUTOPILOT_ENABLED
               value: "false"
@@ -91,6 +93,10 @@ spec:
         - name: renterd-config
           configMap:
             name: renterd
+            defaultMode: 0755
+        - name: renterd-bus-config
+          configMap:
+            name: renterd-bus
             defaultMode: 0755
   volumeClaimTemplates:
     - metadata:

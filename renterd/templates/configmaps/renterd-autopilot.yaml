@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: renterd-autopilot
+data:
+  renterd.yml: |
+    # Managed by Helm - configmap/renterd-autopilot/renterd.yml
+    {{ with .Values.renterd.autopilot.config }}
+    autopilot: {{ . | toYaml | nindent 6 }}
+    {{- end }}

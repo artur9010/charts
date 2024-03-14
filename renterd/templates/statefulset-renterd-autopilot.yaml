@@ -17,9 +17,11 @@ spec:
         {{- include "renterd.selectorLabels" . | nindent 8 }}
         app.kubernetes.io/component: autopilot
       annotations:
-        checksum/configmap-renterd: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+        checksum/configmap-renterd: {{ include (print $.Template.BasePath "/configmaps/renterd.yaml") . | sha256sum }}
+        checksum/configmap-renterd-autopilot: {{ include (print $.Template.BasePath "/configmaps/renterd-autopilot.yaml") . | sha256sum }}
     spec:
       automountServiceAccountToken: {{ .Values.renterd.autopilot.automountServiceAccountToken }}
+      enableServiceLinks: {{ .Values.renterd.autopilot.enableServiceLinks }}
       securityContext:
         runAsUser: 1000
         runAsGroup: 1000
@@ -61,8 +63,8 @@ spec:
             - mountPath: "/data"
               name: renterd-data-emptydir
             - mountPath: "/data/renterd.yml"
-              name: renterd-config
-              subPath: "renterd.autopilot.yml"
+              name: renterd-autopilot-config
+              subPath: "renterd.yml"
             - mountPath: "/entrypoint.sh"
               name: renterd-config
               subPath: "entrypoint.sh"
@@ -96,6 +98,10 @@ spec:
         - name: renterd-config
           configMap:
             name: renterd
+            defaultMode: 0755
+        - name: renterd-autopilot-config
+          configMap:
+            name: renterd-autopilot
             defaultMode: 0755
         - name: renterd-data-emptydir
           emptyDir:

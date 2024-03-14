@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: renterd
+data:
+  entrypoint.sh: |
+    #!/bin/sh
+    # Managed by Helm - configmap/renterd/entrypoint.sh
+    exec renterd -http=':{{ .Values.service.http.port }}' -s3.address=':{{ .Values.service.s3.port }}' "$@"

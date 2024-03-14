@@ -1,7 +1,7 @@
 image:
   repository: ghcr.io/siafoundation/renterd
   pullPolicy: IfNotPresent
-  tag: "1.0.5-zen"
+  tag: "1.0.5"
 
 service:
   bus:
@@ -41,6 +41,7 @@ renterd:
     topologySpreadConstraints: {}
     # as renterd does not need to access k8s api, I recommend leaving it off
     automountServiceAccountToken: false
+    enableServiceLinks: false
     volume:
       accessModes: [ "ReadWriteOnce" ]
       storageClassName: "longhorn"
@@ -66,6 +67,7 @@ renterd:
     topologySpreadConstraints: {}
     # as renterd does not need to access k8s api, I recommend leaving it off
     automountServiceAccountToken: false
+    enableServiceLinks: false
   workers:
     # renterd config - worker section
     config: {}
@@ -85,6 +87,7 @@ renterd:
     topologySpreadConstraints: {}
     # as renterd does not need to access k8s api, I recommend leaving it off
     automountServiceAccountToken: false
+    enableServiceLinks: false
       
 # automatic testnet faucet cron
 autofaucet:
@@ -95,7 +98,7 @@ autofaucet:
   restartPolicy: Never
 
 ingress:
-  enabled: true
+  enabled: false
   className: "traefik"
   annotations: {}
     # cert-manager.io/cluster-issuer: letsencrypt
@@ -120,15 +123,16 @@ ingress:
           pathType: ImplementationSpecific
           svcName: renterd-worker
           svcPort: 8080
-  tls:
-    - secretName: ingress-tls
-      hosts:
-        - renterd.example.com
-        - s3.example.com
+  # tls:
+  #   - secretName: ingress-tls
+  #     hosts:
+  #       - renterd.example.com
+  #       - s3.example.com
 
 # Bitnami mysql chart
 mysql:
   enabled: true
+  # TODO: this chart is hardcoded to use name "mysql"
   fullnameOverride: "mysql"
   auth:
     database: "renterd"
@@ -175,12 +179,3 @@ mysql:
       port=3306
       socket=/opt/bitnami/mysql/tmp/mysql.sock
       pid-file=/opt/bitnami/mysql/tmp/mysqld.pid
-
-
-# Only used if mysql.enabled==false
-mysqlExternal:
-  address: "mysql.example.com:3306"
-  username: "renterd"
-  password: "renterd123"
-  database: "renterd"
-  databaseMetrics: "renterd_metrics"

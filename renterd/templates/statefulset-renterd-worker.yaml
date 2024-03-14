@@ -19,9 +19,11 @@ spec:
         {{- include "renterd.selectorLabels" . | nindent 8 }}
         app.kubernetes.io/component: worker
       annotations:
-        checksum/configmap-renterd: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+        checksum/configmap-renterd: {{ include (print $.Template.BasePath "/configmaps/renterd.yaml") . | sha256sum }}
+        checksum/configmap-renterd-worker: {{ include (print $.Template.BasePath "/configmaps/renterd-worker.yaml") . | sha256sum }}
     spec:
       automountServiceAccountToken: {{ .Values.renterd.workers.automountServiceAccountToken }}
+      enableServiceLinks: {{ .Values.renterd.workers.enableServiceLinks }}
       securityContext:
         runAsUser: 1000
         runAsGroup: 1000
@@ -58,8 +60,8 @@ spec:
             - mountPath: "/data"
               name: renterd-data-emptydir
             - mountPath: "/data/renterd.yml"
-              name: renterd-config
-              subPath: "renterd.worker.yml"
+              name: renterd-worker-config
+              subPath: "renterd.yml"
             - mountPath: "/entrypoint.sh"
               name: renterd-config
               subPath: "entrypoint.sh"
@@ -95,6 +97,10 @@ spec:
         - name: renterd-config
           configMap:
             name: renterd
+            defaultMode: 0755
+        - name: renterd-worker-config
+          configMap:
+            name: renterd-worker
             defaultMode: 0755
         - name: renterd-data-emptydir
           emptyDir:
