@@ -6,7 +6,7 @@ data:
   renterd.yml: |
     # Managed by Helm - configmap/renterd-worker/renterd.yml
     s3:
-      enabled: {{ .Values.renterd.s3.enabled }}
-    {{ with .Values.renterd.workers.config }}
+      enabled: {{ .Values.s3.enabled }}
+    {{ with .Values.workers.config }}
     worker: {{ . | toYaml | nindent 6 }}
     {{- end }}

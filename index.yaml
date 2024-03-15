@@ -3,7 +3,31 @@ entries:
   renterd:
   - apiVersion: v2
     appVersion: 1.0.5
-    created: "2024-03-14T13:02:27.05742037Z"
+    created: "2024-03-15T18:49:59.089364457Z"
+    dependencies:
+    - condition: mysql.enabled
+      name: mysql
+      repository: https://charts.bitnami.com/bitnami
+      version: 9.23.0
+    description: Sia renterd helm chart
+    digest: 368d51aa09ffb1fd1acf6e0e2b7efb2097bbcfb0e9f7ca49c4b58b04a7c4621f
+    icon: https://i.imgur.com/pWg0PRK.png
+    keywords:
+    - storage
+    - distributed
+    - blockchain
+    - sia
+    - renter
+    - s3
+    - webui
+    name: renterd
+    type: application
+    urls:
+    - https://charts.motyka.pro/renterd-1.1.0.tgz
+    version: 1.1.0
+  - apiVersion: v2
+    appVersion: 1.0.5
+    created: "2024-03-15T18:49:59.085465767Z"
     dependencies:
     - condition: mysql.enabled
       name: mysql
@@ -27,7 +51,7 @@ entries:
     version: 1.0.6
   - apiVersion: v2
     appVersion: 1.0.5
-    created: "2024-03-14T13:02:27.052184835Z"
+    created: "2024-03-15T18:49:59.078159715Z"
     dependencies:
     - condition: mysql.enabled
       name: mysql
@@ -51,7 +75,7 @@ entries:
     version: 1.0.5
   - apiVersion: v2
     appVersion: 1.0.5
-    created: "2024-03-14T13:02:27.038181136Z"
+    created: "2024-03-15T18:49:59.061529279Z"
     dependencies:
     - condition: mysql.enabled
       name: mysql
@@ -75,7 +99,7 @@ entries:
     version: 1.0.4
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2024-03-14T13:02:27.023010149Z"
+    created: "2024-03-15T18:49:59.047452313Z"
     dependencies:
     - condition: mysql.enabled
       name: mysql
@@ -99,7 +123,7 @@ entries:
     version: 1.0.3
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2024-03-14T13:02:27.00569118Z"
+    created: "2024-03-15T18:49:59.031214036Z"
     dependencies:
     - condition: mysql.enabled
       name: mysql
@@ -123,7 +147,7 @@ entries:
     version: 1.0.2
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2024-03-14T13:02:26.994493915Z"
+    created: "2024-03-15T18:49:59.020636194Z"
     dependencies:
     - condition: mysql.enabled
       name: mysql
@@ -147,7 +171,7 @@ entries:
     version: 1.0.1
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2024-03-14T13:02:26.977149208Z"
+    created: "2024-03-15T18:49:59.004517368Z"
     dependencies:
     - condition: mysql.enabled
       name: mysql
@@ -161,4 +185,4 @@ entries:
     urls:
     - https://charts.motyka.pro/renterd-1.0.0.tgz
     version: 1.0.0
-generated: "2024-03-14T13:02:26.962129213Z"
+generated: "2024-03-15T18:49:58.989826439Z"

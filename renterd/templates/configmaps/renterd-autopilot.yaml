@@ -5,6 +5,9 @@ metadata:
 data:
   renterd.yml: |
     # Managed by Helm - configmap/renterd-autopilot/renterd.yml
-    {{ with .Values.renterd.autopilot.config }}
+    {{ with .Values.autopilot.config }}
     autopilot: {{ . | toYaml | nindent 6 }}
     {{- end }}
+    # TODO: dirty bugfix - renterd excepts at least one section in config
+    s3:
+      enabled: {{ .Values.s3.enabled }}

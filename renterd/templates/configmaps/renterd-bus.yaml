@@ -7,8 +7,8 @@ data:
     # Managed by Helm - configmap/renterd-bus/renterd.yml
     bus:
       gatewayAddr: "0.0.0.0:{{ .Values.service.bus.port }}"
-      {{ with .Values.renterd.bus.config }}
+      {{ with .Values.bus.config }}
       {{ . | toYaml | nindent 6 }}
       {{- end }}
     s3:
-      enabled: {{ .Values.renterd.s3.enabled }}
+      enabled: {{ .Values.s3.enabled }}

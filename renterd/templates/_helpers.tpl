@@ -43,7 +43,7 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 
 {{- define "renterd.workerAddrs" -}}
     {{- $res := list -}}
-    {{range $i, $e := until (int .Values.renterd.workers.replicas) }}
+    {{range $i, $e := until (int .Values.workers.replicas) }}
     {{- $res = append $res (printf "http://renterd-worker-%d.renterd-worker:%d/api/worker" (int $i) ( int $.Values.service.http.port )) -}}
     {{- end -}}
     {{- printf "%s" (join ";" $res) -}}

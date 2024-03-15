@@ -14,80 +14,98 @@ service:
     type: ClusterIP
     port: 8080
 
-renterd:
-  # You need to create secret manually, check README.md for more info.
-  secretName: "renterd"
-  s3:
-    enabled: true
-  bus:
-    # renterd config - bus section
-    # gatewayAddr is overridden in configmap, so don't specify it inside config
-    config: {}
-      # announcementMaxAgeHours: 8736
-      # bootstrap: true
-      # persistInterval: 1m0s
-      # usedUtxoExpiry: 24h0m0s
-      # slabBufferCompleionThreshold: 4096
-    resources: {}
-      # limits:
-      #   cpu: 2000m
-      #   memory: 8Gi
-      # requests:
-      #   cpu: 100m
-      #   memory: 128Mi
-    nodeSelector: {}
-    affinity: {}
-    tolerations: {}
-    topologySpreadConstraints: {}
-    # as renterd does not need to access k8s api, I recommend leaving it off
-    automountServiceAccountToken: false
-    enableServiceLinks: false
-    volume:
-      accessModes: [ "ReadWriteOnce" ]
-      storageClassName: "longhorn"
-      resources:
-        requests:
-          storage: 10Gi
-  autopilot:
-    # renterd config - autopilot section
-    config: {}
-      # accountsRefillInterval: 10s
-      # heartbeat: 30m0s
-      # migrationHealthCutoff: 0.75
-      # revisionBroadcastInterval: 168h0m0s
-      # revisionSubmissionBuffer: 144
-      # scannerInterval: 24h0m0s
-      # scannerBatchSize: 1000
-      # scannerNumThreads: 100
-      # migratorParallelSlabsPerWorker: 1
-    resources: {}
-    nodeSelector: {}
-    affinity: {}
-    tolerations: {}
-    topologySpreadConstraints: {}
-    # as renterd does not need to access k8s api, I recommend leaving it off
-    automountServiceAccountToken: false
-    enableServiceLinks: false
-  workers:
-    # renterd config - worker section
-    config: {}
-      # busFlushInterval: 5s
-      # contractLockTimeout: 30s
-      # downloadOverdriveTimeout: 3s
-      # uploadOverdriveTimeout: 3s
-      # downloadMaxOverdrive: 5
-      # downloadMaxMemory: 1073741824
-      # uploadMaxMemory: 1073741824
-      # uploadMaxOverdrive: 5
-    replicas: 1
-    resources: {}
-    nodeSelector: {}
-    affinity: {}
-    tolerations: {}
-    topologySpreadConstraints: {}
-    # as renterd does not need to access k8s api, I recommend leaving it off
-    automountServiceAccountToken: false
-    enableServiceLinks: false
+# You need to create secret with seed and api passwords manually, check README.md for more info.
+secretName: "renterd"
+
+# If you decide to not use built-in mysql chart, you will need to create a secret manually. Check README.md for more info.
+databaseSecretName: "renterd-mysql"
+
+s3:
+  enabled: true
+
+bus:
+  # renterd config - bus section
+  # gatewayAddr is overridden in configmap, so don't specify it inside config
+  config: {}
+    # announcementMaxAgeHours: 8736
+    # bootstrap: true
+    # persistInterval: 1m0s
+    # usedUtxoExpiry: 24h0m0s
+    # slabBufferCompleionThreshold: 4096
+  resources: {}
+    # limits:
+    #   cpu: 2000m
+    #   memory: 8Gi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
+  nodeSelector: {}
+  affinity: {}
+  tolerations: {}
+  topologySpreadConstraints: {}
+  # as renterd does not need to access k8s api, I recommend leaving it off
+  automountServiceAccountToken: false
+  enableServiceLinks: false
+  securityContext:
+    runAsUser: 1000
+    runAsGroup: 1000
+    fsGroup: 1000
+  volume:
+    accessModes: [ "ReadWriteOnce" ]
+    storageClassName: "longhorn"
+    resources:
+      requests:
+        storage: 10Gi
+
+autopilot:
+  # renterd config - autopilot section
+  config: {}
+    # accountsRefillInterval: 10s
+    # heartbeat: 30m0s
+    # migrationHealthCutoff: 0.75
+    # revisionBroadcastInterval: 168h0m0s
+    # revisionSubmissionBuffer: 144
+    # scannerInterval: 24h0m0s
+    # scannerBatchSize: 1000
+    # scannerNumThreads: 100
+    # migratorParallelSlabsPerWorker: 1
+  resources: {}
+  nodeSelector: {}
+  affinity: {}
+  tolerations: {}
+  topologySpreadConstraints: {}
+  # as renterd does not need to access k8s api, I recommend leaving it off
+  automountServiceAccountToken: false
+  enableServiceLinks: false
+  securityContext:
+    runAsUser: 1000
+    runAsGroup: 1000
+    fsGroup: 1000
+
+workers:
+  # renterd config - worker section
+  config: {}
+    # busFlushInterval: 5s
+    # contractLockTimeout: 30s
+    # downloadOverdriveTimeout: 3s
+    # uploadOverdriveTimeout: 3s
+    # downloadMaxOverdrive: 5
+    # downloadMaxMemory: 1073741824
+    # uploadMaxMemory: 1073741824
+    # uploadMaxOverdrive: 5
+  replicas: 1
+  resources: {}
+  nodeSelector: {}
+  affinity: {}
+  tolerations: {}
+  topologySpreadConstraints: {}
+  # as renterd does not need to access k8s api, I recommend leaving it off
+  automountServiceAccountToken: false
+  enableServiceLinks: false
+  securityContext:
+    runAsUser: 1000
+    runAsGroup: 1000
+    fsGroup: 1000
       
 # automatic testnet faucet cron
 autofaucet:

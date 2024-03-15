@@ -22,12 +22,12 @@ spec:
         checksum/configmap-renterd-bus: {{ include (print $.Template.BasePath "/configmaps/renterd-bus.yaml") . | sha256sum }}
         checksum/secret-renterd-mysql: {{ include (print $.Template.BasePath "/secrets/renterd-mysql.yaml") . | sha256sum }}
     spec:
-      automountServiceAccountToken: {{ .Values.renterd.bus.automountServiceAccountToken }}
-      enableServiceLinks: {{ .Values.renterd.bus.enableServiceLinks }}
+      automountServiceAccountToken: {{ .Values.bus.automountServiceAccountToken }}
+      enableServiceLinks: {{ .Values.bus.enableServiceLinks }}
+      {{- with .Values.bus.securityContext }}
       securityContext:
-        runAsUser: 1000
-        runAsGroup: 1000
-        fsGroup: 1000
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       # initContainers:
       #   - name: wait-for
       #     image: ghcr.io/patrickdappollonio/wait-for:v1.0.0
@@ -67,27 +67,27 @@ spec:
               subPath: "entrypoint.sh"
           envFrom:
             - secretRef:
-                name: {{ .Values.renterd.secretName | quote }}
+                name: {{ .Values.secretName | quote }}
             - secretRef:
-                name: renterd-mysql
+                name: {{ .Values.databaseSecretName | quote }}
           env:
             - name: RENTERD_AUTOPILOT_ENABLED
               value: "false"
             - name: RENTERD_WORKER_ENABLED
               value: "false"
           resources:
-            {{- toYaml .Values.renterd.bus.resources | nindent 12 }}
-          {{- if .Values.renterd.bus.nodeSelector }}
-          nodeSelector: {{- .Values.renterd.bus.nodeSelector | toYaml | nindent 12 }}
+            {{- toYaml .Values.bus.resources | nindent 12 }}
+          {{- if .Values.bus.nodeSelector }}
+          nodeSelector: {{- .Values.bus.nodeSelector | toYaml | nindent 12 }}
           {{- end }}
-          {{- if .Values.renterd.bus.affinity }}
-          affinity: {{- .Values.renterd.bus.affinity | toYaml | nindent 12 }}
+          {{- if .Values.bus.affinity }}
+          affinity: {{- .Values.bus.affinity | toYaml | nindent 12 }}
           {{- end }}
-          {{- if .Values.renterd.bus.tolerations }}
-          tolerations: {{- .Values.renterd.bus.tolerations | toYaml | nindent 12 }}
+          {{- if .Values.bus.tolerations }}
+          tolerations: {{- .Values.bus.tolerations | toYaml | nindent 12 }}
           {{- end }}
-          {{- if .Values.renterd.workers.topologySpreadConstraints }}
-          topologySpreadConstraints: {{- .Values.renterd.workers.topologySpreadConstraints | toYaml | nindent 12 }}
+          {{- if .Values.workers.topologySpreadConstraints }}
+          topologySpreadConstraints: {{- .Values.workers.topologySpreadConstraints | toYaml | nindent 12 }}
           {{- end }}
       volumes:
         - name: renterd-config
@@ -102,4 +102,4 @@ spec:
     - metadata:
         name: renterd-bus-data
       spec:
-        {{- toYaml .Values.renterd.bus.volume | nindent 8 }}
+        {{- toYaml .Values.bus.volume | nindent 8 }}

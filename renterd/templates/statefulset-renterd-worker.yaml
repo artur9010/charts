@@ -7,7 +7,7 @@ metadata:
     app.kubernetes.io/component: worker
 spec:
   serviceName: "renterd-worker"
-  replicas: {{ .Values.renterd.workers.replicas }}
+  replicas: {{ .Values.workers.replicas }}
   podManagementPolicy: Parallel
   selector:
     matchLabels:
@@ -22,12 +22,12 @@ spec:
         checksum/configmap-renterd: {{ include (print $.Template.BasePath "/configmaps/renterd.yaml") . | sha256sum }}
         checksum/configmap-renterd-worker: {{ include (print $.Template.BasePath "/configmaps/renterd-worker.yaml") . | sha256sum }}
     spec:
-      automountServiceAccountToken: {{ .Values.renterd.workers.automountServiceAccountToken }}
-      enableServiceLinks: {{ .Values.renterd.workers.enableServiceLinks }}
+      automountServiceAccountToken: {{ .Values.workers.automountServiceAccountToken }}
+      enableServiceLinks: {{ .Values.workers.enableServiceLinks }}
+      {{- with .Values.workers.securityContext }}
       securityContext:
-        runAsUser: 1000
-        runAsGroup: 1000
-        fsGroup: 1000
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       initContainers:
         - name: wait-for
           image: ghcr.io/patrickdappollonio/wait-for:v1.0.0
@@ -78,20 +78,20 @@ spec:
               value: {{ include "renterd.busAddr" . | quote }}
           envFrom:
             - secretRef:
-                name: {{ .Values.renterd.secretName | quote }}
+                name: {{ .Values.secretName | quote }}
           resources:
-            {{- toYaml .Values.renterd.workers.resources | nindent 12 }}
-          {{- if .Values.renterd.workers.nodeSelector }}
-          nodeSelector: {{- .Values.renterd.workers.nodeSelector | toYaml | nindent 12 }}
+            {{- toYaml .Values.workers.resources | nindent 12 }}
+          {{- if .Values.workers.nodeSelector }}
+          nodeSelector: {{- .Values.workers.nodeSelector | toYaml | nindent 12 }}
           {{- end }}
-          {{- if .Values.renterd.workers.affinity }}
-          affinity: {{- .Values.renterd.workers.affinity | toYaml | nindent 12 }}
+          {{- if .Values.workers.affinity }}
+          affinity: {{- .Values.workers.affinity | toYaml | nindent 12 }}
           {{- end }}
-          {{- if .Values.renterd.workers.tolerations }}
-          tolerations: {{- .Values.renterd.workers.tolerations | toYaml | nindent 12 }}
+          {{- if .Values.workers.tolerations }}
+          tolerations: {{- .Values.workers.tolerations | toYaml | nindent 12 }}
           {{- end }}
-          {{- if .Values.renterd.workers.topologySpreadConstraints }}
-          topologySpreadConstraints: {{- .Values.renterd.workers.topologySpreadConstraints | toYaml | nindent 12 }}
+          {{- if .Values.workers.topologySpreadConstraints }}
+          topologySpreadConstraints: {{- .Values.workers.topologySpreadConstraints | toYaml | nindent 12 }}
           {{- end }}
       volumes:
         - name: renterd-config
@@ -102,6 +102,9 @@ spec:
           configMap:
             name: renterd-worker
             defaultMode: 0755
+        # renterd is currently lacking an option to disable logging to file, so it needs a space to write logs.
+        # As we now do not run renterd as root, I created a small in-memory volume and k8s securityContext.fsGroup sets permissions on it.
+        # Issue: https://github.com/SiaFoundation/renterd/issues/1017
         - name: renterd-data-emptydir
           emptyDir:
             medium: "Memory"

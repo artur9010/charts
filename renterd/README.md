@@ -10,20 +10,38 @@ Helm chart for [Sia renterd software](https://sia.tech/software/renterd).
 
 ```
 helm repo add artur9010 https://charts.motyka.pro
-helm install renterd artur9010/renterd --version 1.0.6
+helm install renterd artur9010/renterd --version 1.1.0
 ```
 
 ## Requirements
 
 - Kubernetes 1.28+ cluster, nodes should have at least 8GB of ram as renterd is memory hungry. It should work with older versions of k8s but I haven't tested it.
 - Some kind of persistent storage (longhorn, ceph, aws-ebs etc.) and 50GB of available storage (mostly for blockchain copy). It's only required by `renterd-bus` pod which contains consensus (blockchain) copy and partial slabs. There is no support for hostPath, but [rancher local path provisioner](https://github.com/rancher/local-path-provisioner) should work fine
-- Manual creation of secret, see "Creating secret" section.
 
 renterd can run with sqlite or mysql database, due to performance issues on sqlite one I decided to not include an option to use sqlite. This chart includes bitnami mysql chart which is enabled by default. If you already have mysql database, check the instructions below.
 
+## Setup guide
+
+Before you install this helm chart, create a secrets in destination namespace.
+
+### Creating secret with seed and api passwords
+
+Create an .txt file named secret.txt and containing:
+```
+RENTERD_SEED=24 words
+RENTERD_API_PASSWORD=secure_api_password
+RENTERD_BUS_API_PASSWORD=secure_api_password
+RENTERD_WORKER_API_PASSWORD=secure_api_password
+```
+
+Seed: You can generate seed here: https://iancoleman.io/bip39/, make sure to select 24 words.
+Password: API password, use the same value for all 3 of them.
+
+Now run `kubectl create secret generic <secret name from values> -n <your namespace> --from-env-file=secret.txt`
+
 ### How to use external mysql database
 
-If you already have a mysql databse - just disable built-in chart (`mysql.enabled` set to `false`) and create secret named `renterd-mysql` inside renterd namespace.
+If you already have a mysql databse - just disable built-in chart (`mysql.enabled` set to `false`) and create secret named `renterd-mysql` (you can change secret name in values, see `databaseSecretName`) inside renterd namespace.
 
 Create an .txt file named mysql.txt and containing:
 ```
@@ -40,23 +58,10 @@ Additional requirements for external mysql database:
 - `max_connections` a bit higher than default 151, 1024 works fine
 - `log_bin_trust_function_creators` set to 1 (as long as your db user dosen't have SUPER privilage, see https://github.com/SiaFoundation/renterd/issues/910)
 
-## Creating secret
-
-Create an .txt file named secret.txt and containing:
-```
-RENTERD_SEED=24 words
-RENTERD_API_PASSWORD=secure_api_password
-RENTERD_BUS_API_PASSWORD=secure_api_password
-RENTERD_WORKER_API_PASSWORD=secure_api_password
-```
-
-Seed: You can generate seed here: https://iancoleman.io/bip39/, make sure to select 24 words.
-Password: API password, use the same value for all 3 of them.
-
-Now run `kubectl create secret generic <secret name from values> -n <your namespace> --from-env-file=secret.txt`
-
 ## CPU and memory requirements
+
 Tested on Ryzen zen1 platform (Ryzen 5 2200G, 2400G) while uploading files via s3 api using rclone (--transfers 20)
+
 ```
 ➜  ~ kubectl top pod -n renterd-zen
 NAME                                 CPU(cores)   MEMORY(bytes)   
@@ -81,6 +86,26 @@ Use code `36nc16697741959` to get [5 EUR off](https://www.netcup.eu/bestellen/gu
 Looking for more [netcup coupons](https://netcup-coupons.com)? Check [netcup-coupons.com](https://netcup-coupons.com)
 
 ## Changelog
+
+### 1.1.0
+- Moved all contents of `.renterd` to main level of values.yaml
+
+old
+```
+renterd:
+  s3:
+    enabled: true
+```
+
+new
+```
+s3:
+  enabled: true
+```
+
+- Added an option to specify name of secret containing mysql credentials
+- Added an option to specify securityContext of pods in values
+- Updated `bitnami/mysql` chart to `9.23.0`
 
 ### 1.0.6
 - Removed an option to specify external database credentials inside values.
@@ -179,4 +204,4 @@ ingress:
 
 ## Values
 
-See values.yaml file.
+See `values.yaml` file.
