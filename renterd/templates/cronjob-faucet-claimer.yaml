@@ -3,6 +3,8 @@ apiVersion: batch/v1
 kind: CronJob
 metadata:
   name: faucet-claimer
+  labels:
+    {{- include "renterd.labels" . | nindent 4 }}
 spec:
   schedule: "{{.Values.autofaucet.cron}}"
   jobTemplate:

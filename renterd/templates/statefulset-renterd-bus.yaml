@@ -28,13 +28,17 @@ spec:
       securityContext:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      # initContainers:
-      #   - name: wait-for
-      #     image: ghcr.io/patrickdappollonio/wait-for:v1.0.0
-      #     args:
-      #       - --verbose
-      #       # Wait for db before starting bus
-      #       - --host=""
+      initContainers:
+        - name: wait-for
+          image: ghcr.io/patrickdappollonio/wait-for:v1.0.0
+          args:
+            - --verbose
+            - --timeout=60s
+            # Wait for db before starting bus
+            - --host="$(RENTERD_DB_URI)"
+          envFrom:
+            - secretRef:
+                name: {{ .Values.databaseSecretName | quote }}
       containers:
         - name: renterd
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"

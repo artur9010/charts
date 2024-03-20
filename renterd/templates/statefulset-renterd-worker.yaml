@@ -33,6 +33,7 @@ spec:
           image: ghcr.io/patrickdappollonio/wait-for:v1.0.0
           args:
             - --verbose
+            - --timeout=60s
             # Wait for bus before starting workers
             - --host="renterd-bus:{{$.Values.service.http.port}}"
       containers:

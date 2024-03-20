@@ -10,7 +10,7 @@ Helm chart for [Sia renterd software](https://sia.tech/software/renterd).
 
 ```
 helm repo add artur9010 https://charts.motyka.pro
-helm install renterd artur9010/renterd --version 1.1.0
+helm install renterd artur9010/renterd --version 1.1.1
 ```
 
 ## Requirements
@@ -28,13 +28,13 @@ Before you install this helm chart, create a secrets in destination namespace.
 
 Create an .txt file named secret.txt and containing:
 ```
-RENTERD_SEED=24 words
+RENTERD_SEED=12 words
 RENTERD_API_PASSWORD=secure_api_password
 RENTERD_BUS_API_PASSWORD=secure_api_password
 RENTERD_WORKER_API_PASSWORD=secure_api_password
 ```
 
-Seed: You can generate seed here: https://iancoleman.io/bip39/, make sure to select 24 words.
+Seed: You can generate seed here: https://iancoleman.io/bip39/, make sure to select 12 words.
 Password: API password, use the same value for all 3 of them.
 
 Now run `kubectl create secret generic <secret name from values> -n <your namespace> --from-env-file=secret.txt`
@@ -87,6 +87,10 @@ Looking for more [netcup coupons](https://netcup-coupons.com)? Check [netcup-cou
 
 ## Changelog
 
+### 1.1.1
+- Added a database readiness check to renterd-bus init container to make sure it won't start before db.
+- Added missing labels to all objects
+
 ### 1.1.0
 - Moved all contents of `.renterd` to main level of values.yaml
 
@@ -130,26 +134,9 @@ s3:
 - Removed renterd.s3.keys from values as keypairs can now be managed inside webUI.
 - mysql: changed default authentication plugin from `mysql_native_password` to `caching_sha2_password` due to massive spam in container logs, see https://github.com/bitnami/charts/issues/18606
 
-## Components
-This chart runs all 3 of renterd components as separate pods - bus, autopilot and workers.
-There can be only one bus, probably multiple autopilots and multiple workers. Bus also requires some kind of persistent storage for consensus (blockchain) and partial or not uploaded yet slabs.
-Workers are stateless, but autopilot dosen't have any kind of service discovery - it need to have workers specified in env - that means we can't easily scale workers without restarting autopilot each time (it also dosen't like to scale down number of workers).
-
-Workers requires bus to start, autopilot requires workers, bus requires database.
-
-## Testnet automatic faucet claimer
+## Sia Zen testnet automatic faucet claimer
 
 This helm chart has built-in automatic faucet claimer for Sia Zen testnet, you can enable it in `autofaucet` section in values. You can claim up to 5000 ZenSC per day.
-
-Example:
-```yaml
-autofaucet:
-  enabled: true
-  address: "68bf48e81536f2221f3809aa9d1c89c1c869a17c6f186a088e49fd2605e4bfaaa24f26e4c42c"
-  amount: "1000000000000000000000000000" # 1000 SC
-  cron: "0 */4 * * *"
-  restartPolicy: Never
-```
 
 ## Ingress
 
