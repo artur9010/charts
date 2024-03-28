@@ -87,6 +87,9 @@ Looking for more [netcup coupons](https://netcup-coupons.com)? Check [netcup-cou
 
 ## Changelog
 
+### 1.1.2
+- Updated default image from `renterd:1.0.5` to `renterd:1.0.6`
+
 ### 1.1.1
 - Added a database readiness check to renterd-bus init container to make sure it won't start before db.
 - Added missing labels to all objects
