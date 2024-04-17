@@ -4,13 +4,13 @@
 
 Helm chart for [Sia renterd software](https://sia.tech/software/renterd).
 
-**This chart should be installed in a dedicated namespace due to hardcoded names**
+**This chart should be installed in a dedicated namespace**
 
 ## Helm repository
 
 ```
 helm repo add artur9010 https://charts.motyka.pro
-helm install renterd artur9010/renterd --version 1.1.1
+helm install renterd artur9010/renterd --version 1.1.3
 ```
 
 ## Requirements
@@ -86,6 +86,9 @@ Use code `36nc16697741959` to get [5 EUR off](https://www.netcup.eu/bestellen/gu
 Looking for more [netcup coupons](https://netcup-coupons.com)? Check [netcup-coupons.com](https://netcup-coupons.com)
 
 ## Changelog
+
+### 1.1.3
+- Upgraded `bitnami/mysql` chart to `10.1.1`. If you customized mysql settings in values - check changelog before updating - https://artifacthub.io/packages/helm/bitnami/mysql
 
 ### 1.1.2
 - Updated default image from `renterd:1.0.5` to `renterd:1.0.6`
