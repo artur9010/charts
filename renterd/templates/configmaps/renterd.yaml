@@ -8,4 +8,4 @@ data:
   entrypoint.sh: |
     #!/bin/sh
     # Managed by Helm - configmap/renterd/entrypoint.sh
-    exec renterd -http=':{{ .Values.service.http.port }}' -s3.address=':{{ .Values.service.s3.port }}' "$@"
+    exec renterd --http=':{{ .Values.service.http.port }}' --s3.address=':{{ .Values.service.s3.port }}' --log.file.enabled=false "$@"

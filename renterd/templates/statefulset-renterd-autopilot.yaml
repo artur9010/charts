@@ -60,9 +60,6 @@ spec:
             initialDelaySeconds: 15
             periodSeconds: 10
           volumeMounts:
-            # Autopilot does not save anything other than logs on /data
-            - mountPath: "/data"
-              name: renterd-data-emptydir
             - mountPath: "/data/renterd.yml"
               name: renterd-autopilot-config
               subPath: "renterd.yml"
@@ -104,10 +101,3 @@ spec:
           configMap:
             name: renterd-autopilot
             defaultMode: 0755
-        # renterd is currently lacking an option to disable logging to file, so it needs a space to write logs.
-        # As we now do not run renterd as root, I created a small in-memory volume and k8s securityContext.fsGroup sets permissions on it.
-        # Issue: https://github.com/SiaFoundation/renterd/issues/1017
-        - name: renterd-data-emptydir
-          emptyDir:
-            medium: "Memory"
-            sizeLimit: 128Mi

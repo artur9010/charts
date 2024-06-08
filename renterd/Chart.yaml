@@ -1,9 +1,10 @@
 apiVersion: v2
 name: renterd
-description: Sia renterd helm chart
+description: renterd is a next-generation Sia renter, developed by the Sia Foundation. It aims to serve the needs of both everyday users — who want a simple interface for storing and retrieving their personal data — and developers — who want a powerful, flexible, and reliable API for building apps on Sia.
 type: application
-version: 1.1.4
+version: 1.2.0
 appVersion: "1.0.7"
+home: https://sia.tech
 icon: https://i.imgur.com/pWg0PRK.png
 keywords:
 - storage
@@ -13,8 +14,37 @@ keywords:
 - renter
 - s3
 - webui
+annotations:
+  artifacthub.io/category: storage
+  artifacthub.io/maintainers: |
+    - name: artur9010
+      email: artur@motyka.pro
+  artifacthub.io/links: |
+    - name: support
+      url: https://github.com/artur9010/charts/issues
+    - name: Chart GitHub repository
+      url: https://github.com/artur9010/charts
+    - name: renterd GitHub repository
+      url: https://github.com/SiaFoundation/renterd
+  artifacthub.io/screenshots: |
+    - title: Files
+      url: https://sia.tech/_next/image?url=https%3A%2F%2Fsia.tech%2Fassets%2Frenterd%2Ffiles.png&w=1920&q=100
+    - title: Contracts
+      url: https://sia.tech/_next/image?url=https%3A%2F%2Fsia.tech%2Fassets%2Frenterd%2Fcontracts.png&w=1920&q=100
+    - title: Hosts
+      url: https://sia.tech/_next/image?url=https%3A%2F%2Fsia.tech%2Fassets%2Frenterd%2Fhosts.png&w=1920&q=100
+    - title: Autopilot
+      url: https://sia.tech/_next/image?url=https%3A%2F%2Fsia.tech%2Fassets%2Frenterd%2Fautopilot.png&w=1920&q=100
+    - title: Config
+      url: https://sia.tech/_next/image?url=https%3A%2F%2Fsia.tech%2Fassets%2Frenterd%2Fconfig.png&w=1920&q=100
+    - title: Wallet
+      url: https://sia.tech/_next/image?url=https%3A%2F%2Fsia.tech%2Fassets%2Frenterd%2Fwallet.png&w=1920&q=100
+    - title: Node
+      url: https://sia.tech/_next/image?url=https%3A%2F%2Fsia.tech%2Fassets%2Frenterd%2Fnode.png&w=1920&q=100
+    - title: Preferences
+      url: https://sia.tech/_next/image?url=https%3A%2F%2Fsia.tech%2Fassets%2Frenterd%2Fpreferences.png&w=1920&q=100
 dependencies:
   - name: mysql
-    version: 10.1.1
+    version: 11.1.2
     repository: https://charts.bitnami.com/bitnami
     condition: mysql.enabled

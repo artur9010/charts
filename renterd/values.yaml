@@ -115,6 +115,37 @@ autofaucet:
   cron: "0 */4 * * *"
   restartPolicy: Never
 
+ingresses: []
+  # - name: "renterd"
+  #   className: "traefik"
+  #   annotations: {}
+  #   hosts:
+  #     - host: renterd.example.com
+  #       paths:
+  #         - path: /
+  #           pathType: ImplementationSpecific
+  #           svcName: renterd-bus
+  #           svcPort: 9980
+  #         - path: /api/worker
+  #           pathType: ImplementationSpecific
+  #           svcName: renterd-worker
+  #           svcPort: 9980
+  #         - path: /api/autopilot
+  #           pathType: ImplementationSpecific
+  #           svcName: renterd-autopilot
+  #           svcPort: 9980
+  #     - host: s3.example.com
+  #       paths:
+  #         - path: /
+  #           pathType: ImplementationSpecific
+  #           svcName: renterd-worker
+  #           svcPort: 8080
+  #   tls:
+  #     - secretName: ingress-tls
+  #       hosts:
+  #         - renterd.example.com
+  #         - s3.example.com
+
 ingress:
   enabled: false
   className: "traefik"
@@ -163,37 +194,5 @@ mysql:
     resources:
       requests:
         cpu: 250m
-        memory: 3072Mi
-    extraFlags: "--max_connections=1024 --log_bin_trust_function_creators=1"
-    configuration: |-
-      [mysqld]
-      default_authentication_plugin=caching_sha2_password
-      skip-name-resolve
-      explicit_defaults_for_timestamp
-      basedir=/opt/bitnami/mysql
-      plugin_dir=/opt/bitnami/mysql/lib/plugin
-      port=3306
-      socket=/opt/bitnami/mysql/tmp/mysql.sock
-      datadir=/bitnami/mysql/data
-      tmpdir=/opt/bitnami/mysql/tmp
-      max_allowed_packet=16M
-      bind-address=*
-      pid-file=/opt/bitnami/mysql/tmp/mysqld.pid
-      log-error=/opt/bitnami/mysql/logs/mysqld.log
-      character-set-server=UTF8
-      slow_query_log=0
-      long_query_time=10.0
-
-      # renterd chart
-      innodb_buffer_pool_size=4G
-
-      [client]
-      port=3306
-      socket=/opt/bitnami/mysql/tmp/mysql.sock
-      default-character-set=UTF8
-      plugin_dir=/opt/bitnami/mysql/lib/plugin
-
-      [manager]
-      port=3306
-      socket=/opt/bitnami/mysql/tmp/mysql.sock
-      pid-file=/opt/bitnami/mysql/tmp/mysqld.pid
+        memory: 3Gi
+    extraFlags: "--max_connections=1024 --log_bin_trust_function_creators=1 --innodb_buffer_pool_size=4G"

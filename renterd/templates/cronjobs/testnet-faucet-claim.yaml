@@ -2,7 +2,7 @@
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: faucet-claimer
+  name: renterd-testnet-faucet-claim
   labels:
     {{- include "renterd.labels" . | nindent 4 }}
 spec:
