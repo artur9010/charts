@@ -13,7 +13,7 @@ Helm chart for [Sia renterd software](https://sia.tech/software/renterd).
 
 ```
 helm repo add artur9010 https://charts.motyka.pro
-helm install renterd artur9010/renterd --version 1.2.0
+helm install renterd artur9010/renterd --version 1.2.1
 ```
 
 ## Requirements
@@ -94,15 +94,14 @@ This helm chart has built-in automatic faucet claimer for Sia Zen testnet, you c
 
 ## Ingress
 
-Default config has two subdomains (for renterd api and s3 api), but you can modify it to put all of these on one subdomain or remove some of them.
-
 Example configuration (with cert-manager annotation to automate certificate issuing):
 
 ```yaml
 ingresses:
   - name: "renterd"
     className: "traefik"
-    annotations: {}
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt
     hosts:
       - host: renterd.example.com
         paths:
@@ -186,6 +185,11 @@ This chart:
 - runs renterd as non-root user
 
 ## Changelog
+
+### 1.2.1
+- Changed wait-for image from `ghcr.io/patrickdappollonio/wait-for:v1.0.0` to `artur9010/wait-for:v1.0.0` due to lack of arm64 compatibility.
+- Changed default image from `renterd:1.0.7` to `renterd:1.0.8-beta.1`
+- Added support for `RENTERD_WORKER_EXTERNAL_ADDR` (required now in clustered setups)
 
 ### 1.2.0
 **There are breaking changes, read before updating**

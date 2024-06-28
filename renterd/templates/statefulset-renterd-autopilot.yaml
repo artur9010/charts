@@ -28,7 +28,7 @@ spec:
       {{- end }}
       initContainers:
         - name: wait-for
-          image: ghcr.io/patrickdappollonio/wait-for:v1.0.0
+          image: artur9010/wait-for:v1.0.0
           args:
             - --verbose
             - --timeout=60s
@@ -78,6 +78,15 @@ spec:
               value: {{ include "renterd.busAddr" . | quote }}
             - name: RENTERD_WORKER_REMOTE_ADDRS
               value: {{ include "renterd.workerAddrs" . | quote }}
+            # temporary i guess?
+            # Used in RENTERD_WORKER_EXTERNAL_ADDR
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            # TODO: replace with cluster dns
+            - name: RENTERD_WORKER_EXTERNAL_ADDR
+              value: "http://$(POD_IP):{{ .Values.service.http.port }}"
           resources:
             {{- toYaml .Values.autopilot.resources | nindent 12 }}
           {{- if .Values.autopilot.nodeSelector }}
