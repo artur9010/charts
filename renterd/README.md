@@ -13,7 +13,7 @@ Helm chart for [Sia renterd software](https://sia.tech/software/renterd).
 
 ```
 helm repo add artur9010 https://charts.motyka.pro
-helm install renterd artur9010/renterd --version 1.2.1
+helm install renterd artur9010/renterd --version 1.2.2
 ```
 
 ## Requirements
@@ -185,6 +185,9 @@ This chart:
 - runs renterd as non-root user
 
 ## Changelog
+
+### 1.2.2
+- Quick fix for 1.0.8-beta1 compatibility (missing path in `RENTERD_WORKER_EXTERNAL_ADDR`)
 
 ### 1.2.1
 - Changed wait-for image from `ghcr.io/patrickdappollonio/wait-for:v1.0.0` to `artur9010/wait-for:v1.0.0` due to lack of arm64 compatibility.

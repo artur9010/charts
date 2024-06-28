@@ -82,7 +82,7 @@ spec:
                   fieldPath: status.podIP
             # TODO: replace with cluster dns
             - name: RENTERD_WORKER_EXTERNAL_ADDR
-              value: "http://$(POD_IP):{{ .Values.service.http.port }}"
+              value: "http://$(POD_IP):{{ .Values.service.http.port }}/api/worker"
           envFrom:
             - secretRef:
                 name: {{ .Values.secretName | quote }}
