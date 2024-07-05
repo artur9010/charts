@@ -13,7 +13,7 @@ Helm chart for [Sia renterd software](https://sia.tech/software/renterd).
 
 ```
 helm repo add artur9010 https://charts.motyka.pro
-helm install renterd artur9010/renterd --version 1.2.2
+helm install renterd artur9010/renterd --version 1.2.3
 ```
 
 ## Requirements
@@ -185,6 +185,12 @@ This chart:
 - runs renterd as non-root user
 
 ## Changelog
+
+### 1.2.3
+- Removed unneeded envvar from autopilot - `RENTERD_WORKER_EXTERNAL_ADDR`
+- Updated `bitnami/mysql` chart from `11.1.2` to `11.1.7`
+- Updated `RENTERD_WORKER_EXTERNAL_ADDR` env to use cluster domain names instead of IPs
+- Set `publishNotReadyAddresses` on `renterd-worker` service due to [https://github.com/SiaFoundation/renterd/issues/1368](https://github.com/SiaFoundation/renterd/issues/1368)
 
 ### 1.2.2
 - Quick fix for 1.0.8-beta1 compatibility (missing path in `RENTERD_WORKER_EXTERNAL_ADDR`)

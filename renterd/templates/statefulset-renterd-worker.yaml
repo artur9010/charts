@@ -76,13 +76,13 @@ spec:
             - name: RENTERD_BUS_REMOTE_ADDR
               value: {{ include "renterd.busAddr" . | quote }}
             # Used in RENTERD_WORKER_EXTERNAL_ADDR
-            - name: POD_IP
+            - name: POD_NAME
               valueFrom:
                 fieldRef:
-                  fieldPath: status.podIP
-            # TODO: replace with cluster dns
+                  fieldPath: metadata.name
+            # TODO: template: service name
             - name: RENTERD_WORKER_EXTERNAL_ADDR
-              value: "http://$(POD_IP):{{ .Values.service.http.port }}/api/worker"
+              value: "http://$(POD_NAME).renterd-worker:{{ .Values.service.http.port }}/api/worker"
           envFrom:
             - secretRef:
                 name: {{ .Values.secretName | quote }}
