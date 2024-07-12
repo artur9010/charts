@@ -1,7 +1,7 @@
 image:
   repository: ghcr.io/siafoundation/renterd
   pullPolicy: IfNotPresent
-  tag: "1.0.8-beta.1"
+  tag: "1.0.8-beta.2"
 
 service:
   bus:
@@ -58,6 +58,7 @@ bus:
         storage: 10Gi
 
 autopilot:
+  enabled: true
   # renterd config - autopilot section
   config: {}
     # accountsRefillInterval: 10s

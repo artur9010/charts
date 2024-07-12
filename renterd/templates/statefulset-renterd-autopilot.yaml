@@ -1,3 +1,4 @@
+{{ if .Values.autopilot.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -101,3 +102,4 @@ spec:
           configMap:
             name: renterd-autopilot
             defaultMode: 0755
+{{ end }}

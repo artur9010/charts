@@ -13,7 +13,7 @@ Helm chart for [Sia renterd software](https://sia.tech/software/renterd).
 
 ```
 helm repo add artur9010 https://charts.motyka.pro
-helm install renterd artur9010/renterd --version 1.2.3
+helm install renterd artur9010/renterd --version 1.2.4
 ```
 
 ## Requirements
@@ -185,6 +185,10 @@ This chart:
 - runs renterd as non-root user
 
 ## Changelog
+
+### 1.2.4
+- Added an option to disable autopilot if not needed (eq. you have some custom solution to form contracts) - `autopilot.enabled` (default: `true`)
+- Changed default image from `renterd:1.0.8-beta.1` to `renterd:1.0.8-beta.2`
 
 ### 1.2.3
 - Removed unneeded envvar from autopilot - `RENTERD_WORKER_EXTERNAL_ADDR`

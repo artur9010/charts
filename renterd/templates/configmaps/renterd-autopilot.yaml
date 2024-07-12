@@ -1,3 +1,4 @@
+{{ if .Values.autopilot.enabled }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -13,3 +14,4 @@ data:
     # TODO: dirty bugfix - renterd excepts at least one section in config
     s3:
       enabled: {{ .Values.s3.enabled }}
+{{ end }}
