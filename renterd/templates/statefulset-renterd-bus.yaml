@@ -28,6 +28,7 @@ spec:
       securityContext:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      {{ if .Values.databaseSecretName }}
       initContainers:
         - name: wait-for
           image: artur9010/wait-for:v1.0.0
@@ -39,6 +40,7 @@ spec:
           envFrom:
             - secretRef:
                 name: {{ .Values.databaseSecretName | quote }}
+      {{ end }}
       containers:
         - name: renterd
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
@@ -72,8 +74,10 @@ spec:
           envFrom:
             - secretRef:
                 name: {{ .Values.secretName | quote }}
+            {{ if .Values.databaseSecretName }}
             - secretRef:
                 name: {{ .Values.databaseSecretName | quote }}
+            {{ end }}
           env:
             - name: RENTERD_AUTOPILOT_ENABLED
               value: "false"

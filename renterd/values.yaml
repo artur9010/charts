@@ -1,7 +1,7 @@
 image:
   repository: ghcr.io/siafoundation/renterd
   pullPolicy: IfNotPresent
-  tag: "1.0.8-beta.2"
+  tag: "1.0.8"
 
 service:
   bus:
@@ -17,8 +17,10 @@ service:
 # You need to create secret with seed and api passwords manually, check README.md for more info.
 secretName: "renterd"
 
-# If you decide to not use built-in mysql chart, you will need to create a secret manually. Check README.md for more info.
-databaseSecretName: "renterd-mysql"
+# If you decide to not use built-in mysql chart, you will need to create a secret manually and provide its name here. Check README.md for more info.
+# If you want to use built-in mysql set secret name below and enable mysql.enabled in values.
+# Leave empty and disable built-in mysql chart to use sqlite backend. (default)
+databaseSecretName: ""
 
 s3:
   enabled: true
@@ -147,41 +149,9 @@ ingresses: []
   #         - renterd.example.com
   #         - s3.example.com
 
-ingress:
-  enabled: false
-  className: "traefik"
-  annotations: {}
-    # cert-manager.io/cluster-issuer: letsencrypt
-  hosts:
-    - host: renterd.example.com
-      paths:
-        - path: /
-          pathType: ImplementationSpecific
-          svcName: renterd-bus
-          svcPort: 9980
-        - path: /api/worker
-          pathType: ImplementationSpecific
-          svcName: renterd-worker
-          svcPort: 9980
-        - path: /api/autopilot
-          pathType: ImplementationSpecific
-          svcName: renterd-autopilot
-          svcPort: 9980
-    - host: s3.example.com
-      paths:
-        - path: /
-          pathType: ImplementationSpecific
-          svcName: renterd-worker
-          svcPort: 8080
-  # tls:
-  #   - secretName: ingress-tls
-  #     hosts:
-  #       - renterd.example.com
-  #       - s3.example.com
-
 # Bitnami mysql chart
 mysql:
-  enabled: true
+  enabled: false
   # TODO: this chart is hardcoded to use name "mysql"
   fullnameOverride: "mysql"
   auth:

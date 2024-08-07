@@ -13,15 +13,13 @@ Helm chart for [Sia renterd software](https://sia.tech/software/renterd).
 
 ```
 helm repo add artur9010 https://charts.motyka.pro
-helm install renterd artur9010/renterd --version 1.2.4
+helm install renterd artur9010/renterd --version 1.2.5
 ```
 
 ## Requirements
 
 - Kubernetes 1.28+ cluster, nodes should have at least 8GB of ram as renterd is memory hungry. It should work with older versions of k8s but I haven't tested it.
 - Some kind of persistent storage (longhorn, ceph, aws-ebs etc.) and 50GB of available storage (mostly for blockchain copy). It's only required by `renterd-bus` pod which contains consensus (blockchain) copy and partial slabs. There is no support for hostPath, but [rancher local path provisioner](https://github.com/rancher/local-path-provisioner) should work fine
-
-renterd can run with sqlite or mysql database, due to performance issues on sqlite one I decided to not include an option to use sqlite. This chart includes bitnami mysql chart which is enabled by default. If you already have mysql database, check the instructions below.
 
 ## Setup guide
 
@@ -45,7 +43,7 @@ Now run `kubectl create secret generic <secret name from values> -n <your namesp
 
 ### How to use external mysql database
 
-If you already have a mysql databse - just disable built-in chart (`mysql.enabled` set to `false`) and create secret named `renterd-mysql` (you can change secret name in values, see `databaseSecretName`) inside renterd namespace.
+If you already have a mysql databse - just disable built-in chart (`mysql.enabled` set to `false`) and create secret named [here you should put `databaseSecretName` from values] inside renterd namespace.
 
 Create an .txt file named mysql.txt and containing:
 ```
@@ -172,6 +170,15 @@ ingresses:
           - renterd-s3.example.com
 ```
 
+If using nginx make sure to set those annotations:
+
+```
+nginx.ingress.kubernetes.io/proxy-body-size: '0'
+nginx.ingress.kubernetes.io/ssl-redirect: 'false'
+```
+
+First one disables limit for body size, second disables https redirect which for some reason broke rclone uploads(???)
+
 ## Values
 
 See `values.yaml` file.
@@ -185,6 +192,11 @@ This chart:
 - runs renterd as non-root user
 
 ## Changelog
+
+### 1.2.5
+- Added an option to use sqlite backend, just leave database secret name empty and disable built-in mysql.
+- Disabled built-in mysql chart by default, to enable it set `mysql.enalbed` to true.
+- Upgraded renterd to 1.0.8
 
 ### 1.2.4
 - Added an option to disable autopilot if not needed (eq. you have some custom solution to form contracts) - `autopilot.enabled` (default: `true`)
