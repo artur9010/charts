@@ -18,7 +18,6 @@ spec:
         {{- include "renterd.selectorLabels" . | nindent 8 }}
         app.kubernetes.io/component: autopilot
       annotations:
-        checksum/configmap-renterd: {{ include (print $.Template.BasePath "/configmaps/renterd.yaml") . | sha256sum }}
         checksum/configmap-renterd-autopilot: {{ include (print $.Template.BasePath "/configmaps/renterd-autopilot.yaml") . | sha256sum }}
     spec:
       automountServiceAccountToken: {{ .Values.autopilot.automountServiceAccountToken }}
@@ -64,9 +63,6 @@ spec:
             - mountPath: "/data/renterd.yml"
               name: renterd-autopilot-config
               subPath: "renterd.yml"
-            - mountPath: "/entrypoint.sh"
-              name: renterd-config
-              subPath: "entrypoint.sh"
           envFrom:
             - secretRef:
                 name: {{ .Values.secretName | quote }}
@@ -81,6 +77,8 @@ spec:
               value: {{ include "renterd.workerAddrs" . | quote }}
             - name: RENTERD_NETWORK
               value: "{{ .Values.network }}"
+            - name: RENTERD_LOG_FILE_ENABLED
+              value: "false"
           resources:
             {{- toYaml .Values.autopilot.resources | nindent 12 }}
           {{- if .Values.autopilot.nodeSelector }}
@@ -96,10 +94,6 @@ spec:
           topologySpreadConstraints: {{- .Values.autopilot.topologySpreadConstraints | toYaml | nindent 12 }}
           {{- end }}
       volumes:
-        - name: renterd-config
-          configMap:
-            name: renterd
-            defaultMode: 0755
         - name: renterd-autopilot-config
           configMap:
             name: renterd-autopilot

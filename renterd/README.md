@@ -13,7 +13,7 @@ Helm chart for [Sia renterd software](https://sia.tech/software/renterd).
 
 ```
 helm repo add artur9010 https://charts.motyka.pro
-helm install renterd artur9010/renterd --version 1.2.5
+helm install renterd artur9010/renterd --version 1.2.7
 ```
 
 ## Requirements
@@ -186,12 +186,15 @@ See `values.yaml` file.
 ## Other?
 
 This chart:
-- provides a custom entrypoint for renterd containers that:
-  - makes sure to run renterd on ports provided in values
-  - disables writing to a logfile (which removes a requirement to mount a volume to workers and autopilot, as non-root non-existing user cannot write anywhere)
+- disables logging inside renterd, as you are running this app in k8s - you should have already some custom log collecting solution like filebeat, it also removes a requirement to have a volume attached to worker/autopilot pods.
 - runs renterd as non-root user
 
 ## Changelog
+
+### 1.2.7
+** If you are running renterd on test network - you will need to set proper service ports in values, 9880 for http, 7070 for s3. If running dev builds built after 12/08/2024 - you don't need to care about it as all images now are running on default ports 9980 and 8080. **
+
+- Removed custom entrypoint due to issues with current dev builds
 
 ### 1.2.6
 - Upgraded `bitnami/mysql` chart to `11.1.14`

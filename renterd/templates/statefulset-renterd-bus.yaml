@@ -18,7 +18,6 @@ spec:
         {{- include "renterd.selectorLabels" . | nindent 8 }}
         app.kubernetes.io/component: bus
       annotations:
-        checksum/configmap-renterd: {{ include (print $.Template.BasePath "/configmaps/renterd.yaml") . | sha256sum }}
         checksum/configmap-renterd-bus: {{ include (print $.Template.BasePath "/configmaps/renterd-bus.yaml") . | sha256sum }}
         checksum/secret-renterd-mysql: {{ include (print $.Template.BasePath "/secrets/renterd-mysql.yaml") . | sha256sum }}
     spec:
@@ -68,9 +67,6 @@ spec:
             - mountPath: "/data/renterd.yml"
               name: renterd-bus-config
               subPath: "renterd.yml"
-            - mountPath: "/entrypoint.sh"
-              name: renterd-config
-              subPath: "entrypoint.sh"
           envFrom:
             - secretRef:
                 name: {{ .Values.secretName | quote }}
@@ -85,6 +81,8 @@ spec:
               value: "false"
             - name: RENTERD_NETWORK
               value: "{{ .Values.network }}"
+            - name: RENTERD_LOG_FILE_ENABLED
+              value: "false"
           resources:
             {{- toYaml .Values.bus.resources | nindent 12 }}
           {{- if .Values.bus.nodeSelector }}
@@ -100,10 +98,6 @@ spec:
           topologySpreadConstraints: {{- .Values.workers.topologySpreadConstraints | toYaml | nindent 12 }}
           {{- end }}
       volumes:
-        - name: renterd-config
-          configMap:
-            name: renterd
-            defaultMode: 0755
         - name: renterd-bus-config
           configMap:
             name: renterd-bus

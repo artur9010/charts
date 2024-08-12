@@ -19,7 +19,6 @@ spec:
         {{- include "renterd.selectorLabels" . | nindent 8 }}
         app.kubernetes.io/component: worker
       annotations:
-        checksum/configmap-renterd: {{ include (print $.Template.BasePath "/configmaps/renterd.yaml") . | sha256sum }}
         checksum/configmap-renterd-worker: {{ include (print $.Template.BasePath "/configmaps/renterd-worker.yaml") . | sha256sum }}
     spec:
       automountServiceAccountToken: {{ .Values.workers.automountServiceAccountToken }}
@@ -61,9 +60,6 @@ spec:
             - mountPath: "/data/renterd.yml"
               name: renterd-worker-config
               subPath: "renterd.yml"
-            - mountPath: "/entrypoint.sh"
-              name: renterd-config
-              subPath: "entrypoint.sh"
           env:
             - name: RENTERD_WORKER_ID
               valueFrom:
@@ -85,6 +81,8 @@ spec:
               value: "http://$(POD_NAME).renterd-worker:{{ .Values.service.http.port }}/api/worker"
             - name: RENTERD_NETWORK
               value: "{{ .Values.network }}"
+            - name: RENTERD_LOG_FILE_ENABLED
+              value: "false"
           envFrom:
             - secretRef:
                 name: {{ .Values.secretName | quote }}
@@ -103,10 +101,6 @@ spec:
           topologySpreadConstraints: {{- .Values.workers.topologySpreadConstraints | toYaml | nindent 12 }}
           {{- end }}
       volumes:
-        - name: renterd-config
-          configMap:
-            name: renterd
-            defaultMode: 0755
         - name: renterd-worker-config
           configMap:
             name: renterd-worker
