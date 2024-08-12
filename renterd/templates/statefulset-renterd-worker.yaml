@@ -83,6 +83,8 @@ spec:
             # TODO: template: service name
             - name: RENTERD_WORKER_EXTERNAL_ADDR
               value: "http://$(POD_NAME).renterd-worker:{{ .Values.service.http.port }}/api/worker"
+            - name: RENTERD_NETWORK
+              value: "{{ .Values.network }}"
           envFrom:
             - secretRef:
                 name: {{ .Values.secretName | quote }}

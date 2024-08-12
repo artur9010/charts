@@ -14,6 +14,11 @@ service:
     type: ClusterIP
     port: 8080
 
+# Sia network name, use mainnet for main network.
+# For builds older than 12/08/2024 use "-zen" suffix in image name for testnet
+# Known test networks: zen, anagami
+network: "mainnet"
+
 # You need to create secret with seed and api passwords manually, check README.md for more info.
 secretName: "renterd"
 

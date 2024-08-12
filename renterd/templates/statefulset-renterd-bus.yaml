@@ -83,6 +83,8 @@ spec:
               value: "false"
             - name: RENTERD_WORKER_ENABLED
               value: "false"
+            - name: RENTERD_NETWORK
+              value: "{{ .Values.network }}"
           resources:
             {{- toYaml .Values.bus.resources | nindent 12 }}
           {{- if .Values.bus.nodeSelector }}

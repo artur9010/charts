@@ -79,6 +79,8 @@ spec:
               value: {{ include "renterd.busAddr" . | quote }}
             - name: RENTERD_WORKER_REMOTE_ADDRS
               value: {{ include "renterd.workerAddrs" . | quote }}
+            - name: RENTERD_NETWORK
+              value: "{{ .Values.network }}"
           resources:
             {{- toYaml .Values.autopilot.resources | nindent 12 }}
           {{- if .Values.autopilot.nodeSelector }}

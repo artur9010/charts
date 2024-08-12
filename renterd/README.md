@@ -193,6 +193,10 @@ This chart:
 
 ## Changelog
 
+### 1.2.6
+- Upgraded `bitnami/mysql` chart to `11.1.14`
+- Added an option to specify network name (https://github.com/SiaFoundation/renterd/pull/1423)
+
 ### 1.2.5
 - Added an option to use sqlite backend, just leave database secret name empty and disable built-in mysql.
 - Disabled built-in mysql chart by default, to enable it set `mysql.enalbed` to true.
