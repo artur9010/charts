@@ -67,6 +67,10 @@ spec:
             - secretRef:
                 name: {{ .Values.secretName | quote }}
           env:
+            - name: RENTERD_WORKER_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
             - name: RENTERD_AUTOPILOT_ENABLED
               value: "true"
             - name: RENTERD_WORKER_ENABLED

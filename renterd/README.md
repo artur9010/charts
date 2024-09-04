@@ -13,7 +13,7 @@ Helm chart for [Sia renterd software](https://sia.tech/software/renterd).
 
 ```
 helm repo add artur9010 https://charts.motyka.pro
-helm install renterd artur9010/renterd --version 1.2.7
+helm install renterd artur9010/renterd --version 1.2.8
 ```
 
 ## Requirements
@@ -190,6 +190,9 @@ This chart:
 - runs renterd as non-root user
 
 ## Changelog
+
+### 1.2.8
+- Added an env with worker id to autopilot pods to make it compatible with latest dev releases.
 
 ### 1.2.7
 ** If you are running renterd on test network - you will need to set proper service ports in values, 9880 for http, 7070 for s3. If running dev builds built after 12/08/2024 - you don't need to care about it as all images now are running on default ports 9980 and 8080. **
