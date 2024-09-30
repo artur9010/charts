@@ -114,14 +114,6 @@ workers:
     runAsUser: 1000
     runAsGroup: 1000
     fsGroup: 1000
-      
-# automatic testnet faucet cron
-autofaucet:
-  enabled: false
-  address: "68bf48e81536f2221f3809aa9d1c89c1c869a17c6f186a088e49fd2605e4bfaaa24f26e4c42c"
-  amount: "1000000000000000000000000000" # 1000 SC
-  cron: "0 */4 * * *"
-  restartPolicy: Never
 
 ingresses: []
   # - name: "renterd"

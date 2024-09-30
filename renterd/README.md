@@ -13,7 +13,7 @@ Helm chart for [Sia renterd software](https://sia.tech/software/renterd).
 
 ```
 helm repo add artur9010 https://charts.motyka.pro
-helm install renterd artur9010/renterd --version 1.2.8
+helm install renterd artur9010/renterd --version 1.2.9
 ```
 
 ## Requirements
@@ -190,6 +190,10 @@ This chart:
 - runs renterd as non-root user
 
 ## Changelog
+
+### 1.2.9
+- Removed CronJob for automatic faucet claim as it is not working for more than 2 months.
+- Upgraded `bitnami/mysql` chart to `11.1.17`
 
 ### 1.2.8
 - Added an env with worker id to autopilot pods to make it compatible with latest dev releases.
