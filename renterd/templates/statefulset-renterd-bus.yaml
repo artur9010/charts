@@ -62,8 +62,10 @@ spec:
             initialDelaySeconds: 15
             periodSeconds: 10
           volumeMounts:
+            {{ if .Values.bus.volume.enabled }}
             - mountPath: "/data"
               name: renterd-bus-data
+            {{ end }}
             - mountPath: "/data/renterd.yml"
               name: renterd-bus-config
               subPath: "renterd.yml"
@@ -97,13 +99,30 @@ spec:
           {{- if .Values.workers.topologySpreadConstraints }}
           topologySpreadConstraints: {{- .Values.workers.topologySpreadConstraints | toYaml | nindent 12 }}
           {{- end }}
+        {{ if .Values.bus.managementContainer.enable }}
+        - name: management
+          image: "{{ .Values.bus.managementContainer.image }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["sleep", "99999999"]
+          workingDir: /data
+          volumeMounts:
+            {{ if .Values.bus.volume.enabled }}
+            - mountPath: "/data"
+              name: renterd-bus-data
+            {{ end }}
+            - mountPath: "/data/renterd.yml"
+              name: renterd-bus-config
+              subPath: "renterd.yml"
+          {{ end }}
       volumes:
         - name: renterd-bus-config
           configMap:
             name: renterd-bus
             defaultMode: 0755
+  {{ if .Values.bus.volume.enabled }}
   volumeClaimTemplates:
     - metadata:
         name: renterd-bus-data
       spec:
         {{- toYaml .Values.bus.volume | nindent 8 }}
+  {{ end }}

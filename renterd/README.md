@@ -13,7 +13,7 @@ Helm chart for [Sia renterd software](https://sia.tech/software/renterd).
 
 ```
 helm repo add artur9010 https://charts.motyka.pro
-helm install renterd artur9010/renterd --version 1.2.9
+helm install renterd artur9010/renterd --version 1.2.10
 ```
 
 ## Requirements
@@ -186,10 +186,15 @@ See `values.yaml` file.
 ## Other?
 
 This chart:
-- disables logging inside renterd, as you are running this app in k8s - you should have already some custom log collecting solution like filebeat, it also removes a requirement to have a volume attached to worker/autopilot pods.
-- runs renterd as non-root user
+- disables logging inside renterd
 
 ## Changelog
+
+### 1.2.10
+- Added an option to add a sidecar container with ubuntu to renterd-bus pod to make checking renterd files a bit easier.
+- Upgraded renterd to `1.1.0-beta.5`. You might need to change ports, check 1.2.7 below.
+- Removed default securityContext from values, if you were using old default 1000:1000 you will need to restore that.
+- Added an option to disable volume creation for bus - see `bus.volume.enabled` in values.
 
 ### 1.2.9
 - Removed CronJob for automatic faucet claim as it is not working for more than 2 months.
