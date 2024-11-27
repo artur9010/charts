@@ -7,13 +7,15 @@ Helm chart for [Sia renterd software](https://sia.tech/software/renterd).
 
 **This chart should be installed in a dedicated namespace.**
 
+**This chart is still work in progress, may not be perfect but it work**
+
 **Always check changelog at the bottom of this README before updating.**
 
 ## Helm repository
 
 ```
 helm repo add artur9010 https://charts.motyka.pro
-helm install renterd artur9010/renterd --version 1.2.10
+helm install renterd artur9010/renterd --version 1.2.11
 ```
 
 ## Requirements
@@ -78,11 +80,11 @@ renterd-worker-2                     419m         312Mi
 
 ## Looking for perfect server to run renterd? Check netcup
 
-[![netcup](https://i.imgur.com/2Sjxas5.png)](https://www.netcup.eu/?ref=200705)
+[![netcup](https://i.imgur.com/2Sjxas5.png)](https://www.netcup.com/en/checkout/cart?gutschein=36nc16697741959&ref=200705)
 
-ARM servers are available from 7 eur per month. [Check netcup for more info.](https://www.netcup.eu/?ref=200705)
+ARM servers are available from 7 eur per month. [Check netcup for more info.](https://www.netcup.com/en/checkout/cart?gutschein=36nc16697741959&ref=200705)
 
-Use code `36nc16697741959` to get [5 EUR off](https://www.netcup.eu/bestellen/gutschein_einloesen.php?gutschein=36nc16697741959&ref=200705).
+Use code `36nc16697741959` to get [5 EUR off](https://www.netcup.com/en/checkout/cart?gutschein=36nc16697741959&ref=200705).
 
 Looking for more [netcup coupons](https://netcup-coupons.com)? Check [netcup-coupons.com](https://netcup-coupons.com)
 
@@ -186,9 +188,16 @@ See `values.yaml` file.
 ## Other?
 
 This chart:
-- disables logging inside renterd
+- disables logging inside renterd, you already have all of this on stdout so why duplicate it?
 
 ## Changelog
+
+### 1.2.11
+**If you are upgrading from 1.2.10 or older, make sure to delete `consensus.db`. It is not compatible with current beta**
+![Discord notice](https://i.imgur.com/1Uzo36t.png)
+
+- Upgraded renterd to `1.1.0-beta.6`.
+- Upgraded `bitnami/mysql` chart to `12.0.1`. You might need to delete mysql statefulset before upgrading (see https://artifacthub.io/packages/helm/bitnami/mysql#to-12-0-0)
 
 ### 1.2.10
 - Added an option to add a sidecar container with ubuntu to renterd-bus pod to make checking renterd files a bit easier.
