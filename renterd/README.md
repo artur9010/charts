@@ -15,7 +15,7 @@ Helm chart for [Sia renterd software](https://sia.tech/software/renterd).
 
 ```
 helm repo add artur9010 https://charts.motyka.pro
-helm install renterd artur9010/renterd --version 1.2.11
+helm install renterd artur9010/renterd --version 1.2.12
 ```
 
 ## Requirements
@@ -191,6 +191,10 @@ This chart:
 - disables logging inside renterd, you already have all of this on stdout so why duplicate it?
 
 ## Changelog
+
+
+### 1.2.12
+- Upgraded renterd to `1.1.0`
 
 ### 1.2.11
 **If you are upgrading from 1.2.10 or older, make sure to delete `consensus.db`. It is not compatible with current beta**
