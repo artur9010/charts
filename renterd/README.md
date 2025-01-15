@@ -15,7 +15,7 @@ Helm chart for [Sia renterd software](https://sia.tech/software/renterd).
 
 ```
 helm repo add artur9010 https://charts.motyka.pro
-helm install renterd artur9010/renterd --version 1.2.12
+helm install renterd artur9010/renterd --version 1.2.13
 ```
 
 ## Requirements
@@ -192,6 +192,10 @@ This chart:
 
 ## Changelog
 
+### 1.2.13
+- Upgraded renterd to `2.0.0-beta.2`
+- Removed `managementContainer` as it is no longer needed.
+- Upgraded mysql chart to `12.2.1`
 
 ### 1.2.12
 - Upgraded renterd to `1.1.0`

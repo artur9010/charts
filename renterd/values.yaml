@@ -1,7 +1,7 @@
 image:
   repository: ghcr.io/siafoundation/renterd
   pullPolicy: IfNotPresent
-  tag: "1.1.0"
+  tag: "2.0.0-beta.2"
 
 service:
   bus:
@@ -67,12 +67,6 @@ bus:
     resources:
       requests:
         storage: 10Gi
-  # as renterd image lacks any tools (or even a shell), you can easily add a second container to a pod
-  # which make performing most of mainteance tasks a lot easier. It's just a container with ubuntu and infinite sleep
-  # It was added as a quick workaround to the lack of option to quickly view renterd files.
-  managementContainer:
-    enable: false
-    image: "ubuntu:24.04"
 
 autopilot:
   enabled: true
