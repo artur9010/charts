@@ -62,10 +62,8 @@ spec:
             initialDelaySeconds: 15
             periodSeconds: 10
           volumeMounts:
-            {{ if .Values.bus.volume.enabled }}
             - mountPath: "/data"
               name: renterd-bus-data
-            {{ end }}
             - mountPath: "/data/renterd.yml"
               name: renterd-bus-config
               subPath: "renterd.yml"
@@ -104,10 +102,6 @@ spec:
           configMap:
             name: renterd-bus
             defaultMode: 0755
-  {{ if .Values.bus.volume.enabled }}
-  volumeClaimTemplates:
-    - metadata:
-        name: renterd-bus-data
-      spec:
-        {{- toYaml .Values.bus.volume | nindent 8 }}
-  {{ end }}
+        - name: renterd-bus-data
+          persistentVolumeClaim:
+            claimName: {{ .Values.storage.name | quote }}

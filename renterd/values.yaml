@@ -1,7 +1,7 @@
 image:
   repository: ghcr.io/siafoundation/renterd
   pullPolicy: IfNotPresent
-  tag: "2.0.0-beta.2"
+  tag: "2.0.0-beta.3"
 
 service:
   bus:
@@ -30,6 +30,15 @@ databaseSecretName: ""
 s3:
   enabled: true
 
+storage:
+  name: "renterd-bus-data"
+  spec:
+    accessModes: [ "ReadWriteOnce" ]
+    # storageClassName: ""
+    resources:
+      requests:
+        storage: 8Gi
+
 bus:
   # renterd config - bus section
   # gatewayAddr is overridden in configmap, so don't specify it inside config
@@ -57,16 +66,6 @@ bus:
     # runAsUser: 1000
     # runAsGroup: 1000
     # fsGroup: 1000
-  
-  # If you are planning to use renterd with mysql and without upload packing,
-  # you can disable volume creation and mounting here.
-  volume:
-    enabled: true
-    accessModes: [ "ReadWriteOnce" ]
-    storageClassName: "longhorn"
-    resources:
-      requests:
-        storage: 10Gi
 
 autopilot:
   enabled: true

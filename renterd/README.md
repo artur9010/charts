@@ -15,7 +15,7 @@ Helm chart for [Sia renterd software](https://sia.tech/software/renterd).
 
 ```
 helm repo add artur9010 https://charts.motyka.pro
-helm install renterd artur9010/renterd --version 1.2.13
+helm install renterd artur9010/renterd --version 1.3.1
 ```
 
 ## Requirements
@@ -87,10 +87,6 @@ ARM servers are available from 7 eur per month. [Check netcup for more info.](ht
 Use code `36nc16697741959` to get [5 EUR off](https://www.netcup.com/en/checkout/cart?gutschein=36nc16697741959&ref=200705).
 
 Looking for more [netcup coupons](https://netcup-coupons.com)? Check [netcup-coupons.com](https://netcup-coupons.com)
-
-## Sia Zen testnet automatic faucet claimer
-
-This helm chart has built-in automatic faucet claimer for Sia Zen testnet, you can enable it in `autofaucet` section in values. You can claim up to 5000 Zen SC per day.
 
 ## Ingress
 
@@ -191,6 +187,13 @@ This chart:
 - disables logging inside renterd, you already have all of this on stdout so why duplicate it?
 
 ## Changelog
+
+### 1.3.1
+- Upgraded renterd to `2.0.0-beta.3`
+
+### 1.3.0
+** Breaking changes, see below**
+- Moved PVC from template inside renterd-bus statefulset to standalone PersistentVolumeClaim, as only one bus is allowed to be running and volumeClaimTemplates does not update PVC's after changing the template it would make it easier to manage PVC params using gitops tools like ArgoCD. If you are already were using renterd chart older than 1.3.0, make sure to set `storage.name` to `renterd-bus-data-renterd-bus-0` to keep compatibility. Also as renterd requires some kind of storage to work regardless of slab-packing or used database solution, it is no longer allowed to disable creation of PVC. This might be changed in future, but i don't think it will be.
 
 ### 1.2.13
 - Upgraded renterd to `2.0.0-beta.2`
