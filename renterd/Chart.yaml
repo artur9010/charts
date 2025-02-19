@@ -2,8 +2,8 @@ apiVersion: v2
 name: renterd
 description: renterd is a next-generation Sia renter, developed by the Sia Foundation. It aims to serve the needs of both everyday users — who want a simple interface for storing and retrieving their personal data — and developers — who want a powerful, flexible, and reliable API for building apps on Sia.
 type: application
-version: 1.3.2
-appVersion: "2.0.0-beta.4"
+version: 1.3.3
+appVersion: "2.0.0"
 home: https://sia.tech
 icon: https://i.imgur.com/pWg0PRK.png
 keywords:
@@ -46,6 +46,6 @@ annotations:
 dependencies:
   # https://artifacthub.io/packages/helm/bitnami/mysql
   - name: mysql
-    version: 12.2.1
+    version: 12.2.2
     repository: https://charts.bitnami.com/bitnami
     condition: mysql.enabled
