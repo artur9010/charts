@@ -15,7 +15,7 @@ Helm chart for [Sia renterd software](https://sia.tech/software/renterd).
 
 ```
 helm repo add artur9010 https://charts.motyka.pro
-helm install renterd artur9010/renterd --version 1.3.3
+helm install renterd artur9010/renterd --version 1.3.4
 ```
 
 ## Requirements
@@ -187,6 +187,9 @@ This chart:
 - disables logging inside renterd, you already have all of this on stdout so why duplicate it?
 
 ## Changelog
+
+### 1.3.4
+- Upgraded renterd to `2.0.1`
 
 ### 1.3.3
 - Upgraded renterd to `2.0.0`
