@@ -15,7 +15,7 @@ Helm chart for [Sia renterd software](https://sia.tech/software/renterd).
 
 ```
 helm repo add artur9010 https://charts.motyka.pro
-helm install renterd artur9010/renterd --version 1.3.4
+helm install renterd artur9010/renterd --version 1.3.5
 ```
 
 ## Requirements
@@ -80,11 +80,11 @@ renterd-worker-2                     419m         312Mi
 
 ## Looking for perfect server to run renterd? Check netcup
 
-[![netcup](https://i.imgur.com/2Sjxas5.png)](https://www.netcup.com/en/checkout/cart?gutschein=36nc16697741959&ref=200705)
+[![netcup](https://i.imgur.com/2Sjxas5.png)](https://brzu.ch/renterd-netcup)
 
-ARM servers are available from 7 eur per month. [Check netcup for more info.](https://www.netcup.com/en/checkout/cart?gutschein=36nc16697741959&ref=200705)
+ARM servers are available from 7 eur per month. [Check netcup for more info.](https://brzu.ch/renterd-netcup)
 
-Use code `36nc16697741959` to get [5 EUR off](https://www.netcup.com/en/checkout/cart?gutschein=36nc16697741959&ref=200705).
+Use code `36nc16697741959` to get [5 EUR off](https://brzu.ch/renterd-netcup).
 
 Looking for more [netcup coupons](https://netcup-coupons.com)? Check [netcup-coupons.com](https://netcup-coupons.com)
 
@@ -187,6 +187,9 @@ This chart:
 - disables logging inside renterd, you already have all of this on stdout so why duplicate it?
 
 ## Changelog
+
+### 1.3.5
+- Upgraded renterd to `2.1.0-beta.1`
 
 ### 1.3.4
 - Upgraded renterd to `2.0.1`
