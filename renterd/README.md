@@ -84,7 +84,7 @@ renterd-worker-2                     419m         312Mi
 
 ARM servers are available from 7 eur per month. [Check netcup for more info.](https://brzu.ch/renterd-netcup)
 
-Use code `36nc16697741959` to get [5 EUR off](https://brzu.ch/renterd-netcup).
+Use code `36nc17460389834` to get [5 EUR off](https://brzu.ch/renterd-netcup).
 
 Looking for more [netcup coupons](https://netcup-coupons.com)? Check [netcup-coupons.com](https://netcup-coupons.com)
 
@@ -187,6 +187,9 @@ This chart:
 - disables logging inside renterd, you already have all of this on stdout so why duplicate it?
 
 ## Changelog
+
+### 1.3.7
+- Upgraded renterd to `2.2.1`
 
 ### 1.3.6
 - Upgraded renterd to `2.2.0`
