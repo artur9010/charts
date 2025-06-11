@@ -1,7 +1,7 @@
 # Unofficial Sia renterd Helm Chart
 
 [![Artifact Hub](https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/artur9010)](https://artifacthub.io/packages/search?repo=artur9010)
-![Kubernetes 1.28+](https://img.shields.io/badge/Kubernetes-1.28%2B-blue)
+![Kubernetes 1.30+](https://img.shields.io/badge/Kubernetes-1.30%2B-blue)
 
 Helm chart for [Sia renterd software](https://sia.tech/software/renterd).
 
@@ -20,8 +20,8 @@ helm install renterd artur9010/renterd
 
 ## Requirements
 
-- Kubernetes 1.28+ cluster, nodes should have at least 8GB of ram as renterd is memory hungry. It should work with older versions of k8s but I haven't tested it.
-- Some kind of persistent storage (longhorn, ceph, aws-ebs etc.) and 50GB of available storage (mostly for blockchain copy). It's only required by `renterd-bus` pod which contains consensus (blockchain) copy and partial slabs. There is no support for hostPath, but [rancher local path provisioner](https://github.com/rancher/local-path-provisioner) should work fine
+- Kubernetes 1.30+ cluster. It should work with older versions of k8s but I haven't tested it.
+- Some kind of persistent storage (longhorn, ceph, aws-ebs etc.) and 100GB of available storage (mostly for blockchain copy). It's only required by `renterd-bus` pod which contains consensus (blockchain) copy and partial slabs. There is no support for hostPath, but [rancher local path provisioner](https://github.com/rancher/local-path-provisioner) should work fine
 
 ## Setup guide
 
@@ -187,6 +187,9 @@ This chart:
 - disables logging inside renterd, you already have all of this on stdout so why duplicate it?
 
 ## Changelog
+
+### 1.3.8
+- Upgraded renterd to `2.3.0`
 
 ### 1.3.7
 - Upgraded renterd to `2.2.1`
