@@ -188,6 +188,9 @@ This chart:
 
 ## Changelog
 
+### 1.3.10
+- Upgraded renterd to `2.4.0`
+
 ### 1.3.9
 - Upgraded renterd to `2.3.2`
 
