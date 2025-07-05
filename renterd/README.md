@@ -188,6 +188,10 @@ This chart:
 
 ## Changelog
 
+### 1.3.11
+- Upgraded mysql chart to `13.0.2`, also reduced max_connections and buffer size.
+- For those of you who use secret management that can be used with helm values, I added option to specify secret values for renterd seed/api password and database credentials in values.yaml
+
 ### 1.3.10
 - Upgraded renterd to `2.4.0`
 

@@ -15,17 +15,33 @@ service:
     port: 8080
 
 # Sia network name, use mainnet for main network.
-# For builds older than 12/08/2024 use "-zen" suffix in image name for testnet
 # Known test networks: zen, anagami
 network: "mainnet"
 
 # You need to create secret with seed and api passwords manually, check README.md for more info.
+# If you have any SECURE secret management that can pass secrets to helm, you can set createSecret to true and provide seed and api passwords in values.yaml.
 secretName: "renterd"
+createSecret: false # Set to true if you want to create secret automatically, but you will need to provide seed and api passwords in values.yaml.
+# Also i should remind you that you should never put your seed unencrypted in values.yaml, it is not secure, also DO NOT EVER send those credentials to git.
+# If you somehow shared your seed, you should immediately transfer your funds to new wallet.
+secretContent:
+  RENTERD_SEED: "12 words"
+  RENTERD_API_PASSWORD: "secure_api_password"
+  RENTERD_BUS_API_PASSWORD: "secure_api_password"
+  RENTERD_WORKER_API_PASSWORD: "secure_api_password"
 
 # If you decide to not use built-in mysql chart, you will need to create a secret manually and provide its name here. Check README.md for more info.
+# If you have any SECURE secret management that can pass secrets to helm, you can set createDatabaseSecret to true and provide database credentials in values.yaml.
 # If you want to use built-in mysql set secret name below and enable mysql.enabled in values.
 # Leave empty and disable built-in mysql chart to use sqlite backend. (default)
 databaseSecretName: ""
+createDatabaseSecret: false # Set to true if you want to create secret automatically, but you will need to provide database credentials in values.yaml.
+databaseSecretContent:
+  RENTERD_DB_URI: "mysql.example.com:3306"
+  RENTERD_DB_USER: "renterd"
+  RENTERD_DB_PASSWORD: "hunter2"
+  RENTERD_DB_NAME: "renterd"
+  RENTERD_DB_METRICS_NAME: "renterd_metrics"
 
 s3:
   enabled: true
@@ -166,4 +182,4 @@ mysql:
       requests:
         cpu: 250m
         memory: 3Gi
-    extraFlags: "--max_connections=1024 --log_bin_trust_function_creators=1 --innodb_buffer_pool_size=4G"
+    extraFlags: "--max_connections=512 --log_bin_trust_function_creators=1 --innodb_buffer_pool_size=2G"
