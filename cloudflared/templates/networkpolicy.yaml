@@ -1,0 +1,41 @@
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: nginx-cloudflare-network-policy
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: ingress-nginx
+      app.kubernetes.io/component: controller
+  policyTypes:
+    - Ingress
+  ingress:
+    # Allow metrics from kube-prometheus-stack
+    - ports:
+        - protocol: TCP
+          port: 10254
+      from:
+        - namespaceSelector:
+            matchExpressions:
+              - key: "kubernetes.io/metadata.name"
+                operator: In
+                values: ["kube-prometheus-stack"]
+    # Allow HTTP(S) from same namespace
+    - ports:
+        - protocol: TCP
+          port: 80
+        - protocol: TCP 
+          port: 443
+      from:
+        - namespaceSelector:
+            matchExpressions:
+              - key: "kubernetes.io/metadata.name"
+                operator: In
+                values: ["{{ .Release.Namespace }}"]
+    # Webhook, allow from anywhere
+    - ports:
+        - protocol: TCP
+          port: 8443
+      from:
+        - ipBlock:
+            cidr: 0.0.0.0/0

@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cloudflared
+data:
+  config.yaml: |
+    ingress:
+      {{- with .Values.ingress -}}
+      {{ . | toYaml | nindent 6 }}
+      {{- end }}

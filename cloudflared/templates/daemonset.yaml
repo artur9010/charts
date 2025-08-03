@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: cloudflared
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: cloudflared
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: cloudflared
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+    spec:
+      containers:
+        - name: cloudflared
+          image: cloudflare/cloudflared:2025.7.0
+          imagePullPolicy: IfNotPresent
+          command:
+          - cloudflared
+          - tunnel
+          # Disable autoupdate
+          - --no-autoupdate
+          # Enable prometheus metrics
+          - --metrics
+          - 0.0.0.0:2000
+          # Load config
+          - --config
+          - /etc/cloudflared/config/config.yaml
+          # Run.
+          - run
+          args:
+          - --token
+          - {{ .Values.token }}
+          resources:
+            requests:
+              cpu: 20m
+              memory: 64Mi
+          ports:
+            - name: metrics
+              containerPort: 2000
+          livenessProbe:
+            httpGet:
+              path: /ready
+              port: 2000
+            failureThreshold: 1
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          volumeMounts:
+            - name: config
+              mountPath: /etc/cloudflared/config
+              readOnly: true
+      volumes:
+        - name: config
+          configMap:
+            name: cloudflared
+            items:
+            - key: config.yaml
+              path: config.yaml
