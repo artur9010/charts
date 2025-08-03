@@ -1,7 +1,7 @@
 image:
   repository: ghcr.io/siafoundation/renterd
   pullPolicy: IfNotPresent
-  tag: "2.4.0"
+  tag: "2.5.0"
 
 service:
   bus:
@@ -30,10 +30,8 @@ secretContent:
   RENTERD_BUS_API_PASSWORD: "secure_api_password"
   RENTERD_WORKER_API_PASSWORD: "secure_api_password"
 
-# If you decide to not use built-in mysql chart, you will need to create a secret manually and provide its name here. Check README.md for more info.
+# If you decide to not use mysql, you will need to create a secret manually and provide its name here. Check README.md for more info.
 # If you have any SECURE secret management that can pass secrets to helm, you can set createDatabaseSecret to true and provide database credentials in values.yaml.
-# If you want to use built-in mysql set secret name below and enable mysql.enabled in values.
-# Leave empty and disable built-in mysql chart to use sqlite backend. (default)
 databaseSecretName: ""
 createDatabaseSecret: false # Set to true if you want to create secret automatically, but you will need to provide database credentials in values.yaml.
 databaseSecretContent:
@@ -164,22 +162,3 @@ ingresses: []
   #       hosts:
   #         - renterd.example.com
   #         - s3.example.com
-
-# Bitnami mysql chart
-mysql:
-  enabled: false
-  # TODO: this chart is hardcoded to use name "mysql"
-  fullnameOverride: "mysql"
-  auth:
-    database: "renterd"
-    # database for metrics isn't created automatically
-    databaseMetrics: "renterd_metrics"
-    username: "renterd"
-    password: "renterd"
-    rootPassword: "renterd"
-  primary:
-    resources:
-      requests:
-        cpu: 250m
-        memory: 3Gi
-    extraFlags: "--max_connections=512 --log_bin_trust_function_creators=1 --innodb_buffer_pool_size=2G"

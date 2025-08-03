@@ -43,9 +43,9 @@ RENTERD_WORKER_API_PASSWORD=secure_api_password
 
 Now run `kubectl create secret generic <secret name from values> -n <your namespace> --from-env-file=secret.txt`
 
-### How to use external mysql database
+### How to use mysql database
 
-If you already have a mysql databse - just disable built-in chart (`mysql.enabled` set to `false`) and create secret named [here you should put `databaseSecretName` from values] inside renterd namespace.
+If you already have a mysql databse, create secret named [here you should put `databaseSecretName` from values] inside renterd namespace.
 
 Create an .txt file named mysql.txt and containing:
 ```
@@ -187,6 +187,10 @@ This chart:
 - disables logging inside renterd, you already have all of this on stdout so why duplicate it?
 
 ## Changelog
+
+### 1.4.0 - Breaking change, removal of bitnami/mysql dependency
+- Removed bitnami/mysql helm chart dependency due to https://github.com/bitnami/containers/issues/83267. You are now required to create mysql server by yourself or use sqlite. Fuck you broadcom.
+- Upgraded renterd to `2.5.0`
 
 ### 1.3.11
 - Upgraded mysql chart to `13.0.2`, also reduced max_connections and buffer size.

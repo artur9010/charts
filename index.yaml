@@ -13,6 +13,60 @@ entries:
       artifacthub.io/maintainers: |
         - name: artur9010
           email: artur@motyka.pro
+      artifacthub.io/screenshots: |-
+        - title: Files
+          url: https://sia.tech/_next/image?url=https%3A%2F%2Fsia.tech%2Fassets%2Frenterd%2Ffiles.png&w=1920&q=100
+        - title: Contracts
+          url: https://sia.tech/_next/image?url=https%3A%2F%2Fsia.tech%2Fassets%2Frenterd%2Fcontracts.png&w=1920&q=100
+        - title: Hosts
+          url: https://sia.tech/_next/image?url=https%3A%2F%2Fsia.tech%2Fassets%2Frenterd%2Fhosts.png&w=1920&q=100
+        - title: Autopilot
+          url: https://sia.tech/_next/image?url=https%3A%2F%2Fsia.tech%2Fassets%2Frenterd%2Fautopilot.png&w=1920&q=100
+        - title: Config
+          url: https://sia.tech/_next/image?url=https%3A%2F%2Fsia.tech%2Fassets%2Frenterd%2Fconfig.png&w=1920&q=100
+        - title: Wallet
+          url: https://sia.tech/_next/image?url=https%3A%2F%2Fsia.tech%2Fassets%2Frenterd%2Fwallet.png&w=1920&q=100
+        - title: Node
+          url: https://sia.tech/_next/image?url=https%3A%2F%2Fsia.tech%2Fassets%2Frenterd%2Fnode.png&w=1920&q=100
+        - title: Preferences
+          url: https://sia.tech/_next/image?url=https%3A%2F%2Fsia.tech%2Fassets%2Frenterd%2Fpreferences.png&w=1920&q=100
+    apiVersion: v2
+    appVersion: 2.4.0
+    created: "2025-08-03T22:04:11.4978019+02:00"
+    description: renterd is a next-generation Sia renter, developed by the Sia Foundation.
+      It aims to serve the needs of both everyday users — who want a simple interface
+      for storing and retrieving their personal data — and developers — who want a
+      powerful, flexible, and reliable API for building apps on Sia.
+    digest: 971fcf72e48c206ef78ce7668006ae4003fec165f9cd228f21ace40f18e9b935
+    home: https://sia.tech
+    icon: https://avatars.githubusercontent.com/u/71667087
+    keywords:
+    - storage
+    - distributed
+    - blockchain
+    - sia
+    - renter
+    - s3
+    - webui
+    - mysql
+    - crypto
+    name: renterd
+    type: application
+    urls:
+    - renterd-1.4.0.tgz
+    version: 1.4.0
+  - annotations:
+      artifacthub.io/category: storage
+      artifacthub.io/links: |
+        - name: support
+          url: https://github.com/artur9010/charts/issues
+        - name: Chart GitHub repository
+          url: https://github.com/artur9010/charts
+        - name: renterd GitHub repository
+          url: https://github.com/SiaFoundation/renterd
+      artifacthub.io/maintainers: |
+        - name: artur9010
+          email: artur@motyka.pro
       artifacthub.io/screenshots: |
         - title: Files
           url: https://sia.tech/_next/image?url=https%3A%2F%2Fsia.tech%2Fassets%2Frenterd%2Ffiles.png&w=1920&q=100
@@ -32,7 +86,7 @@ entries:
           url: https://sia.tech/_next/image?url=https%3A%2F%2Fsia.tech%2Fassets%2Frenterd%2Fpreferences.png&w=1920&q=100
     apiVersion: v2
     appVersion: 2.4.0
-    created: "2025-07-05T19:57:13.094071984+02:00"
+    created: "2025-08-03T22:04:11.466901533+02:00"
     dependencies:
     - condition: mysql.enabled
       name: mysql
@@ -91,7 +145,7 @@ entries:
           url: https://sia.tech/_next/image?url=https%3A%2F%2Fsia.tech%2Fassets%2Frenterd%2Fpreferences.png&w=1920&q=100
     apiVersion: v2
     appVersion: 2.4.0
-    created: "2025-07-05T19:57:13.090423049+02:00"
+    created: "2025-08-03T22:04:11.462911177+02:00"
     dependencies:
     - condition: mysql.enabled
       name: mysql
@@ -150,7 +204,7 @@ entries:
           url: https://sia.tech/_next/image?url=https%3A%2F%2Fsia.tech%2Fassets%2Frenterd%2Fpreferences.png&w=1920&q=100
     apiVersion: v2
     appVersion: 2.3.2
-    created: "2025-07-05T19:57:13.119741438+02:00"
+    created: "2025-08-03T22:04:11.497400825+02:00"
     dependencies:
     - condition: mysql.enabled
       name: mysql
@@ -209,7 +263,7 @@ entries:
           url: https://sia.tech/_next/image?url=https%3A%2F%2Fsia.tech%2Fassets%2Frenterd%2Fpreferences.png&w=1920&q=100
     apiVersion: v2
     appVersion: 2.3.0
-    created: "2025-07-05T19:57:13.116481278+02:00"
+    created: "2025-08-03T22:04:11.493608792+02:00"
     dependencies:
     - condition: mysql.enabled
       name: mysql
@@ -268,7 +322,7 @@ entries:
           url: https://sia.tech/_next/image?url=https%3A%2F%2Fsia.tech%2Fassets%2Frenterd%2Fpreferences.png&w=1920&q=100
     apiVersion: v2
     appVersion: 2.2.1
-    created: "2025-07-05T19:57:13.112981235+02:00"
+    created: "2025-08-03T22:04:11.48969555+02:00"
     dependencies:
     - condition: mysql.enabled
       name: mysql
@@ -327,7 +381,7 @@ entries:
           url: https://sia.tech/_next/image?url=https%3A%2F%2Fsia.tech%2Fassets%2Frenterd%2Fpreferences.png&w=1920&q=100
     apiVersion: v2
     appVersion: 2.2.0
-    created: "2025-07-05T19:57:13.109599655+02:00"
+    created: "2025-08-03T22:04:11.485066681+02:00"
     dependencies:
     - condition: mysql.enabled
       name: mysql
@@ -386,7 +440,7 @@ entries:
           url: https://sia.tech/_next/image?url=https%3A%2F%2Fsia.tech%2Fassets%2Frenterd%2Fpreferences.png&w=1920&q=100
     apiVersion: v2
     appVersion: 2.1.0-beta.1
-    created: "2025-07-05T19:57:13.106433081+02:00"
+    created: "2025-08-03T22:04:11.481229283+02:00"
     dependencies:
     - condition: mysql.enabled
       name: mysql
@@ -445,7 +499,7 @@ entries:
           url: https://sia.tech/_next/image?url=https%3A%2F%2Fsia.tech%2Fassets%2Frenterd%2Fpreferences.png&w=1920&q=100
     apiVersion: v2
     appVersion: 2.0.1
-    created: "2025-07-05T19:57:13.103485061+02:00"
+    created: "2025-08-03T22:04:11.477365204+02:00"
     dependencies:
     - condition: mysql.enabled
       name: mysql
@@ -502,7 +556,7 @@ entries:
           url: https://sia.tech/_next/image?url=https%3A%2F%2Fsia.tech%2Fassets%2Frenterd%2Fpreferences.png&w=1920&q=100
     apiVersion: v2
     appVersion: 2.0.0
-    created: "2025-07-05T19:57:13.100372179+02:00"
+    created: "2025-08-03T22:04:11.474352218+02:00"
     dependencies:
     - condition: mysql.enabled
       name: mysql
@@ -559,7 +613,7 @@ entries:
           url: https://sia.tech/_next/image?url=https%3A%2F%2Fsia.tech%2Fassets%2Frenterd%2Fpreferences.png&w=1920&q=100
     apiVersion: v2
     appVersion: 2.0.0-beta.4
-    created: "2025-07-05T19:57:13.097561428+02:00"
+    created: "2025-08-03T22:04:11.470222369+02:00"
     dependencies:
     - condition: mysql.enabled
       name: mysql
@@ -616,7 +670,7 @@ entries:
           url: https://sia.tech/_next/image?url=https%3A%2F%2Fsia.tech%2Fassets%2Frenterd%2Fpreferences.png&w=1920&q=100
     apiVersion: v2
     appVersion: 2.0.0-beta.3
-    created: "2025-07-05T19:57:13.087307913+02:00"
+    created: "2025-08-03T22:04:11.460105482+02:00"
     dependencies:
     - condition: mysql.enabled
       name: mysql
@@ -673,7 +727,7 @@ entries:
           url: https://sia.tech/_next/image?url=https%3A%2F%2Fsia.tech%2Fassets%2Frenterd%2Fpreferences.png&w=1920&q=100
     apiVersion: v2
     appVersion: 2.0.0-beta.2
-    created: "2025-07-05T19:57:13.083751292+02:00"
+    created: "2025-08-03T22:04:11.45649978+02:00"
     dependencies:
     - condition: mysql.enabled
       name: mysql
@@ -730,7 +784,7 @@ entries:
           url: https://sia.tech/_next/image?url=https%3A%2F%2Fsia.tech%2Fassets%2Frenterd%2Fpreferences.png&w=1920&q=100
     apiVersion: v2
     appVersion: 2.0.0-beta.2
-    created: "2025-07-05T19:57:13.059124158+02:00"
+    created: "2025-08-03T22:04:11.427138522+02:00"
     dependencies:
     - condition: mysql.enabled
       name: mysql
@@ -787,7 +841,7 @@ entries:
           url: https://sia.tech/_next/image?url=https%3A%2F%2Fsia.tech%2Fassets%2Frenterd%2Fpreferences.png&w=1920&q=100
     apiVersion: v2
     appVersion: 1.1.0
-    created: "2025-07-05T19:57:13.05547388+02:00"
+    created: "2025-08-03T22:04:11.424129404+02:00"
     dependencies:
     - condition: mysql.enabled
       name: mysql
@@ -844,7 +898,7 @@ entries:
           url: https://sia.tech/_next/image?url=https%3A%2F%2Fsia.tech%2Fassets%2Frenterd%2Fpreferences.png&w=1920&q=100
     apiVersion: v2
     appVersion: 1.1.0-beta.6
-    created: "2025-07-05T19:57:13.052819976+02:00"
+    created: "2025-08-03T22:04:11.421158658+02:00"
     dependencies:
     - condition: mysql.enabled
       name: mysql
@@ -901,7 +955,7 @@ entries:
           url: https://sia.tech/_next/image?url=https%3A%2F%2Fsia.tech%2Fassets%2Frenterd%2Fpreferences.png&w=1920&q=100
     apiVersion: v2
     appVersion: 1.1.0-beta.5
-    created: "2025-07-05T19:57:13.04911789+02:00"
+    created: "2025-08-03T22:04:11.418480493+02:00"
     dependencies:
     - condition: mysql.enabled
       name: mysql
@@ -958,7 +1012,7 @@ entries:
           url: https://sia.tech/_next/image?url=https%3A%2F%2Fsia.tech%2Fassets%2Frenterd%2Fpreferences.png&w=1920&q=100
     apiVersion: v2
     appVersion: 1.0.8
-    created: "2025-07-05T19:57:13.08089723+02:00"
+    created: "2025-08-03T22:04:11.453671081+02:00"
     dependencies:
     - condition: mysql.enabled
       name: mysql
@@ -1015,7 +1069,7 @@ entries:
           url: https://sia.tech/_next/image?url=https%3A%2F%2Fsia.tech%2Fassets%2Frenterd%2Fpreferences.png&w=1920&q=100
     apiVersion: v2
     appVersion: 1.0.8
-    created: "2025-07-05T19:57:13.078405581+02:00"
+    created: "2025-08-03T22:04:11.450189964+02:00"
     dependencies:
     - condition: mysql.enabled
       name: mysql
@@ -1072,7 +1126,7 @@ entries:
           url: https://sia.tech/_next/image?url=https%3A%2F%2Fsia.tech%2Fassets%2Frenterd%2Fpreferences.png&w=1920&q=100
     apiVersion: v2
     appVersion: 1.0.8
-    created: "2025-07-05T19:57:13.075438515+02:00"
+    created: "2025-08-03T22:04:11.447599585+02:00"
     dependencies:
     - condition: mysql.enabled
       name: mysql
@@ -1129,7 +1183,7 @@ entries:
           url: https://sia.tech/_next/image?url=https%3A%2F%2Fsia.tech%2Fassets%2Frenterd%2Fpreferences.png&w=1920&q=100
     apiVersion: v2
     appVersion: 1.0.8
-    created: "2025-07-05T19:57:13.072962797+02:00"
+    created: "2025-08-03T22:04:11.443325213+02:00"
     dependencies:
     - condition: mysql.enabled
       name: mysql
@@ -1186,7 +1240,7 @@ entries:
           url: https://sia.tech/_next/image?url=https%3A%2F%2Fsia.tech%2Fassets%2Frenterd%2Fpreferences.png&w=1920&q=100
     apiVersion: v2
     appVersion: 1.0.8
-    created: "2025-07-05T19:57:13.069913675+02:00"
+    created: "2025-08-03T22:04:11.440685461+02:00"
     dependencies:
     - condition: mysql.enabled
       name: mysql
@@ -1243,7 +1297,7 @@ entries:
           url: https://sia.tech/_next/image?url=https%3A%2F%2Fsia.tech%2Fassets%2Frenterd%2Fpreferences.png&w=1920&q=100
     apiVersion: v2
     appVersion: 1.0.8-beta.2
-    created: "2025-07-05T19:57:13.06724363+02:00"
+    created: "2025-08-03T22:04:11.4377018+02:00"
     dependencies:
     - condition: mysql.enabled
       name: mysql
@@ -1300,7 +1354,7 @@ entries:
           url: https://sia.tech/_next/image?url=https%3A%2F%2Fsia.tech%2Fassets%2Frenterd%2Fpreferences.png&w=1920&q=100
     apiVersion: v2
     appVersion: 1.0.8-beta.1
-    created: "2025-07-05T19:57:13.064665118+02:00"
+    created: "2025-08-03T22:04:11.433755326+02:00"
     dependencies:
     - condition: mysql.enabled
       name: mysql
@@ -1357,7 +1411,7 @@ entries:
           url: https://sia.tech/_next/image?url=https%3A%2F%2Fsia.tech%2Fassets%2Frenterd%2Fpreferences.png&w=1920&q=100
     apiVersion: v2
     appVersion: 1.0.8-beta.1
-    created: "2025-07-05T19:57:13.061671952+02:00"
+    created: "2025-08-03T22:04:11.431039921+02:00"
     dependencies:
     - condition: mysql.enabled
       name: mysql
@@ -1414,7 +1468,7 @@ entries:
           url: https://sia.tech/_next/image?url=https%3A%2F%2Fsia.tech%2Fassets%2Frenterd%2Fpreferences.png&w=1920&q=100
     apiVersion: v2
     appVersion: 1.0.8-beta.1
-    created: "2025-07-05T19:57:13.045923214+02:00"
+    created: "2025-08-03T22:04:11.415249417+02:00"
     dependencies:
     - condition: mysql.enabled
       name: mysql
@@ -1471,7 +1525,7 @@ entries:
           url: https://sia.tech/_next/image?url=https%3A%2F%2Fsia.tech%2Fassets%2Frenterd%2Fpreferences.png&w=1920&q=100
     apiVersion: v2
     appVersion: 1.0.7
-    created: "2025-07-05T19:57:13.043380419+02:00"
+    created: "2025-08-03T22:04:11.41271354+02:00"
     dependencies:
     - condition: mysql.enabled
       name: mysql
@@ -1499,7 +1553,7 @@ entries:
     version: 1.2.0
   - apiVersion: v2
     appVersion: 1.0.7
-    created: "2025-07-05T19:57:13.040857662+02:00"
+    created: "2025-08-03T22:04:11.409927302+02:00"
     dependencies:
     - condition: mysql.enabled
       name: mysql
@@ -1523,7 +1577,7 @@ entries:
     version: 1.1.4
   - apiVersion: v2
     appVersion: 1.0.6
-    created: "2025-07-05T19:57:13.037854066+02:00"
+    created: "2025-08-03T22:04:11.407385684+02:00"
     dependencies:
     - condition: mysql.enabled
       name: mysql
@@ -1547,7 +1601,7 @@ entries:
     version: 1.1.3
   - apiVersion: v2
     appVersion: 1.0.6
-    created: "2025-07-05T19:57:13.035465092+02:00"
+    created: "2025-08-03T22:04:11.404836723+02:00"
     dependencies:
     - condition: mysql.enabled
       name: mysql
@@ -1571,7 +1625,7 @@ entries:
     version: 1.1.2
   - apiVersion: v2
     appVersion: 1.0.5
-    created: "2025-07-05T19:57:13.031820505+02:00"
+    created: "2025-08-03T22:04:11.402285046+02:00"
     dependencies:
     - condition: mysql.enabled
       name: mysql
@@ -1595,7 +1649,7 @@ entries:
     version: 1.1.1
   - apiVersion: v2
     appVersion: 1.0.5
-    created: "2025-07-05T19:57:13.029100306+02:00"
+    created: "2025-08-03T22:04:11.399849509+02:00"
     dependencies:
     - condition: mysql.enabled
       name: mysql
@@ -1619,7 +1673,7 @@ entries:
     version: 1.1.0
   - apiVersion: v2
     appVersion: 1.0.5
-    created: "2025-07-05T19:57:13.02565213+02:00"
+    created: "2025-08-03T22:04:11.396665381+02:00"
     dependencies:
     - condition: mysql.enabled
       name: mysql
@@ -1643,7 +1697,7 @@ entries:
     version: 1.0.6
   - apiVersion: v2
     appVersion: 1.0.5
-    created: "2025-07-05T19:57:13.023262675+02:00"
+    created: "2025-08-03T22:04:11.394259669+02:00"
     dependencies:
     - condition: mysql.enabled
       name: mysql
@@ -1667,7 +1721,7 @@ entries:
     version: 1.0.5
   - apiVersion: v2
     appVersion: 1.0.5
-    created: "2025-07-05T19:57:13.019817044+02:00"
+    created: "2025-08-03T22:04:11.390885373+02:00"
     dependencies:
     - condition: mysql.enabled
       name: mysql
@@ -1691,7 +1745,7 @@ entries:
     version: 1.0.4
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2025-07-05T19:57:13.017457756+02:00"
+    created: "2025-08-03T22:04:11.388640975+02:00"
     dependencies:
     - condition: mysql.enabled
       name: mysql
@@ -1715,7 +1769,7 @@ entries:
     version: 1.0.3
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2025-07-05T19:57:13.014725964+02:00"
+    created: "2025-08-03T22:04:11.384726682+02:00"
     dependencies:
     - condition: mysql.enabled
       name: mysql
@@ -1739,7 +1793,7 @@ entries:
     version: 1.0.2
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2025-07-05T19:57:13.012493105+02:00"
+    created: "2025-08-03T22:04:11.382472716+02:00"
     dependencies:
     - condition: mysql.enabled
       name: mysql
@@ -1763,7 +1817,7 @@ entries:
     version: 1.0.1
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2025-07-05T19:57:13.009536969+02:00"
+    created: "2025-08-03T22:04:11.378659613+02:00"
     dependencies:
     - condition: mysql.enabled
       name: mysql
@@ -1777,4 +1831,4 @@ entries:
     urls:
     - renterd-1.0.0.tgz
     version: 1.0.0
-generated: "2025-07-05T19:57:12.999538356+02:00"
+generated: "2025-08-03T22:04:11.368683772+02:00"
