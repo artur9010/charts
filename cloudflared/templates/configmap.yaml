@@ -2,6 +2,10 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: cloudflared
+  annotations:
+    argocd.argoproj.io/sync-wave: "-1" # Ensure this configmap is created before the deployment
+  labels:
+    {{- include "cloudflared.labels" . | nindent 4 }}
 data:
   config.yaml: |
     ingress:

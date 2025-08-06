@@ -3,7 +3,7 @@ kind: Service
 metadata:
   name: cloudflared
   labels:
-    app.kubernetes.io/name: cloudflared
+    {{- include "cloudflared.labels" . | nindent 4 }}
 spec:
   type: ClusterIP
   ports:
@@ -12,4 +12,4 @@ spec:
       protocol: TCP
       name: metrics
   selector:
-    app.kubernetes.io/name: cloudflared
+    {{- include "cloudflared.selectorLabels" . | nindent 4 }}

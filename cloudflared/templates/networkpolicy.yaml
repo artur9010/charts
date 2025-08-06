@@ -2,6 +2,8 @@ kind: NetworkPolicy
 apiVersion: networking.k8s.io/v1
 metadata:
   name: nginx-cloudflare-network-policy
+  labels:
+    {{- include "cloudflared.labels" . | nindent 4 }}
 spec:
   podSelector:
     matchLabels:

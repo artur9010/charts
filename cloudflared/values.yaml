@@ -3,8 +3,25 @@ ingress:
   # This rule matches any traffic which didn't match a previous rule, and responds with built-in into chart nginx ingress.
   - service: nginx-cloudflared-controller:80
 
+cloudflared:
+  # Available values: DaemonSet, Deployment
+  type: DaemonSet
+  replicaCount: 1 # only for Deployment
+  image:
+    repository: cloudflare/cloudflared
+    tag: "2025.7.0"
+    pullPolicy: IfNotPresent
+  nodeSelector: {}
+  tolerations: []
+  resources:
+    requests:
+      cpu: 20m
+      memory: 64Mi
+    limits:
+      cpu: 100m
+      memory: 256Mi
+
 ingress-nginx:
-  enabled: true
   fullnameOverride: nginx-cloudflared
   controller:
     kind: DaemonSet
