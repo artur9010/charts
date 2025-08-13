@@ -6,7 +6,7 @@ version: 1.0.1
 appVersion: "2025.7.0"
 dependencies:
   - name: ingress-nginx
-    version: v4.13.0
+    version: 4.13.1
     repository: https://kubernetes.github.io/ingress-nginx
 keywords:
 - networking
