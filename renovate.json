@@ -1,16 +1,19 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["config:base"],
-  "enabledManagers": ["helm-values", "github-actions", "dockerfile"],
+  "enabledManagers": ["helm-values", "helmv3", "github-actions", "dockerfile"],
   "helm-values": {
     "fileMatch": ["^[^/]+/values\\.ya?ml$"]
+  },
+  "helmv3": {
+    "fileMatch": ["^[^/]+/Chart\\.ya?ml$"]
   },
   "labels": ["dependencies", "renovate"],
   "prHourlyLimit": 2,
   "prConcurrentLimit": 5,
   "packageRules": [
     {
-      "matchManagers": ["helm-values"],
+      "matchManagers": ["helm-values", "helmv3"],
       "groupName": "helm chart dependencies"
     }
   ]
