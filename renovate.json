@@ -11,6 +11,8 @@
     ":separateMultipleMajorReleases",
     ":updateNotScheduled"
   ],
+  "prConcurrentLimit": 0,
+  "prHourlyLimit": 0,
   "packageRules": [
     {
       "description": "Treat every chart as separate group with separate scope and branch prefix",
