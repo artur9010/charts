@@ -1,24 +1,37 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:base"],
-  "enabledManagers": ["helm-values", "helmv3", "github-actions", "dockerfile"],
-  "helm-values": {
-    "fileMatch": ["^[^/]+/values\\.ya?ml$"]
-  },
-  "helmv3": {
-    "fileMatch": ["^[^/]+/Chart\\.ya?ml$"],
-    "postUpgradeTasks": {
-      "commands": ["helm dependency update {{{packageFileDir}}}"],
-      "fileFilters": ["**/Chart.lock"]
-    }
-  },
-  "labels": ["dependencies", "renovate"],
-  "prHourlyLimit": 2,
-  "prConcurrentLimit": 5,
+  "extends": [
+    "config:best-practices",
+    ":semanticCommits",
+    ":semanticCommitScopeDisabled",
+    "docker:enableMajor",
+    "customManagers:helmChartYamlAppVersions",
+    ":disableRateLimiting",
+    ":ignoreUnstable",
+    ":separateMultipleMajorReleases",
+    ":updateNotScheduled"
+  ],
+  "prConcurrentLimit": 0,
+  "prHourlyLimit": 0,
   "packageRules": [
     {
-      "matchManagers": ["helm-values", "helmv3"],
-      "groupName": "helm chart dependencies"
+      "description": "Treat every chart as separate group with separate scope and branch prefix",
+      "matchFileNames": [
+        "cloudflared/**",
+        "renterd/**"
+      ],
+      "additionalBranchPrefix": "{{packageFileDir}}-",
+      "semanticCommitScope": "{{packageFileDir}}"
+    },
+    {
+      "description": "Disable digest pinning for regex managers in Chart.yaml used for appVersion upgrading",
+      "matchManagers": [
+        "custom.regex"
+      ],
+      "matchFileNames": [
+        "*/Chart.yaml"
+      ],
+      "pinDigests": false
     }
   ]
 }
