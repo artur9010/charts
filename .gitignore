@@ -1,0 +1,10 @@
+# Helm chart packages
+*.tgz
+
+# Chart dependencies
+charts/
+Chart.lock
+
+# Temporary files
+.tmp/
+.cache/

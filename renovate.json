@@ -6,7 +6,11 @@
     "fileMatch": ["^[^/]+/values\\.ya?ml$"]
   },
   "helmv3": {
-    "fileMatch": ["^[^/]+/Chart\\.ya?ml$"]
+    "fileMatch": ["^[^/]+/Chart\\.ya?ml$"],
+    "postUpgradeTasks": {
+      "commands": ["helm dependency update {{{packageFileDir}}}"],
+      "fileFilters": ["**/Chart.lock"]
+    }
   },
   "labels": ["dependencies", "renovate"],
   "prHourlyLimit": 2,
