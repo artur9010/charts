@@ -1,7 +1,7 @@
 image:
   repository: ghcr.io/siafoundation/renterd
   pullPolicy: IfNotPresent
-  tag: "2.5.0"
+  tag: "2.5.0@sha256:363d87c33d9720a31046df944f0611b0bb49c76c1664ad408d32941c2c4f92fc"
 
 service:
   bus:
