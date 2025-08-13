@@ -14,11 +14,5 @@
   },
   "labels": ["dependencies", "renovate"],
   "prHourlyLimit": 2,
-  "prConcurrentLimit": 5,
-  "packageRules": [
-    {
-      "matchManagers": ["helm-values", "helmv3"],
-      "groupName": "helm chart dependencies"
-    }
-  ]
+  "prConcurrentLimit": 5
 }
