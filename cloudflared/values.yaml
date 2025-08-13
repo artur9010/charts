@@ -9,7 +9,7 @@ cloudflared:
   replicaCount: 1 # only for Deployment
   image:
     repository: cloudflare/cloudflared
-    tag: "2025.7.0"
+    tag: "2025.8.0"
     pullPolicy: IfNotPresent
   nodeSelector: {}
   tolerations: []
