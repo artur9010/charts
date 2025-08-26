@@ -38,6 +38,12 @@ cat > docs/index.html <<EOF
 <ul>
 EOF
 
+for PACKAGE in "${PACKAGES[@]}"; do
+    echo "<li><a href=\"https://artifacthub.io/packages/helm/artur9010/$PACKAGE\" rel=\"noopener nofollow\" target=\"_blank\">See $PACKAGE on ArtifactHub</a></li>" >> docs/index.html
+done
+
+echo "</ul><h2>Downloads</h2><ul>" >> docs/index.html
+
 for f in docs/*.tgz; do
   if [ -f "$f" ]; then
     filename=$(basename "$f")
