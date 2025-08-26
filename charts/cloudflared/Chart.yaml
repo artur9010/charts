@@ -2,7 +2,7 @@ apiVersion: v2
 name: cloudflared
 description: A cloudflared with ingress-nginx stack
 type: application
-version: 1.0.2
+version: 1.0.3
 appVersion: "2025.8.1"
 dependencies:
   - name: ingress-nginx

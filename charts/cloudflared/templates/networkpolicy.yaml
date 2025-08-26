@@ -39,5 +39,6 @@ spec:
         - protocol: TCP
           port: 8443
       from:
+        - namespaceSelector: {}
         - ipBlock:
             cidr: 0.0.0.0/0
