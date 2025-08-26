@@ -188,6 +188,9 @@ This chart:
 
 ## Changelog
 
+### 1.4.1
+- Upgraded renterd to `2.6.0`
+
 ### 1.4.0 - Breaking change, removal of bitnami/mysql dependency
 - Removed bitnami/mysql helm chart dependency due to https://github.com/bitnami/containers/issues/83267. You are now required to create mysql server by yourself or use sqlite. Fuck you broadcom.
 - Upgraded renterd to `2.5.0`
