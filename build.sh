@@ -24,6 +24,7 @@ done
 
 helm repo index --merge docs/index.yaml --url https://charts.motyka.pro .
 mv index.yaml docs/
+sed -i 's#/docs/#/#g' docs/index.yaml
 
 # Create index.html in docs/ with links to all tgz files in docs/
 cat > docs/index.html <<EOF
