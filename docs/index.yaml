@@ -8,7 +8,7 @@ entries:
           email: artur@motyka.pro
     apiVersion: v2
     appVersion: 2025.8.1
-    created: "2025-08-26T16:35:50.331306837+02:00"
+    created: "2025-08-26T16:23:29.941168412+02:00"
     dependencies:
     - name: ingress-nginx
       repository: https://kubernetes.github.io/ingress-nginx
@@ -25,7 +25,7 @@ entries:
     name: cloudflared
     type: application
     urls:
-    - https://charts.motyka.pro/docs/cloudflared-1.0.2.tgz
+    - https://charts.motyka.pro/cloudflared-1.0.2.tgz
     version: 1.0.2
   - annotations:
       artifacthub.io/category: networking
@@ -34,7 +34,7 @@ entries:
           email: artur@motyka.pro
     apiVersion: v2
     appVersion: 2025.7.0
-    created: "2025-08-26T16:35:50.328708976+02:00"
+    created: "2025-08-26T16:23:29.938832147+02:00"
     dependencies:
     - name: ingress-nginx
       repository: https://kubernetes.github.io/ingress-nginx
@@ -51,7 +51,7 @@ entries:
     name: cloudflared
     type: application
     urls:
-    - https://charts.motyka.pro/docs/cloudflared-1.0.1.tgz
+    - https://charts.motyka.pro/cloudflared-1.0.1.tgz
     version: 1.0.1
   - annotations:
       artifacthub.io/category: networking
@@ -60,7 +60,7 @@ entries:
           email: artur@motyka.pro
     apiVersion: v2
     appVersion: 2025.7.0
-    created: "2025-08-26T16:35:50.325451274+02:00"
+    created: "2025-08-26T16:23:29.935598402+02:00"
     dependencies:
     - condition: ingress-nginx.enabled
       name: ingress-nginx
@@ -78,7 +78,7 @@ entries:
     name: cloudflared
     type: application
     urls:
-    - https://charts.motyka.pro/docs/cloudflared-1.0.0.tgz
+    - https://charts.motyka.pro/cloudflared-1.0.0.tgz
     version: 1.0.0
   renterd:
   - annotations:
@@ -112,7 +112,7 @@ entries:
           url: https://sia.tech/_next/image?url=https%3A%2F%2Fsia.tech%2Fassets%2Frenterd%2Fpreferences.png&w=1920&q=100
     apiVersion: v2
     appVersion: 2.4.0
-    created: "2025-08-26T16:35:50.437011265+02:00"
+    created: "2025-08-26T16:23:30.046259951+02:00"
     description: renterd is a next-generation Sia renter, developed by the Sia Foundation.
       It aims to serve the needs of both everyday users — who want a simple interface
       for storing and retrieving their personal data — and developers — who want a
@@ -133,7 +133,7 @@ entries:
     name: renterd
     type: application
     urls:
-    - https://charts.motyka.pro/docs/renterd-1.4.1.tgz
+    - https://charts.motyka.pro/renterd-1.4.1.tgz
     version: 1.4.1
   - annotations:
       artifacthub.io/category: storage
@@ -166,7 +166,7 @@ entries:
           url: https://sia.tech/_next/image?url=https%3A%2F%2Fsia.tech%2Fassets%2Frenterd%2Fpreferences.png&w=1920&q=100
     apiVersion: v2
     appVersion: 2.4.0
-    created: "2025-08-26T16:35:50.436601654+02:00"
+    created: "2025-08-26T16:23:30.045861341+02:00"
     description: renterd is a next-generation Sia renter, developed by the Sia Foundation.
       It aims to serve the needs of both everyday users — who want a simple interface
       for storing and retrieving their personal data — and developers — who want a
@@ -187,7 +187,7 @@ entries:
     name: renterd
     type: application
     urls:
-    - https://charts.motyka.pro/docs/renterd-1.4.0.tgz
+    - https://charts.motyka.pro/renterd-1.4.0.tgz
     version: 1.4.0
   - annotations:
       artifacthub.io/category: storage
@@ -220,7 +220,7 @@ entries:
           url: https://sia.tech/_next/image?url=https%3A%2F%2Fsia.tech%2Fassets%2Frenterd%2Fpreferences.png&w=1920&q=100
     apiVersion: v2
     appVersion: 2.4.0
-    created: "2025-08-26T16:35:50.412582265+02:00"
+    created: "2025-08-26T16:23:30.021749473+02:00"
     dependencies:
     - condition: mysql.enabled
       name: mysql
@@ -246,7 +246,7 @@ entries:
     name: renterd
     type: application
     urls:
-    - https://charts.motyka.pro/docs/renterd-1.3.11.tgz
+    - https://charts.motyka.pro/renterd-1.3.11.tgz
     version: 1.3.11
   - annotations:
       artifacthub.io/category: storage
@@ -279,7 +279,7 @@ entries:
           url: https://sia.tech/_next/image?url=https%3A%2F%2Fsia.tech%2Fassets%2Frenterd%2Fpreferences.png&w=1920&q=100
     apiVersion: v2
     appVersion: 2.4.0
-    created: "2025-08-26T16:35:50.409667298+02:00"
+    created: "2025-08-26T16:23:30.018177752+02:00"
     dependencies:
     - condition: mysql.enabled
       name: mysql
@@ -305,7 +305,7 @@ entries:
     name: renterd
     type: application
     urls:
-    - https://charts.motyka.pro/docs/renterd-1.3.10.tgz
+    - https://charts.motyka.pro/renterd-1.3.10.tgz
     version: 1.3.10
   - annotations:
       artifacthub.io/category: storage
@@ -338,7 +338,7 @@ entries:
           url: https://sia.tech/_next/image?url=https%3A%2F%2Fsia.tech%2Fassets%2Frenterd%2Fpreferences.png&w=1920&q=100
     apiVersion: v2
     appVersion: 2.3.2
-    created: "2025-08-26T16:35:50.436141738+02:00"
+    created: "2025-08-26T16:23:30.045424259+02:00"
     dependencies:
     - condition: mysql.enabled
       name: mysql
@@ -364,7 +364,7 @@ entries:
     name: renterd
     type: application
     urls:
-    - https://charts.motyka.pro/docs/renterd-1.3.9.tgz
+    - https://charts.motyka.pro/renterd-1.3.9.tgz
     version: 1.3.9
   - annotations:
       artifacthub.io/category: storage
@@ -397,7 +397,7 @@ entries:
           url: https://sia.tech/_next/image?url=https%3A%2F%2Fsia.tech%2Fassets%2Frenterd%2Fpreferences.png&w=1920&q=100
     apiVersion: v2
     appVersion: 2.3.0
-    created: "2025-08-26T16:35:50.43284928+02:00"
+    created: "2025-08-26T16:23:30.042171909+02:00"
     dependencies:
     - condition: mysql.enabled
       name: mysql
@@ -423,7 +423,7 @@ entries:
     name: renterd
     type: application
     urls:
-    - https://charts.motyka.pro/docs/renterd-1.3.8.tgz
+    - https://charts.motyka.pro/renterd-1.3.8.tgz
     version: 1.3.8
   - annotations:
       artifacthub.io/category: storage
@@ -456,7 +456,7 @@ entries:
           url: https://sia.tech/_next/image?url=https%3A%2F%2Fsia.tech%2Fassets%2Frenterd%2Fpreferences.png&w=1920&q=100
     apiVersion: v2
     appVersion: 2.2.1
-    created: "2025-08-26T16:35:50.428988972+02:00"
+    created: "2025-08-26T16:23:30.039549305+02:00"
     dependencies:
     - condition: mysql.enabled
       name: mysql
@@ -482,7 +482,7 @@ entries:
     name: renterd
     type: application
     urls:
-    - https://charts.motyka.pro/docs/renterd-1.3.7.tgz
+    - https://charts.motyka.pro/renterd-1.3.7.tgz
     version: 1.3.7
   - annotations:
       artifacthub.io/category: storage
@@ -515,7 +515,7 @@ entries:
           url: https://sia.tech/_next/image?url=https%3A%2F%2Fsia.tech%2Fassets%2Frenterd%2Fpreferences.png&w=1920&q=100
     apiVersion: v2
     appVersion: 2.2.0
-    created: "2025-08-26T16:35:50.426516958+02:00"
+    created: "2025-08-26T16:23:30.03613478+02:00"
     dependencies:
     - condition: mysql.enabled
       name: mysql
@@ -541,7 +541,7 @@ entries:
     name: renterd
     type: application
     urls:
-    - https://charts.motyka.pro/docs/renterd-1.3.6.tgz
+    - https://charts.motyka.pro/renterd-1.3.6.tgz
     version: 1.3.6
   - annotations:
       artifacthub.io/category: storage
@@ -574,7 +574,7 @@ entries:
           url: https://sia.tech/_next/image?url=https%3A%2F%2Fsia.tech%2Fassets%2Frenterd%2Fpreferences.png&w=1920&q=100
     apiVersion: v2
     appVersion: 2.1.0-beta.1
-    created: "2025-08-26T16:35:50.423531999+02:00"
+    created: "2025-08-26T16:23:30.033583439+02:00"
     dependencies:
     - condition: mysql.enabled
       name: mysql
@@ -600,7 +600,7 @@ entries:
     name: renterd
     type: application
     urls:
-    - https://charts.motyka.pro/docs/renterd-1.3.5.tgz
+    - https://charts.motyka.pro/renterd-1.3.5.tgz
     version: 1.3.5
   - annotations:
       artifacthub.io/category: storage
@@ -633,7 +633,7 @@ entries:
           url: https://sia.tech/_next/image?url=https%3A%2F%2Fsia.tech%2Fassets%2Frenterd%2Fpreferences.png&w=1920&q=100
     apiVersion: v2
     appVersion: 2.0.1
-    created: "2025-08-26T16:35:50.420962351+02:00"
+    created: "2025-08-26T16:23:30.030356858+02:00"
     dependencies:
     - condition: mysql.enabled
       name: mysql
@@ -657,7 +657,7 @@ entries:
     name: renterd
     type: application
     urls:
-    - https://charts.motyka.pro/docs/renterd-1.3.4.tgz
+    - https://charts.motyka.pro/renterd-1.3.4.tgz
     version: 1.3.4
   - annotations:
       artifacthub.io/category: storage
@@ -690,7 +690,7 @@ entries:
           url: https://sia.tech/_next/image?url=https%3A%2F%2Fsia.tech%2Fassets%2Frenterd%2Fpreferences.png&w=1920&q=100
     apiVersion: v2
     appVersion: 2.0.0
-    created: "2025-08-26T16:35:50.417862836+02:00"
+    created: "2025-08-26T16:23:30.027650897+02:00"
     dependencies:
     - condition: mysql.enabled
       name: mysql
@@ -714,7 +714,7 @@ entries:
     name: renterd
     type: application
     urls:
-    - https://charts.motyka.pro/docs/renterd-1.3.3.tgz
+    - https://charts.motyka.pro/renterd-1.3.3.tgz
     version: 1.3.3
   - annotations:
       artifacthub.io/category: storage
@@ -747,7 +747,7 @@ entries:
           url: https://sia.tech/_next/image?url=https%3A%2F%2Fsia.tech%2Fassets%2Frenterd%2Fpreferences.png&w=1920&q=100
     apiVersion: v2
     appVersion: 2.0.0-beta.4
-    created: "2025-08-26T16:35:50.415318867+02:00"
+    created: "2025-08-26T16:23:30.024370084+02:00"
     dependencies:
     - condition: mysql.enabled
       name: mysql
@@ -771,7 +771,7 @@ entries:
     name: renterd
     type: application
     urls:
-    - https://charts.motyka.pro/docs/renterd-1.3.2.tgz
+    - https://charts.motyka.pro/renterd-1.3.2.tgz
     version: 1.3.2
   - annotations:
       artifacthub.io/category: storage
@@ -804,7 +804,7 @@ entries:
           url: https://sia.tech/_next/image?url=https%3A%2F%2Fsia.tech%2Fassets%2Frenterd%2Fpreferences.png&w=1920&q=100
     apiVersion: v2
     appVersion: 2.0.0-beta.3
-    created: "2025-08-26T16:35:50.406934383+02:00"
+    created: "2025-08-26T16:23:30.015385278+02:00"
     dependencies:
     - condition: mysql.enabled
       name: mysql
@@ -828,7 +828,7 @@ entries:
     name: renterd
     type: application
     urls:
-    - https://charts.motyka.pro/docs/renterd-1.3.1.tgz
+    - https://charts.motyka.pro/renterd-1.3.1.tgz
     version: 1.3.1
   - annotations:
       artifacthub.io/category: storage
@@ -861,7 +861,7 @@ entries:
           url: https://sia.tech/_next/image?url=https%3A%2F%2Fsia.tech%2Fassets%2Frenterd%2Fpreferences.png&w=1920&q=100
     apiVersion: v2
     appVersion: 2.0.0-beta.2
-    created: "2025-08-26T16:35:50.403684274+02:00"
+    created: "2025-08-26T16:23:30.012140623+02:00"
     dependencies:
     - condition: mysql.enabled
       name: mysql
@@ -885,7 +885,7 @@ entries:
     name: renterd
     type: application
     urls:
-    - https://charts.motyka.pro/docs/renterd-1.3.0.tgz
+    - https://charts.motyka.pro/renterd-1.3.0.tgz
     version: 1.3.0
   - annotations:
       artifacthub.io/category: storage
@@ -918,7 +918,7 @@ entries:
           url: https://sia.tech/_next/image?url=https%3A%2F%2Fsia.tech%2Fassets%2Frenterd%2Fpreferences.png&w=1920&q=100
     apiVersion: v2
     appVersion: 2.0.0-beta.2
-    created: "2025-08-26T16:35:50.37968869+02:00"
+    created: "2025-08-26T16:23:29.988074811+02:00"
     dependencies:
     - condition: mysql.enabled
       name: mysql
@@ -942,7 +942,7 @@ entries:
     name: renterd
     type: application
     urls:
-    - https://charts.motyka.pro/docs/renterd-1.2.13.tgz
+    - https://charts.motyka.pro/renterd-1.2.13.tgz
     version: 1.2.13
   - annotations:
       artifacthub.io/category: storage
@@ -975,7 +975,7 @@ entries:
           url: https://sia.tech/_next/image?url=https%3A%2F%2Fsia.tech%2Fassets%2Frenterd%2Fpreferences.png&w=1920&q=100
     apiVersion: v2
     appVersion: 1.1.0
-    created: "2025-08-26T16:35:50.376542317+02:00"
+    created: "2025-08-26T16:23:29.985527688+02:00"
     dependencies:
     - condition: mysql.enabled
       name: mysql
@@ -999,7 +999,7 @@ entries:
     name: renterd
     type: application
     urls:
-    - https://charts.motyka.pro/docs/renterd-1.2.12.tgz
+    - https://charts.motyka.pro/renterd-1.2.12.tgz
     version: 1.2.12
   - annotations:
       artifacthub.io/category: storage
@@ -1032,7 +1032,7 @@ entries:
           url: https://sia.tech/_next/image?url=https%3A%2F%2Fsia.tech%2Fassets%2Frenterd%2Fpreferences.png&w=1920&q=100
     apiVersion: v2
     appVersion: 1.1.0-beta.6
-    created: "2025-08-26T16:35:50.373020847+02:00"
+    created: "2025-08-26T16:23:29.98256307+02:00"
     dependencies:
     - condition: mysql.enabled
       name: mysql
@@ -1056,7 +1056,7 @@ entries:
     name: renterd
     type: application
     urls:
-    - https://charts.motyka.pro/docs/renterd-1.2.11.tgz
+    - https://charts.motyka.pro/renterd-1.2.11.tgz
     version: 1.2.11
   - annotations:
       artifacthub.io/category: storage
@@ -1089,7 +1089,7 @@ entries:
           url: https://sia.tech/_next/image?url=https%3A%2F%2Fsia.tech%2Fassets%2Frenterd%2Fpreferences.png&w=1920&q=100
     apiVersion: v2
     appVersion: 1.1.0-beta.5
-    created: "2025-08-26T16:35:50.370537021+02:00"
+    created: "2025-08-26T16:23:29.980184224+02:00"
     dependencies:
     - condition: mysql.enabled
       name: mysql
@@ -1113,7 +1113,7 @@ entries:
     name: renterd
     type: application
     urls:
-    - https://charts.motyka.pro/docs/renterd-1.2.10.tgz
+    - https://charts.motyka.pro/renterd-1.2.10.tgz
     version: 1.2.10
   - annotations:
       artifacthub.io/category: storage
@@ -1146,7 +1146,7 @@ entries:
           url: https://sia.tech/_next/image?url=https%3A%2F%2Fsia.tech%2Fassets%2Frenterd%2Fpreferences.png&w=1920&q=100
     apiVersion: v2
     appVersion: 1.0.8
-    created: "2025-08-26T16:35:50.400872691+02:00"
+    created: "2025-08-26T16:23:30.009495977+02:00"
     dependencies:
     - condition: mysql.enabled
       name: mysql
@@ -1170,7 +1170,7 @@ entries:
     name: renterd
     type: application
     urls:
-    - https://charts.motyka.pro/docs/renterd-1.2.9.tgz
+    - https://charts.motyka.pro/renterd-1.2.9.tgz
     version: 1.2.9
   - annotations:
       artifacthub.io/category: storage
@@ -1203,7 +1203,7 @@ entries:
           url: https://sia.tech/_next/image?url=https%3A%2F%2Fsia.tech%2Fassets%2Frenterd%2Fpreferences.png&w=1920&q=100
     apiVersion: v2
     appVersion: 1.0.8
-    created: "2025-08-26T16:35:50.397617653+02:00"
+    created: "2025-08-26T16:23:30.006232787+02:00"
     dependencies:
     - condition: mysql.enabled
       name: mysql
@@ -1227,7 +1227,7 @@ entries:
     name: renterd
     type: application
     urls:
-    - https://charts.motyka.pro/docs/renterd-1.2.8.tgz
+    - https://charts.motyka.pro/renterd-1.2.8.tgz
     version: 1.2.8
   - annotations:
       artifacthub.io/category: storage
@@ -1260,7 +1260,7 @@ entries:
           url: https://sia.tech/_next/image?url=https%3A%2F%2Fsia.tech%2Fassets%2Frenterd%2Fpreferences.png&w=1920&q=100
     apiVersion: v2
     appVersion: 1.0.8
-    created: "2025-08-26T16:35:50.395393626+02:00"
+    created: "2025-08-26T16:23:30.003999505+02:00"
     dependencies:
     - condition: mysql.enabled
       name: mysql
@@ -1284,7 +1284,7 @@ entries:
     name: renterd
     type: application
     urls:
-    - https://charts.motyka.pro/docs/renterd-1.2.7.tgz
+    - https://charts.motyka.pro/renterd-1.2.7.tgz
     version: 1.2.7
   - annotations:
       artifacthub.io/category: storage
@@ -1317,7 +1317,7 @@ entries:
           url: https://sia.tech/_next/image?url=https%3A%2F%2Fsia.tech%2Fassets%2Frenterd%2Fpreferences.png&w=1920&q=100
     apiVersion: v2
     appVersion: 1.0.8
-    created: "2025-08-26T16:35:50.392359935+02:00"
+    created: "2025-08-26T16:23:30.001586524+02:00"
     dependencies:
     - condition: mysql.enabled
       name: mysql
@@ -1341,7 +1341,7 @@ entries:
     name: renterd
     type: application
     urls:
-    - https://charts.motyka.pro/docs/renterd-1.2.6.tgz
+    - https://charts.motyka.pro/renterd-1.2.6.tgz
     version: 1.2.6
   - annotations:
       artifacthub.io/category: storage
@@ -1374,7 +1374,7 @@ entries:
           url: https://sia.tech/_next/image?url=https%3A%2F%2Fsia.tech%2Fassets%2Frenterd%2Fpreferences.png&w=1920&q=100
     apiVersion: v2
     appVersion: 1.0.8
-    created: "2025-08-26T16:35:50.390055437+02:00"
+    created: "2025-08-26T16:23:29.998971935+02:00"
     dependencies:
     - condition: mysql.enabled
       name: mysql
@@ -1398,7 +1398,7 @@ entries:
     name: renterd
     type: application
     urls:
-    - https://charts.motyka.pro/docs/renterd-1.2.5.tgz
+    - https://charts.motyka.pro/renterd-1.2.5.tgz
     version: 1.2.5
   - annotations:
       artifacthub.io/category: storage
@@ -1431,7 +1431,7 @@ entries:
           url: https://sia.tech/_next/image?url=https%3A%2F%2Fsia.tech%2Fassets%2Frenterd%2Fpreferences.png&w=1920&q=100
     apiVersion: v2
     appVersion: 1.0.8-beta.2
-    created: "2025-08-26T16:35:50.387286213+02:00"
+    created: "2025-08-26T16:23:29.99668929+02:00"
     dependencies:
     - condition: mysql.enabled
       name: mysql
@@ -1455,7 +1455,7 @@ entries:
     name: renterd
     type: application
     urls:
-    - https://charts.motyka.pro/docs/renterd-1.2.4.tgz
+    - https://charts.motyka.pro/renterd-1.2.4.tgz
     version: 1.2.4
   - annotations:
       artifacthub.io/category: storage
@@ -1488,7 +1488,7 @@ entries:
           url: https://sia.tech/_next/image?url=https%3A%2F%2Fsia.tech%2Fassets%2Frenterd%2Fpreferences.png&w=1920&q=100
     apiVersion: v2
     appVersion: 1.0.8-beta.1
-    created: "2025-08-26T16:35:50.384944004+02:00"
+    created: "2025-08-26T16:23:29.993298409+02:00"
     dependencies:
     - condition: mysql.enabled
       name: mysql
@@ -1512,7 +1512,7 @@ entries:
     name: renterd
     type: application
     urls:
-    - https://charts.motyka.pro/docs/renterd-1.2.3.tgz
+    - https://charts.motyka.pro/renterd-1.2.3.tgz
     version: 1.2.3
   - annotations:
       artifacthub.io/category: storage
@@ -1545,7 +1545,7 @@ entries:
           url: https://sia.tech/_next/image?url=https%3A%2F%2Fsia.tech%2Fassets%2Frenterd%2Fpreferences.png&w=1920&q=100
     apiVersion: v2
     appVersion: 1.0.8-beta.1
-    created: "2025-08-26T16:35:50.382575755+02:00"
+    created: "2025-08-26T16:23:29.990983283+02:00"
     dependencies:
     - condition: mysql.enabled
       name: mysql
@@ -1569,7 +1569,7 @@ entries:
     name: renterd
     type: application
     urls:
-    - https://charts.motyka.pro/docs/renterd-1.2.2.tgz
+    - https://charts.motyka.pro/renterd-1.2.2.tgz
     version: 1.2.2
   - annotations:
       artifacthub.io/category: storage
@@ -1602,7 +1602,7 @@ entries:
           url: https://sia.tech/_next/image?url=https%3A%2F%2Fsia.tech%2Fassets%2Frenterd%2Fpreferences.png&w=1920&q=100
     apiVersion: v2
     appVersion: 1.0.8-beta.1
-    created: "2025-08-26T16:35:50.367765233+02:00"
+    created: "2025-08-26T16:23:29.977374597+02:00"
     dependencies:
     - condition: mysql.enabled
       name: mysql
@@ -1626,7 +1626,7 @@ entries:
     name: renterd
     type: application
     urls:
-    - https://charts.motyka.pro/docs/renterd-1.2.1.tgz
+    - https://charts.motyka.pro/renterd-1.2.1.tgz
     version: 1.2.1
   - annotations:
       artifacthub.io/category: storage
@@ -1659,7 +1659,7 @@ entries:
           url: https://sia.tech/_next/image?url=https%3A%2F%2Fsia.tech%2Fassets%2Frenterd%2Fpreferences.png&w=1920&q=100
     apiVersion: v2
     appVersion: 1.0.7
-    created: "2025-08-26T16:35:50.365401974+02:00"
+    created: "2025-08-26T16:23:29.974599816+02:00"
     dependencies:
     - condition: mysql.enabled
       name: mysql
@@ -1683,11 +1683,11 @@ entries:
     name: renterd
     type: application
     urls:
-    - https://charts.motyka.pro/docs/renterd-1.2.0.tgz
+    - https://charts.motyka.pro/renterd-1.2.0.tgz
     version: 1.2.0
   - apiVersion: v2
     appVersion: 1.0.7
-    created: "2025-08-26T16:35:50.362717661+02:00"
+    created: "2025-08-26T16:23:29.972347739+02:00"
     dependencies:
     - condition: mysql.enabled
       name: mysql
@@ -1707,11 +1707,11 @@ entries:
     name: renterd
     type: application
     urls:
-    - https://charts.motyka.pro/docs/renterd-1.1.4.tgz
+    - https://charts.motyka.pro/renterd-1.1.4.tgz
     version: 1.1.4
   - apiVersion: v2
     appVersion: 1.0.6
-    created: "2025-08-26T16:35:50.36049694+02:00"
+    created: "2025-08-26T16:23:29.969760571+02:00"
     dependencies:
     - condition: mysql.enabled
       name: mysql
@@ -1731,11 +1731,11 @@ entries:
     name: renterd
     type: application
     urls:
-    - https://charts.motyka.pro/docs/renterd-1.1.3.tgz
+    - https://charts.motyka.pro/renterd-1.1.3.tgz
     version: 1.1.3
   - apiVersion: v2
     appVersion: 1.0.6
-    created: "2025-08-26T16:35:50.357187409+02:00"
+    created: "2025-08-26T16:23:29.967197518+02:00"
     dependencies:
     - condition: mysql.enabled
       name: mysql
@@ -1755,11 +1755,11 @@ entries:
     name: renterd
     type: application
     urls:
-    - https://charts.motyka.pro/docs/renterd-1.1.2.tgz
+    - https://charts.motyka.pro/renterd-1.1.2.tgz
     version: 1.1.2
   - apiVersion: v2
     appVersion: 1.0.5
-    created: "2025-08-26T16:35:50.354846042+02:00"
+    created: "2025-08-26T16:23:29.964319022+02:00"
     dependencies:
     - condition: mysql.enabled
       name: mysql
@@ -1779,11 +1779,11 @@ entries:
     name: renterd
     type: application
     urls:
-    - https://charts.motyka.pro/docs/renterd-1.1.1.tgz
+    - https://charts.motyka.pro/renterd-1.1.1.tgz
     version: 1.1.1
   - apiVersion: v2
     appVersion: 1.0.5
-    created: "2025-08-26T16:35:50.351836797+02:00"
+    created: "2025-08-26T16:23:29.962019796+02:00"
     dependencies:
     - condition: mysql.enabled
       name: mysql
@@ -1803,11 +1803,11 @@ entries:
     name: renterd
     type: application
     urls:
-    - https://charts.motyka.pro/docs/renterd-1.1.0.tgz
+    - https://charts.motyka.pro/renterd-1.1.0.tgz
     version: 1.1.0
   - apiVersion: v2
     appVersion: 1.0.5
-    created: "2025-08-26T16:35:50.348310448+02:00"
+    created: "2025-08-26T16:23:29.959796883+02:00"
     dependencies:
     - condition: mysql.enabled
       name: mysql
@@ -1827,11 +1827,11 @@ entries:
     name: renterd
     type: application
     urls:
-    - https://charts.motyka.pro/docs/renterd-1.0.6.tgz
+    - https://charts.motyka.pro/renterd-1.0.6.tgz
     version: 1.0.6
   - apiVersion: v2
     appVersion: 1.0.5
-    created: "2025-08-26T16:35:50.346152285+02:00"
+    created: "2025-08-26T16:23:29.956404791+02:00"
     dependencies:
     - condition: mysql.enabled
       name: mysql
@@ -1851,11 +1851,11 @@ entries:
     name: renterd
     type: application
     urls:
-    - https://charts.motyka.pro/docs/renterd-1.0.5.tgz
+    - https://charts.motyka.pro/renterd-1.0.5.tgz
     version: 1.0.5
   - apiVersion: v2
     appVersion: 1.0.5
-    created: "2025-08-26T16:35:50.34307408+02:00"
+    created: "2025-08-26T16:23:29.953758161+02:00"
     dependencies:
     - condition: mysql.enabled
       name: mysql
@@ -1875,11 +1875,11 @@ entries:
     name: renterd
     type: application
     urls:
-    - https://charts.motyka.pro/docs/renterd-1.0.4.tgz
+    - https://charts.motyka.pro/renterd-1.0.4.tgz
     version: 1.0.4
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2025-08-26T16:35:50.340464718+02:00"
+    created: "2025-08-26T16:23:29.950567918+02:00"
     dependencies:
     - condition: mysql.enabled
       name: mysql
@@ -1899,11 +1899,11 @@ entries:
     name: renterd
     type: application
     urls:
-    - https://charts.motyka.pro/docs/renterd-1.0.3.tgz
+    - https://charts.motyka.pro/renterd-1.0.3.tgz
     version: 1.0.3
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2025-08-26T16:35:50.338177752+02:00"
+    created: "2025-08-26T16:23:29.948333394+02:00"
     dependencies:
     - condition: mysql.enabled
       name: mysql
@@ -1923,11 +1923,11 @@ entries:
     name: renterd
     type: application
     urls:
-    - https://charts.motyka.pro/docs/renterd-1.0.2.tgz
+    - https://charts.motyka.pro/renterd-1.0.2.tgz
     version: 1.0.2
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2025-08-26T16:35:50.335549204+02:00"
+    created: "2025-08-26T16:23:29.945635027+02:00"
     dependencies:
     - condition: mysql.enabled
       name: mysql
@@ -1947,11 +1947,11 @@ entries:
     name: renterd
     type: application
     urls:
-    - https://charts.motyka.pro/docs/renterd-1.0.1.tgz
+    - https://charts.motyka.pro/renterd-1.0.1.tgz
     version: 1.0.1
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2025-08-26T16:35:50.333552996+02:00"
+    created: "2025-08-26T16:23:29.943689997+02:00"
     dependencies:
     - condition: mysql.enabled
       name: mysql
@@ -1963,6 +1963,6 @@ entries:
     name: renterd
     type: application
     urls:
-    - https://charts.motyka.pro/docs/renterd-1.0.0.tgz
+    - https://charts.motyka.pro/renterd-1.0.0.tgz
     version: 1.0.0
-generated: "2025-08-26T16:35:50.322637436+02:00"
+generated: "2025-08-26T16:23:29.932847857+02:00"

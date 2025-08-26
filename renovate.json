@@ -17,8 +17,7 @@
     {
       "description": "Treat every chart as separate group with separate scope and branch prefix",
       "matchFileNames": [
-        "cloudflared/**",
-        "renterd/**"
+        "charts/**/**"
       ],
       "additionalBranchPrefix": "{{packageFileDir}}-",
       "semanticCommitScope": "{{packageFileDir}}"

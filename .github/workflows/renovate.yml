@@ -2,7 +2,7 @@ name: Renovate
 
 on:
   schedule:
-    - cron: '0 0 * * *'  # Run daily at 00:00 UTC
+    - cron: '0 * * * *'  # Run hourly
   workflow_dispatch:     # Allow manual triggers
 
 permissions:
@@ -24,3 +24,4 @@ jobs:
         env:
           LOG_LEVEL: debug
           RENOVATE_REPOSITORIES: ${{ github.repository }}
+      # todo: run build.sh
