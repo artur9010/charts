@@ -31,8 +31,13 @@ cat > docs/index.html <<EOF
 <html>
 <head>
   <title>artur9010 Chart Repository</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
 </head>
 <body>
+<main class="container">
 <h1>artur9010 Chart Repository</h1>
 <p>To add this repository, run: <code>helm repo add artur9010 https://charts.motyka.pro</code></p>
 <ul>
@@ -53,6 +58,7 @@ done
 
 cat >> docs/index.html <<EOF
 </ul>
+</main>
 </body>
 </html>
 EOF
