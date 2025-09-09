@@ -46,21 +46,6 @@
         ],
         "executionMode": "branch"
       }
-    },
-    {
-      "description": "Rebuild helm repository index after chart version bump",
-      "matchFileNames": [
-        "charts/*/*"
-      ],
-      "postUpgradeTasks": {
-        "commands": [
-          "bash build.sh"
-        ],
-        "fileFilters": [
-          "charts/*/*"
-        ],
-        "executionMode": "branch"
-      }
     }
   ]
 }
