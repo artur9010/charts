@@ -28,7 +28,7 @@
         "custom.regex"
       ],
       "matchFileNames": [
-        "*/Chart.yaml"
+        "charts/*/Chart.yaml"
       ],
       "pinDigests": false
     },
