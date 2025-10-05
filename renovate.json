@@ -39,7 +39,8 @@
       ],
       "postUpgradeTasks": {
         "commands": [
-          "bash scripts/bump-chart-version.sh '{{{parentDir}}}'"
+          "bash scripts/bump-chart-version.sh '{{{parentDir}}}'",
+          "bash build.sh"
         ],
         "fileFilters": [
           "charts/*/*"
