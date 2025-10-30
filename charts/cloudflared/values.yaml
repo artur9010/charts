@@ -9,7 +9,7 @@ cloudflared:
   replicaCount: 1 # only for Deployment
   image:
     repository: cloudflare/cloudflared
-    tag: "2025.9.1@sha256:4604b477520dc8322af5427da68b44f0bf814938e9d2e4814f2249ee4b03ffdf"
+    tag: "2025.10.1@sha256:21f3607baf2384c54d592b0efe76dd5f548c0dbc083e62fa22c7fac3923d077f"
     pullPolicy: IfNotPresent
   nodeSelector: {}
   tolerations: []
