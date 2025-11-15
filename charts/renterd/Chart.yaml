@@ -2,7 +2,7 @@ apiVersion: v2
 name: renterd
 description: renterd is a next-generation Sia renter, developed by the Sia Foundation. It aims to serve the needs of both everyday users — who want a simple interface for storing and retrieving their personal data — and developers — who want a powerful, flexible, and reliable API for building apps on Sia.
 type: application
-version: 1.4.2
+version: 1.4.3
 appVersion: "2.4.0"
 home: https://sia.tech
 icon: https://avatars.githubusercontent.com/u/71667087
