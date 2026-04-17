@@ -1,7 +1,7 @@
 image:
   repository: ghcr.io/siafoundation/s3d
   pullPolicy: IfNotPresent
-  tag: "bf33bf3"
+  tag: "bf33bf3@sha256:b3fcc85f7282f9be8640e69015f46717f1dca68808ea5e09ea1dac9fa9001180"
 
 imagePullSecrets: []
 
