@@ -1,0 +1,27 @@
+apiVersion: v2
+name: s3d
+description: s3d is a S3-compatible storage service backed by Sia, developed by the Sia Foundation.
+type: application
+version: 1.0.0
+appVersion: "947707a"
+home: https://sia.tech
+icon: https://avatars.githubusercontent.com/u/71667087
+keywords:
+- storage
+- distributed
+- blockchain
+- sia
+- s3
+- s3d
+annotations:
+  artifacthub.io/category: storage
+  artifacthub.io/maintainers: |
+    - name: artur9010
+      email: artur@motyka.pro
+  artifacthub.io/links: |
+    - name: support
+      url: https://github.com/artur9010/charts/issues
+    - name: Chart GitHub repository
+      url: https://github.com/artur9010/charts
+    - name: s3d GitHub repository
+      url: https://github.com/SiaFoundation/s3d

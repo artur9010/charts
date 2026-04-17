@@ -1,0 +1,97 @@
+image:
+  repository: ghcr.io/siafoundation/s3d
+  pullPolicy: IfNotPresent
+  tag: "947707a"
+
+imagePullSecrets: []
+
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: false
+  name: ""
+
+secretName: "s3d"
+createSecret: false
+secretContent:
+  S3D_RECOVERY_PHRASE: ""
+  S3D_ACCESS_KEY: ""
+  S3D_SECRET_KEY: ""
+
+apiAddress: "127.0.0.1:8000"
+
+persistence:
+  enabled: false
+  size: 8Gi
+  storageClassName: ""
+  accessModes: ["ReadWriteOnce"]
+  annotations: {}
+
+log:
+  stdout:
+    enabled: true
+    level: info
+    format: human
+    enableANSI: true
+  file:
+    enabled: false # if you don't have any log collecting in cluster, enable it
+    level: info
+    format: json
+    path: ""
+
+sia:
+  indexerURL: "https://sia.storage"
+  hostBases: []
+
+resources: {}
+  # limits:
+  #   cpu: 2000m
+  #   memory: 4Gi
+  # requests:
+  #   cpu: 100m
+  #   memory: 256Mi
+
+nodeSelector: {}
+
+affinity: {}
+
+tolerations: {}
+
+topologySpreadConstraints: []
+
+automountServiceAccountToken: false
+enableServiceLinks: false
+
+securityContext: {}
+  # runAsUser: 1000
+  # runAsGroup: 1000
+  # fsGroup: 1000
+
+podAnnotations: {}
+
+podLabels: {}
+
+service:
+  s3:
+    type: ClusterIP
+    port: 8000
+    annotations: {}
+
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: s3d.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+          svcName: s3d
+          svcPort: 8000
+  tls: []
+    # - secretName: s3d-tls
+    #   hosts:
+    #     - s3d.example.com

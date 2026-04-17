@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: s3d
+  labels:
+    {{- include "s3d.labels" . | nindent 4 }}
+data:
+  s3d.yml: |
+    # Managed by Helm - configmap/s3d/s3d.yml
+    apiAddress: {{ .Values.apiAddress | quote }}
+    directory: /data
+    log:
+      stdout:
+        enabled: {{ .Values.log.stdout.enabled }}
+        level: {{ .Values.log.stdout.level | quote }}
+        format: {{ .Values.log.stdout.format | quote }}
+        enableANSI: {{ .Values.log.stdout.enableANSI }}
+      file:
+        enabled: {{ .Values.log.file.enabled }}
+        level: {{ .Values.log.file.level | quote }}
+        format: {{ .Values.log.file.format | quote }}
+        {{- if .Values.log.file.path }}
+        path: {{ .Values.log.file.path | quote }}
+        {{- end }}
+    s3:
+      {{- if .Values.sia.hostBases }}
+      hostBases:
+        {{- range .Values.sia.hostBases }}
+        - {{ . | quote }}
+        {{- end }}
+      {{- end }}
+    sia:
+      indexerURL: {{ .Values.sia.indexerURL | quote }}

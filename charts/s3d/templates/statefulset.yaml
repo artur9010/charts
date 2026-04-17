@@ -1,0 +1,92 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: s3d
+  labels:
+    {{- include "s3d.labels" . | nindent 4 }}
+spec:
+  serviceName: s3d
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "s3d.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "s3d.selectorLabels" . | nindent 8 }}
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+        {{- if .Values.podAnnotations }}
+        {{- toYaml .Values.podAnnotations | nindent 8 }}
+        {{- end }}
+    spec:
+      automountServiceAccountToken: {{ .Values.automountServiceAccountToken | toString }}
+      enableServiceLinks: {{ .Values.enableServiceLinks | toString }}
+      {{- with .Values.securityContext }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- if .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml .Values.imagePullSecrets | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: s3d
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: s3
+              containerPort: {{ include "s3d.port" .Values.apiAddress }}
+              protocol: TCP
+          readinessProbe:
+            tcpSocket:
+              port: {{ include "s3d.port" .Values.apiAddress }}
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: {{ include "s3d.port" .Values.apiAddress }}
+          volumeMounts:
+            - name: s3d-config
+              mountPath: /data/s3d.yml
+              subPath: s3d.yml
+            {{- if .Values.persistence.enabled }}
+            - name: s3d-data
+              mountPath: /data
+            {{- end }}
+          envFrom:
+            - secretRef:
+                name: {{ .Values.secretName | quote }}
+          env:
+            - name: S3D_CONFIG_FILE
+              value: "/data/s3d.yml"
+            - name: S3D_DATA_DIR
+              value: "/data"
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          {{- if .Values.nodeSelector }}
+          nodeSelector:
+            {{- toYaml .Values.nodeSelector | nindent 12 }}
+          {{- end }}
+          {{- if .Values.affinity }}
+          affinity:
+            {{- toYaml .Values.affinity | nindent 12 }}
+          {{- end }}
+          {{- if .Values.tolerations }}
+          tolerations:
+            {{- toYaml .Values.tolerations | nindent 12 }}
+          {{- end }}
+          {{- if .Values.topologySpreadConstraints }}
+          topologySpreadConstraints:
+            {{- toYaml .Values.topologySpreadConstraints | nindent 12 }}
+          {{- end }}
+      volumes:
+        - name: s3d-config
+          configMap:
+            name: s3d
+            defaultMode: 0755
+        {{- if .Values.persistence.enabled }}
+        - name: s3d-data
+          persistentVolumeClaim:
+            claimName: s3d
+        {{- end }}
