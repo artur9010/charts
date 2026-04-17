@@ -30,4 +30,11 @@ data:
         {{- end }}
       {{- end }}
     sia:
+      {{- if .Values.sia.keyPairs }}
+      keyPairs:
+        {{- range .Values.sia.keyPairs }}
+        - accessKey: {{ .accessKey | quote }}
+          secretKey: {{ .secretKey | quote }}
+        {{- end }}
+      {{- end }}
       indexerURL: {{ .Values.sia.indexerURL | quote }}

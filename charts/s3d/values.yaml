@@ -1,7 +1,7 @@
 image:
   repository: ghcr.io/siafoundation/s3d
   pullPolicy: IfNotPresent
-  tag: "947707a"
+  tag: "bf33bf3"
 
 imagePullSecrets: []
 
@@ -16,8 +16,6 @@ secretName: "s3d"
 createSecret: false
 secretContent:
   S3D_RECOVERY_PHRASE: ""
-  S3D_ACCESS_KEY: ""
-  S3D_SECRET_KEY: ""
 
 apiAddress: "127.0.0.1:8000"
 
@@ -43,6 +41,9 @@ log:
 sia:
   indexerURL: "https://sia.storage"
   hostBases: []
+  keyPairs: []
+  #  - accessKey: ""
+  #    secretKey: ""
 
 resources: {}
   # limits:

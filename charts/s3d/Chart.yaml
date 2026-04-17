@@ -2,8 +2,8 @@ apiVersion: v2
 name: s3d
 description: s3d is a S3-compatible storage service backed by Sia, developed by the Sia Foundation.
 type: application
-version: 1.0.0
-appVersion: "947707a"
+version: 1.0.1
+appVersion: "bf33bf3"
 home: https://sia.tech
 icon: https://avatars.githubusercontent.com/u/71667087
 keywords:
