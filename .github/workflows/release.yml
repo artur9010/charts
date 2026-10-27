@@ -1,0 +1,76 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'charts/**'
+  workflow_dispatch:     # Allow manual triggers
+
+permissions:
+  contents: write   # GitHub Releases and gh-pages
+  packages: write   # GHCR
+  id-token: write   # keyless cosign signing
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7.0.1
+        with:
+          fetch-depth: 0
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v5.0.1
+        with:
+          version: v4.3.1
+
+      # chart-releaser does not add dependency repositories on its own
+      - name: Add dependency repositories
+        run: helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+
+      # Packages charts changed since the latest tag, creates a GitHub Release per
+      # chart version and commits the package and index.yaml to gh-pages
+      - name: Run chart-releaser
+        uses: helm/chart-releaser-action@v1.7.0
+        with:
+          packages_with_index: true
+          mark_as_latest: false
+        env:
+          CR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CR_GENERATE_RELEASE_NOTES: true
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v4.6.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install cosign
+        uses: sigstore/cosign-installer@v4.1.2
+
+      - name: Push and sign charts in GHCR
+        env:
+          REGISTRY: ghcr.io/${{ github.repository_owner }}/charts
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          shopt -s nullglob
+          echo "$TOKEN" | helm registry login ghcr.io --username "${{ github.actor }}" --password-stdin
+          for pkg in .cr-release-packages/*.tgz; do
+            name=$(helm show chart "$pkg" | awk '/^name:/ {print $2}')
+            version=$(helm show chart "$pkg" | awk '/^version:/ {print $2}')
+            if helm show chart "oci://$REGISTRY/$name" --version "$version" >/dev/null 2>&1; then
+              echo "$name $version already exists in $REGISTRY, skipping"
+              continue
+            fi
+            digest=$(helm push "$pkg" "oci://$REGISTRY" 2>&1 | tee /dev/stderr | awk '/^Digest:/ {print $2}')
+            cosign sign --yes "$REGISTRY/$name@$digest"
+          done
