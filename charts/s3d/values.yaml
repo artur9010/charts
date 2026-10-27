@@ -33,7 +33,7 @@ log:
     format: human
     enableANSI: true
   file:
-    enabled: false # if you don't have any log collecting in cluster, enable it
+    enabled: false  # if you don't have any log collecting in cluster, enable it
     level: info
     format: json
     path: ""

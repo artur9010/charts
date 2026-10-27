@@ -8,27 +8,38 @@ This file must stay accurate. Whenever a change affects anything described here,
 
 ## Repository overview
 
-This is a personal Helm chart repository published at `https://charts.motyka.pro` (GitHub Pages, served from `docs/`) and listed on Artifact Hub under the `artur9010` repository.
+This is a personal Helm chart repository, listed on Artifact Hub under the `artur9010` repository. It is published in two places:
+
+- a classic Helm repository at `https://charts.motyka.pro`, served by GitHub Pages from the `gh-pages` branch;
+- an OCI registry at `oci://ghcr.io/artur9010/charts/<chart>`, with charts signed by keyless cosign.
+
+`master` branch:
 
 ```
-charts/<name>/            chart sources (one directory per chart)
-docs/                     published Helm repository (GitHub Pages root)
-  <name>-<version>.tgz    packaged releases (immutable, committed)
-  index.yaml              Helm repo index (generated)
-  index.html              landing page (generated)
-  artifacthub-repo.yml    Artifact Hub repository metadata
-  CNAME                   charts.motyka.pro
-build.sh                  packages new chart versions and regenerates docs/index.*
-scripts/bump-chart-version.sh   bumps the patch part of a chart's `version`
-renovate.json             Renovate configuration
+charts/<name>/                  chart sources (one directory per chart)
+ct.yaml                         chart-testing configuration
+renovate.json                   Renovate configuration
+.github/workflows/lint.yml      ct lint on pull requests
+.github/workflows/release.yml   publishes changed charts on push to master
 .github/workflows/renovate.yml  self-hosted Renovate, runs hourly
+```
+
+`gh-pages` branch (written by CI, not edited on master):
+
+```
+<name>-<version>.tgz    packaged releases (immutable)
+index.yaml              Helm repo index
+index.html              static landing page
+artifacthub-repo.yml    Artifact Hub repository metadata
+CNAME                   charts.motyka.pro
+.nojekyll
 ```
 
 ### Charts
 
 | Chart | What it deploys | Notes |
 |---|---|---|
-| `cloudflared` | A Cloudflare Tunnel (`cloudflared`, DaemonSet or Deployment) plus a bundled `ingress-nginx` subchart with the class `nginx-cloudflared` | It has a dependency, so `Chart.lock` and the vendored `charts/ingress-nginx-*.tgz` are committed. It also holds `secrets.craftum.yaml`, a SOPS-encrypted (AWS KMS) file. |
+| `cloudflared` | A Cloudflare Tunnel (`cloudflared`, DaemonSet or Deployment) plus a bundled `ingress-nginx` subchart with the class `nginx-cloudflared` | It has a dependency. `Chart.lock` is committed, but the downloaded `charts/*.tgz` is ignored by git and rebuilt in CI. It also holds `secrets.craftum.yaml`, a SOPS-encrypted (AWS KMS) file. |
 | `renterd` | Sia `renterd`, split into bus, worker and autopilot StatefulSets | Needs an external MySQL. Its README has a `## Changelog` section. |
 | `s3d` | Sia `s3d`, an S3-compatible gateway (single StatefulSet) | Its `appVersion` and image tag are a git commit SHA, not a SemVer version. |
 
@@ -38,45 +49,52 @@ All charts use `apiVersion: v2` and `type: application`. They carry Artifact Hub
 
 - Helm 4 is the current target (verified with `helm` v4.3.1). Templates must stay compatible with Helm 3.
 - The dev environment is NixOS. Run tools through `nix-shell`, for example `nix-shell -p kubernetes-helm --run '<cmd>'`. There is no Docker daemon.
-- `build.sh` requires `helm` on `PATH`.
+- CI uses Helm v4.3.1 (`azure/setup-helm`) and chart-testing (`helm/chart-testing-action`).
 
 ## Validating changes
 
 Run these for every chart you touch before committing:
 
 ```sh
-helm lint --strict charts/<name>
+nix-shell -p chart-testing kubernetes-helm yamllint yamale --run 'ct lint --config ct.yaml --charts charts/<name>'
 helm template test charts/<name>                      # default values must render
 helm template test charts/<name> -f my-values.yaml    # also exercise the code paths you changed
 ```
 
+- `ct lint` runs `helm lint`, validates `Chart.yaml` against the chart schema, and runs yamllint on `Chart.yaml` and `values.yaml`. Use two spaces before inline `#` comments, no spaces inside `[ ]`, and end files with a newline.
+- `ct lint` also requires the chart `version` to be higher than on `master`, through `check-version-increment`. Locally that check compares against your local `master`.
 - Rendering must succeed with the default `values.yaml`. Toggle the flags your change affects (`ingress.enabled`, `persistence.enabled`, `createSecret`, `cloudflared.type: Deployment`, and so on) and render again.
-- For `cloudflared`, run `helm dependency build charts/cloudflared` first if the vendored subchart is missing.
-- There is no CI lint or test job. Local validation is the only gate.
+- For `cloudflared`, run `helm dependency build charts/cloudflared` first, because the subchart archive is not committed.
+- `.github/workflows/lint.yml` runs `ct lint --config ct.yaml` on pull requests that touch `charts/**`. Pull requests opened by Renovate with `GITHUB_TOKEN` do not trigger other workflows, so lint does not run on them.
 
 ## Release workflow
 
-Each released chart version is a `.tgz` committed to `docs/`. Released packages are immutable.
+Releases are built by CI. Do not package charts by hand or commit `.tgz` files to `master`.
 
 1. Make the chart change.
 2. Bump `version` in `charts/<name>/Chart.yaml` (SemVer: patch for fixes and dependency bumps, minor for new features, major for breaking value or resource changes). If the application version changed, update `appVersion` to match the image tag in `values.yaml` (without the digest).
 3. For `renterd`, add an entry at the top of `## Changelog` in its README. Mark breaking changes in the heading and give old and new value examples, following the existing entries.
-4. Run `bash build.sh` from the repo root. It packages every chart whose `docs/<name>-<version>.tgz` does not exist yet, merges `docs/index.yaml`, rewrites the URLs and regenerates `docs/index.html`.
-5. Commit the chart sources and the generated `docs/` files together. Release commits are titled `<chart> <version>`, for example `s3d 1.0.1`.
+4. Merge or push to `master`. `.github/workflows/release.yml` then publishes the release:
+   - `helm/chart-releaser-action` finds charts changed since the latest git tag;
+   - it packages them, creates a GitHub Release and tag `<name>-<version>` for each one, and commits the `.tgz` and the updated `index.yaml` to `gh-pages` (`packages_with_index: true`);
+   - each new package is pushed to `oci://ghcr.io/artur9010/charts` and signed with `cosign sign` (keyless, GitHub OIDC). Versions already in GHCR are skipped.
 
 Rules:
 
-- Never modify, overwrite or delete an existing `docs/*.tgz`. Always bump the version instead.
-- Do not hand-edit `docs/index.yaml` or `docs/index.html`. Change `build.sh` instead.
-- Keep `docs/CNAME` and `docs/artifacthub-repo.yml` as they are unless asked.
+- Never modify, overwrite or delete an existing `<name>-<version>.tgz`, GitHub Release, tag or OCI tag. Always bump the version instead.
+- Do not edit `gh-pages` by hand, except for `index.html`, `CNAME` and `artifacthub-repo.yml`, and only when asked. `index.html` is static and does not list versions.
+- Every chart change merged to `master` must come with a version bump. chart-releaser keys releases by tag, so an unbumped change is either skipped or collides with an existing release.
+- Release tags are created by CI. Do not create or move `<name>-<version>` tags manually.
+- Dependency repositories used by subcharts must be added with `helm repo add` in `release.yml` and listed in `chart-repos` in `ct.yaml`.
 
 ## Renovate
 
 - Renovate runs hourly from `.github/workflows/renovate.yml` using `config:best-practices`. It opens one PR per update, with branch prefix `<chart>-` and a semantic commit `chore(<chart>): ...`.
-- `renovate.json` declares `postUpgradeTasks` (`scripts/bump-chart-version.sh <chart>`, then `build.sh`), but in practice Renovate PRs change only the dependency line (for example `values.yaml` or the subchart version). The workflow does not allow post-upgrade commands, and `fileFilters` covers only `charts/*/*`. After merging Renovate PRs, the maintainer makes a release commit (`<chart> <version>`) that bumps `version`/`appVersion` and runs `build.sh`. Follow the release workflow above for that commit.
+- The `bumpVersions` rule in `renovate.json` bumps the patch part of `version` in the chart's `Chart.yaml` in the same PR, so merging a Renovate PR publishes a release. `bumpVersions` is experimental in Renovate.
+- `appVersion` is not updated automatically. When Renovate bumps the main image, update `appVersion` in the PR before merging.
 - Image tags are pinned as `tag@sha256:digest` (see `cloudflared` and `renterd` values). Keep that format so Renovate can update them, and never use floating tags such as `latest`.
-- Subchart versions in `Chart.yaml` are exact pins that Renovate updates. Do not switch them to ranges. When a dependency version changes, refresh `Chart.lock` and the vendored archive with `helm dependency update`.
-- `bump-chart-version.sh` only handles plain `X.Y.Z` versions. Do not give charts pre-release or build suffixes.
+- Subchart versions in `Chart.yaml` are exact pins that Renovate updates together with `Chart.lock`. Do not switch them to ranges.
+- Chart versions are plain `X.Y.Z`, without pre-release or build suffixes.
 
 ## Chart conventions in this repository
 
@@ -137,7 +155,7 @@ These come from the official [Helm chart best practices guide](https://helm.sh/d
 
 ### Dependencies
 
-- Declare subcharts in `Chart.yaml` with `https://` repositories. Commit `Chart.lock` and the archive in `charts/`, because `build.sh` runs `helm dep up` before packaging.
+- Declare subcharts in `Chart.yaml` with `https://` repositories. Commit `Chart.lock`. The archive in `charts/` is ignored by git (`.gitignore`) and fetched in CI.
 - Optional subcharts need a `condition: <subchart>.enabled`.
 - Configure subcharts under their name key in the parent `values.yaml` (see `ingress-nginx:` in `cloudflared`).
 
@@ -153,5 +171,5 @@ These come from the official [Helm chart best practices guide](https://helm.sh/d
 ## Commits and pull requests
 
 - Release commits: `<chart> <version>`. Renovate commits: `chore(<chart>): update ...`.
-- Keep a change to a single chart per commit where practical, including its generated `docs/` artifacts.
+- Keep a change to a single chart per commit where practical.
 - Do not commit or push unless asked.

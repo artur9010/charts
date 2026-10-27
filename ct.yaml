@@ -1,0 +1,8 @@
+target-branch: master
+chart-dirs:
+  - charts
+chart-repos:
+  - ingress-nginx=https://kubernetes.github.io/ingress-nginx
+# Maintainers are listed in artifacthub.io/maintainers annotations, not in Chart.yaml
+validate-maintainers: false
+check-version-increment: true

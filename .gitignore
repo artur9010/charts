@@ -1,0 +1,2 @@
+# Vendored subcharts are rebuilt from Chart.lock in CI
+charts/*/charts/*.tgz

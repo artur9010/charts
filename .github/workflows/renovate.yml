@@ -24,4 +24,3 @@ jobs:
         env:
           LOG_LEVEL: debug
           RENOVATE_REPOSITORIES: ${{ github.repository }}
-      # todo: run build.sh

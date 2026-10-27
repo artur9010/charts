@@ -11,6 +11,12 @@ helm repo add artur9010 https://charts.motyka.pro
 helm install s3d artur9010/s3d
 ```
 
+Or from the OCI registry:
+
+```
+helm install s3d oci://ghcr.io/artur9010/charts/s3d --version <version>
+```
+
 ## Looking for perfect server to run renterd? Check netcup
 
 [![netcup](https://i.imgur.com/2Sjxas5.png)](https://brzu.ch/renterd-netcup)

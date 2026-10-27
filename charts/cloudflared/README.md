@@ -7,6 +7,19 @@ Cloudflared with ingress-nginx helm chart included, make sure to have cert-manag
 By default it runs as DaemonSet, cloudflare tunnels are limited to 25 connected clients so if you have bigger cluster just make sure to change type to Deployment in `.Values.cloudflared.type`
 Values are also preconfigured to make ingress-nginx work fine in this setup, feel free to modify them to meet your requirements, those were fine for me.
 
+## Helm repository
+
+```
+helm repo add artur9010 https://charts.motyka.pro
+helm install cloudflared artur9010/cloudflared
+```
+
+Or from the OCI registry:
+
+```
+helm install cloudflared oci://ghcr.io/artur9010/charts/cloudflared --version <version>
+```
+
 ## Requirements
 
 - Cert-manager installed

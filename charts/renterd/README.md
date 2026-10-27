@@ -18,6 +18,12 @@ helm repo add artur9010 https://charts.motyka.pro
 helm install renterd artur9010/renterd
 ```
 
+Or from the OCI registry:
+
+```
+helm install renterd oci://ghcr.io/artur9010/charts/renterd --version <version>
+```
+
 ## Requirements
 
 - Kubernetes 1.30+ cluster. It should work with older versions of k8s but I haven't tested it.
