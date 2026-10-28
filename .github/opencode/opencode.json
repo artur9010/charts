@@ -1,0 +1,46 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "model": "opencode/deepseek-v4.1-flash-free",
+  "share": "disabled",
+  "autoupdate": false,
+  "mcp": {
+    "exa": {
+      "type": "remote",
+      "url": "https://mcp.exa.ai/mcp?tools=web_search_exa,web_fetch_exa",
+      "oauth": false,
+      "enabled": true
+    }
+  },
+  "permission": {
+    "*": "deny",
+    "read": "allow",
+    "grep": "allow",
+    "glob": "allow",
+    "exa_*": "allow",
+    "bash": {
+      "*": "deny",
+      "git *": "allow",
+      "ls": "allow",
+      "ls *": "allow",
+      "cat *": "allow",
+      "head *": "allow",
+      "tail *": "allow",
+      "grep *": "allow",
+      "wc *": "allow",
+      "sort *": "allow",
+      "uniq *": "allow",
+      "echo *": "allow",
+      "mkdir *": "allow",
+      "diff *": "allow",
+      "find *": "allow",
+      "*../*": "deny",
+      "*$*": "deny",
+      "*-exec*": "deny",
+      "*-ok *": "deny",
+      "*-okdir*": "deny",
+      "*-delete*": "deny",
+      "*-fprint*": "deny",
+      "*-fls*": "deny"
+    }
+  }
+}

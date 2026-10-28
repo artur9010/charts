@@ -50,5 +50,17 @@
         }
       ]
     }
+  ],
+  "customManagers": [
+    {
+      "description": "`FOO_VERSION: x.y.z # renovate: datasource=... depName=...` env vars in workflows",
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/^\\.github/workflows/[^/]+\\.ya?ml$/"
+      ],
+      "matchStrings": [
+        "[A-Z_]+_VERSION:\\s*(?<currentValue>[^\\s#]+)\\s+# renovate:\\s+datasource=(?<datasource>\\S+)\\s+depName=(?<depName>\\S+)"
+      ]
+    }
   ]
 }

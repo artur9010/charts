@@ -1,0 +1,159 @@
+name: Renovate changelog
+
+# Posts an AI summary (breaking changes, impact on our charts, rendered manifest diff)
+# as a sticky comment on Renovate PRs. Changed charts get a rendered diff and, for
+# subchart bumps, an upstream chart diff from .github/scripts/chart-diff.sh.
+# The model (opencode, .github/opencode/) is a free OpenCode Zen model, so no API key.
+# It can read the diff dir and run git (to clone upstream repos and compare tags) plus
+# read-only ls/cat/head/tail/grep/wc/sort/uniq/echo, nothing else, and gets no GitHub token.
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  workflow_dispatch:
+    inputs:
+      pr:
+        description: PR number
+        type: number
+        required: true
+
+concurrency:
+  group: renovate-changelog-${{ github.event.pull_request.number || inputs.pr }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: write
+
+env:
+  PR: ${{ github.event.pull_request.number || inputs.pr }}
+  # Hidden marker identifying our comment, so reruns edit it instead of adding one
+  MARKER: '<!-- renovate-changelog -->'
+  MODEL: opencode/deepseek-v4.1-flash-free
+  OPENCODE_VERSION: 1.19.4 # renovate: datasource=npm depName=opencode-ai
+
+jobs:
+  changelog:
+    if: github.event_name == 'workflow_dispatch' || startsWith(github.head_ref, 'renovate/')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          # all branches, to diff the PR head against its merge base
+          fetch-depth: 0
+          # the model can run git, keep the token out of .git/config
+          persist-credentials: false
+
+      - name: Collect PR data
+        id: pr
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          out=$RUNNER_TEMP/diff
+          mkdir -p "$out"
+          gh pr view "$PR" --json title,body,headRefOid,baseRefName,mergeCommit >"$RUNNER_TEMP/pr.json"
+          head=$(jq -r .headRefOid "$RUNNER_TEMP/pr.json")
+          # the branch may be gone (closed PR); GitHub keeps the head under pull/<n>/head
+          # (token passed for this fetch only, checkout doesn't persist it)
+          git -c "http.extraheader=AUTHORIZATION: basic $(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)" \
+            fetch -q origin "pull/$PR/head"
+          # a merged PR (manual re-run) is diffed against the base branch as it was before the merge
+          base_ref=$(jq -r 'if .mergeCommit then .mergeCommit.oid + "^1" else "origin/" + .baseRefName end' "$RUNNER_TEMP/pr.json")
+          base=$(git merge-base "$base_ref" "$head")
+          jq -r '"# " + .title + "\n\n" + .body' "$RUNNER_TEMP/pr.json" >"$out/pr.md"
+          git diff "$base" "$head" -- . ':(exclude)*.tgz' | head -c 300000 >"$out/pr.diff"
+          # our repo at the PR head, to check how the dependency is used (no SOPS files, no subchart archives)
+          mkdir "$out/repo"
+          git archive "$head" | tar -x -C "$out/repo" --exclude='secrets.*' --exclude='*.tgz'
+          echo "base=$base" >>"$GITHUB_OUTPUT"
+          echo "head=$head" >>"$GITHUB_OUTPUT"
+
+      # helm and yq are preinstalled on ubuntu-latest
+      - name: Diff charts
+        run: .github/scripts/chart-diff.sh "${{ steps.pr.outputs.base }}" "${{ steps.pr.outputs.head }}" "$RUNNER_TEMP/diff"
+
+      # No GitHub token here: the input is untrusted upstream content
+      - name: Summarize with opencode
+        id: summarize
+        working-directory: ${{ runner.temp }}/diff
+        env:
+          OPENCODE_CONFIG: ${{ github.workspace }}/.github/opencode/opencode.json
+        run: |
+          npm install -g "opencode-ai@$OPENCODE_VERSION"
+          # stdout has every text part, including "now I'll clone X" between tool calls;
+          # tool calls are logged to stderr
+          # a fixed --title skips opencode's title generation, which otherwise goes to a
+          # "small model" it guesses from the provider
+          opencode run --title "renovate-changelog PR $PR" --model "$MODEL" "$(cat "$GITHUB_WORKSPACE/.github/opencode/prompt.md")" >"$RUNNER_TEMP/opencode.log"
+          # fresh runner, so the latest session is ours
+          opencode export "$(opencode session list --format json | jq -r '.[0].id')" >"$RUNNER_TEMP/session.json"
+          # the answer is the text of the last step (each step is its own assistant message)
+          jq -r '[.messages[] | select(.info.role == "assistant")] | last | [.parts[] | select(.type == "text") | .text] | join("\n")' \
+            "$RUNNER_TEMP/session.json" >"$RUNNER_TEMP/summary.md"
+          if [ ! -s "$RUNNER_TEMP/summary.md" ]; then
+            echo "opencode produced no output" >&2
+            exit 1
+          fi
+          # drop any preamble before the risk line ("No chart directories, so ...")
+          if grep -q '^\*\*Risk' "$RUNNER_TEMP/summary.md"; then
+            sed -i -n '/^\*\*Risk/,$p' "$RUNNER_TEMP/summary.md"
+          fi
+          # the model tends to justify empty sections ("None. Only X changed..."), drop that
+          sed -i -E 's/^(- )?(None|No manual steps)[[:space:]]*(\.|;|:|,|—|-).*$/\2./' "$RUNNER_TEMP/summary.md"
+          # nothing after "No manual steps." (the model likes to append "Sources: ..." or "Note: ...")
+          awk '{print} /^### Upgrade steps/{u=1} u && /^No manual steps\.$/{exit}' "$RUNNER_TEMP/summary.md" >"$RUNNER_TEMP/summary.tmp"
+          mv "$RUNNER_TEMP/summary.tmp" "$RUNNER_TEMP/summary.md"
+          # session tokens, for the footer (the model is free, so no cost)
+          jq -r '[.messages[].info | select(.role == "assistant")] |
+            def k: . / 1000 | round | tostring + "k";
+            "usage=" + (map(.tokens.input // 0) | add | k) + " in, "
+            + (map(.tokens.output // 0) | add | k) + " out, "
+            + (map(.tokens.cache.read // 0) | add | k) + " cached"' \
+            "$RUNNER_TEMP/session.json" >>"$GITHUB_OUTPUT"
+
+      - name: Upload diffs
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: renovate-changelog-pr${{ env.PR }}
+          path: |
+            ${{ runner.temp }}/diff
+            !${{ runner.temp }}/diff/repos
+            !${{ runner.temp }}/diff/repo
+            ${{ runner.temp }}/summary.md
+            ${{ runner.temp }}/session.json
+            ${{ runner.temp }}/opencode.log
+          retention-days: 14
+
+      - name: Post sticky comment
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          USAGE: ${{ steps.summarize.outputs.usage || 'usage n/a' }}
+        run: |
+          body=$RUNNER_TEMP/comment.md
+          {
+            echo "$MARKER"
+            echo "## 🤖 Changelog"
+            echo
+            # GitHub's comment limit is 65536 characters
+            if [ "$(wc -m <"$RUNNER_TEMP/summary.md")" -gt 60000 ]; then
+              head -c 60000 "$RUNNER_TEMP/summary.md"
+              printf '\n\n_[truncated, see the run artifact]_\n'
+            else
+              cat "$RUNNER_TEMP/summary.md"
+            fi
+            echo
+            echo "---"
+            echo "<sub>\`${MODEL#opencode/}\` @ ${{ steps.pr.outputs.head }} · $USAGE · [raw diffs]($RUN_URL)</sub>"
+          } >"$body"
+          id=$(gh api --paginate "repos/$GITHUB_REPOSITORY/issues/$PR/comments" \
+            --jq ".[] | select(.user.login == \"github-actions[bot]\" and (.body | startswith(\"$MARKER\"))) | .id" | head -n1)
+          if [ -n "$id" ]; then
+            gh api -X PATCH "repos/$GITHUB_REPOSITORY/issues/comments/$id" -F "body=@$body" >/dev/null
+            echo "Updated comment $id"
+          else
+            gh api -X POST "repos/$GITHUB_REPOSITORY/issues/$PR/comments" -F "body=@$body" >/dev/null
+            echo "Posted new comment"
+          fi

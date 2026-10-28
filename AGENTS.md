@@ -22,6 +22,9 @@ renovate.json                   Renovate configuration
 .github/workflows/lint.yml      ct lint on pull requests
 .github/workflows/release.yml   publishes changed charts on push to master
 .github/workflows/renovate.yml  self-hosted Renovate, runs hourly
+.github/workflows/renovate-changelog.yml  AI summary comment on Renovate PRs
+.github/opencode/               opencode config and prompt for renovate-changelog
+.github/scripts/chart-diff.sh   rendered and upstream subchart diffs for renovate-changelog
 ```
 
 `gh-pages` branch (written by CI, not edited on master):
@@ -65,7 +68,16 @@ helm template test charts/<name> -f my-values.yaml    # also exercise the code p
 - `ct lint` also requires the chart `version` to be higher than on `master`, through `check-version-increment`. Locally that check compares against your local `master`.
 - Rendering must succeed with the default `values.yaml`. Toggle the flags your change affects (`ingress.enabled`, `persistence.enabled`, `createSecret`, `cloudflared.type: Deployment`, and so on) and render again.
 - For `cloudflared`, run `helm dependency build charts/cloudflared` first, because the subchart archive is not committed.
-- `.github/workflows/lint.yml` runs `ct lint --config ct.yaml` on pull requests that touch `charts/**`. Pull requests opened by Renovate with `GITHUB_TOKEN` do not trigger other workflows, so lint does not run on them.
+- `.github/workflows/lint.yml` runs `ct lint --config ct.yaml` on pull requests that touch `charts/**`.
+- Renovate authenticates as a GitHub App. `actions/create-github-app-token` creates the token from the `RENOVATE_APP_ID` and `RENOVATE_APP_PRIVATE_KEY` secrets. Do not switch it back to `GITHUB_TOKEN`: pull requests opened with `GITHUB_TOKEN` do not trigger other workflows, so lint and renovate-changelog would not run on Renovate PRs.
+
+## Renovate PR summaries
+
+- `.github/workflows/renovate-changelog.yml` posts an AI summary as a sticky comment (marker `<!-- renovate-changelog -->`) on every PR from a `renovate/` branch. It covers risk, breaking changes, impact on our chart, chart maintenance (version bump, `appVersion`), rendered manifest changes and upgrade steps.
+- The comment is written by opencode (npm `opencode-ai`, pinned in `OPENCODE_VERSION`) using the free OpenCode Zen model `opencode/deepseek-v4.1-flash-free`. No API key or provider secret is needed. Free Zen models are offered for a limited time, so when the model disappears, pick another one from `opencode models` (IDs ending in `-free`) and update both `MODEL` in the workflow and `model` in `.github/opencode/opencode.json`.
+- `.github/scripts/chart-diff.sh <base> <head> <out>` renders each changed chart at both revisions with default values and, for subchart bumps, pulls the old and new upstream subcharts with `helm pull` and diffs them. It runs locally too: `nix-shell -p kubernetes-helm yq-go --run '.github/scripts/chart-diff.sh <base> <head> <out>'`.
+- The model's tools (read, `git`, read-only `ls`/`cat`/`head`/`tail`/`grep`/`diff`/…, Exa web search MCP; no `$` or `../`) are set in `.github/opencode/opencode.json`, and the output format in `.github/opencode/prompt.md`. It gets no GitHub token.
+- Check denied tool calls with `gh run view <id> --log | grep -a "✗ "`. Re-run with `gh workflow run renovate-changelog.yml -f pr=<n>`. Locally, use `nix-shell -p opencode` (the npm package doesn't install on NixOS) and `opencode run --standalone`.
 
 ## Release workflow
 

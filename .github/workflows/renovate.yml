@@ -5,10 +5,9 @@ on:
     - cron: '0 * * * *'  # Run hourly
   workflow_dispatch:     # Allow manual triggers
 
+# Renovate uses the GitHub App token, GITHUB_TOKEN only needs to check out
 permissions:
-  contents: write
-  pull-requests: write
-  issues: write
+  contents: read
 
 jobs:
   renovate:
@@ -17,10 +16,18 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
 
+      # A GitHub App token, so Renovate PRs trigger pull_request workflows (GITHUB_TOKEN events do not)
+      - name: Create GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@v3.3.0
+        with:
+          app-id: ${{ secrets.RENOVATE_APP_ID }}
+          private-key: ${{ secrets.RENOVATE_APP_PRIVATE_KEY }}
+
       - name: Renovate
         uses: renovatebot/github-action@v43.0.14
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ steps.app-token.outputs.token }}
         env:
           LOG_LEVEL: debug
           RENOVATE_REPOSITORIES: ${{ github.repository }}
