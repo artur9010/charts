@@ -39,7 +39,7 @@ jobs:
       # Packages charts changed since the latest tag, creates a GitHub Release per
       # chart version and commits the package and index.yaml to gh-pages
       - name: Run chart-releaser
-        uses: helm/chart-releaser-action@v1.7.0
+        uses: helm/chart-releaser-action@df287104677278f869ca5480bd260358397cc3f9 # v1.8.0
         with:
           packages_with_index: true
           mark_as_latest: false
