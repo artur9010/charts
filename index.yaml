@@ -3,6 +3,32 @@ entries:
   cloudflared:
   - annotations:
       artifacthub.io/category: networking
+      artifacthub.io/maintainers: |
+        - name: artur9010
+          email: artur@motyka.pro
+    apiVersion: v2
+    appVersion: 2026.3.0
+    created: "2026-10-28T00:25:22.942058549Z"
+    dependencies:
+    - name: ingress-nginx
+      repository: https://kubernetes.github.io/ingress-nginx
+      version: 4.15.1
+    description: A cloudflared with ingress-nginx stack
+    digest: 8fe89bf925851f07b75e985859c63f38bb0e270ef66c440c7bd26451aaa6d500
+    keywords:
+    - networking
+    - cloudflare
+    - cloudflared
+    - ingress
+    - ingress-nginx
+    - ingress-controller
+    name: cloudflared
+    type: application
+    urls:
+    - cloudflared-1.0.10.tgz
+    version: 1.0.10
+  - annotations:
+      artifacthub.io/category: networking
       artifacthub.io/maintainers: |-
         - name: artur9010
           email: artur@motyka.pro
@@ -2374,4 +2400,4 @@ entries:
     urls:
     - https://charts.motyka.pro/s3d-1.0.0.tgz
     version: 1.0.0
-generated: "2026-04-17T20:34:48.393720845+02:00"
+generated: "2026-10-28T00:25:22.942208309Z"
