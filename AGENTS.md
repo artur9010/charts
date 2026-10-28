@@ -44,7 +44,7 @@ CNAME                   charts.motyka.pro
 |---|---|---|
 | `cloudflared` | A Cloudflare Tunnel (`cloudflared`, DaemonSet or Deployment) plus a bundled `ingress-nginx` subchart with the class `nginx-cloudflared` | It has a dependency. `Chart.lock` is committed, but the downloaded `charts/*.tgz` is ignored by git and rebuilt in CI. It also holds `secrets.craftum.yaml`, a SOPS-encrypted (AWS KMS) file. |
 | `renterd` | Sia `renterd`, split into bus, worker and autopilot StatefulSets | Needs an external MySQL. Its README has a `## Changelog` section. |
-| `s3d` | Sia `s3d`, an S3-compatible gateway (single StatefulSet) | Its `appVersion` and image tag are a git commit SHA, not a SemVer version. |
+| `s3d` | Sia `s3d`, an S3-compatible gateway (single StatefulSet) | s3d reads `adminPassword` only from its config file, so a `config` init container merges `S3D_ADMIN_PASSWORD` from the Secret into an in-memory `emptyDir` copy of the ConfigMap. First-time `s3d login` is interactive, and `setupMode: true` runs `sleep infinity` so it can be done with `kubectl exec`. Access keys live in the s3d database and are managed with `s3d users` and `s3d keys`, not with values. Its README documents breaking upgrades. |
 
 All charts use `apiVersion: v2` and `type: application`. They carry Artifact Hub annotations (`artifacthub.io/category`, `artifacthub.io/maintainers` and, where present, `artifacthub.io/links` and `artifacthub.io/screenshots`).
 
@@ -115,7 +115,7 @@ Follow the existing patterns of the chart you are editing:
 - Helpers live in `templates/_helpers.tpl` and are namespaced by chart: `<chart>.name`, `<chart>.fullname`, `<chart>.chart`, `<chart>.labels`, `<chart>.selectorLabels`.
 - Every resource includes `{{- include "<chart>.labels" . | nindent 4 }}`. Selectors use only `<chart>.selectorLabels`, plus `app.kubernetes.io/component` where a chart has several workloads (renterd's bus, worker and autopilot).
 - Pod templates carry `checksum/<name>` annotations computed with `include (print $.Template.BasePath "/<file>.yaml") . | sha256sum`, so pods restart when config changes. Add one for every ConfigMap or Secret a pod consumes.
-- Application config is rendered into a ConfigMap and mounted with `subPath` (for example `/data/renterd.yml` or `/data/s3d.yml`).
+- Application config is rendered into a ConfigMap and mounted with `subPath` (for example `/data/renterd.yml`). s3d is the exception: its ConfigMap is a template that its `config` init container completes into `/etc/s3d/s3d.yml`.
 - Secrets are created by the user beforehand by default (`secretName`, `createSecret: false`). Chart-managed secrets are opt-in through `createSecret: true` and `secretContent`. Keep that default, because the secrets include wallet seeds.
 - Pods default to `automountServiceAccountToken: false` and `enableServiceLinks: false`.
 - Existing resource names are hardcoded in places (for example `s3d`, `renterd-bus`, `cloudflared`, `nginx-cloudflared`). Renaming them breaks upgrades and the documented setup instructions (cloudflared's tunnel default route points at `nginx-cloudflared-controller:80`). Rename only as a deliberate breaking change with a major version bump and a changelog entry.
@@ -178,7 +178,7 @@ These come from the official [Helm chart best practices guide](https://helm.sh/d
 ## Security
 
 - Never commit plaintext secrets. `charts/cloudflared/secrets.craftum.yaml` is SOPS-encrypted. Do not decrypt it, print its values or replace it with plaintext.
-- The `renterd` and `s3d` secrets contain wallet seed or recovery phrases. Do not change defaults in a way that would make the chart generate or store them in plain values without the user opting in.
+- The `renterd` secrets contain the wallet seed, and the `s3d` secret contains the admin API password. The s3d recovery phrase is entered interactively during `s3d login` and is never stored by the chart. Do not change defaults in a way that would make the chart generate or store these in plain values without the user opting in.
 
 ## Commits and pull requests
 

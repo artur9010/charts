@@ -1,3 +1,13 @@
+{{- /* Values removed in s3d 0.2: fail loudly instead of silently ignoring them */}}
+{{- if .Values.sia.keyPairs }}
+{{- fail "sia.keyPairs was removed in s3d 0.2. Access keys live in the s3d database now, create them with `kubectl exec s3d-0 -- s3d users create <user>` and `s3d keys create <user>`. See the chart README." }}
+{{- end }}
+{{- if .Values.sia.indexerURL }}
+{{- fail "sia.indexerURL was removed in s3d 0.2. The indexer URL is set during `s3d login`, see setupMode in the chart README." }}
+{{- end }}
+{{- if (.Values.secretContent).S3D_RECOVERY_PHRASE }}
+{{- fail "secretContent.S3D_RECOVERY_PHRASE is no longer used by s3d 0.2. Remove it; the recovery phrase is entered during `s3d login`, see setupMode in the chart README." }}
+{{- end }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -5,9 +15,14 @@ metadata:
   labels:
     {{- include "s3d.labels" . | nindent 4 }}
 data:
+  {{- /* adminPassword is appended from the Secret by the config init container */}}
   s3d.yml: |
     # Managed by Helm - configmap/s3d/s3d.yml
     apiAddress: {{ .Values.apiAddress | quote }}
+    {{- if .Values.apiHTTPSAddress }}
+    apiHTTPSAddress: {{ .Values.apiHTTPSAddress | quote }}
+    {{- end }}
+    adminAddress: {{ required "adminAddress is required" .Values.adminAddress | quote }}
     directory: /data
     log:
       stdout:
@@ -30,11 +45,7 @@ data:
         {{- end }}
       {{- end }}
     sia:
-      {{- if .Values.sia.keyPairs }}
-      keyPairs:
-        {{- range .Values.sia.keyPairs }}
-        - accessKey: {{ .accessKey | quote }}
-          secretKey: {{ .secretKey | quote }}
-        {{- end }}
-      {{- end }}
-      indexerURL: {{ .Values.sia.indexerURL | quote }}
+      diskUsageLimit: {{ .Values.sia.diskUsageLimit | int64 }}
+      uploadThreads: {{ .Values.sia.uploadThreads | int }}
+      dataShards: {{ .Values.sia.dataShards | int }}
+      parityShards: {{ .Values.sia.parityShards | int }}

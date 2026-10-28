@@ -16,5 +16,11 @@ spec:
       targetPort: s3
       protocol: TCP
       name: s3
+    {{- if .Values.apiHTTPSAddress }}
+    - port: {{ .Values.service.s3.httpsPort }}
+      targetPort: s3-https
+      protocol: TCP
+      name: s3-https
+    {{- end }}
   selector:
     {{- include "s3d.selectorLabels" . | nindent 4 }}

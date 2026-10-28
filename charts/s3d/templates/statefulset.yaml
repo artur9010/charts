@@ -14,8 +14,14 @@ spec:
     metadata:
       labels:
         {{- include "s3d.selectorLabels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
       annotations:
         checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+        {{- if .Values.createSecret }}
+        checksum/secret: {{ include (print $.Template.BasePath "/secrets.yaml") . | sha256sum }}
+        {{- end }}
         {{- if .Values.podAnnotations }}
         {{- toYaml .Values.podAnnotations | nindent 8 }}
         {{- end }}
@@ -30,61 +36,99 @@ spec:
       imagePullSecrets:
         {{- toYaml .Values.imagePullSecrets | nindent 8 }}
       {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.topologySpreadConstraints }}
+      topologySpreadConstraints:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      initContainers:
+        {{- /* s3d reads adminPassword only from the config file, so merge it from the Secret into a private copy */}}
+        - name: config
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command:
+            - sh
+            - -c
+            - |
+              set -eu
+              umask 077
+              cp /etc/s3d-template/s3d.yml /etc/s3d/s3d.yml
+              printf "adminPassword: '%s'\n" "$(printf '%s' "$S3D_ADMIN_PASSWORD" | sed "s/'/''/g")" >> /etc/s3d/s3d.yml
+          env:
+            - name: S3D_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secretName | quote }}
+                  key: S3D_ADMIN_PASSWORD
+          volumeMounts:
+            - name: s3d-config-template
+              mountPath: /etc/s3d-template
+            - name: s3d-config
+              mountPath: /etc/s3d
       containers:
         - name: s3d
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- if .Values.setupMode }}
+          command: ["sleep", "infinity"]
+          {{- else }}
+          args:
+            - -api.s3
+            - {{ .Values.apiAddress | quote }}
+          {{- end }}
           ports:
             - name: s3
               containerPort: {{ include "s3d.port" .Values.apiAddress }}
               protocol: TCP
+            {{- if .Values.apiHTTPSAddress }}
+            - name: s3-https
+              containerPort: {{ include "s3d.port" .Values.apiHTTPSAddress }}
+              protocol: TCP
+            {{- end }}
+          {{- if not .Values.setupMode }}
           readinessProbe:
             tcpSocket:
-              port: {{ include "s3d.port" .Values.apiAddress }}
+              port: s3
             initialDelaySeconds: 5
             periodSeconds: 10
           livenessProbe:
             tcpSocket:
-              port: {{ include "s3d.port" .Values.apiAddress }}
+              port: s3
+          {{- end }}
           volumeMounts:
             - name: s3d-config
-              mountPath: /data/s3d.yml
-              subPath: s3d.yml
+              mountPath: /etc/s3d
+              readOnly: true
             {{- if .Values.persistence.enabled }}
             - name: s3d-data
               mountPath: /data
             {{- end }}
-          envFrom:
-            - secretRef:
-                name: {{ .Values.secretName | quote }}
           env:
             - name: S3D_CONFIG_FILE
-              value: "/data/s3d.yml"
+              value: "/etc/s3d/s3d.yml"
             - name: S3D_DATA_DIR
               value: "/data"
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
-          {{- if .Values.nodeSelector }}
-          nodeSelector:
-            {{- toYaml .Values.nodeSelector | nindent 12 }}
-          {{- end }}
-          {{- if .Values.affinity }}
-          affinity:
-            {{- toYaml .Values.affinity | nindent 12 }}
-          {{- end }}
-          {{- if .Values.tolerations }}
-          tolerations:
-            {{- toYaml .Values.tolerations | nindent 12 }}
-          {{- end }}
-          {{- if .Values.topologySpreadConstraints }}
-          topologySpreadConstraints:
-            {{- toYaml .Values.topologySpreadConstraints | nindent 12 }}
-          {{- end }}
       volumes:
-        - name: s3d-config
+        - name: s3d-config-template
           configMap:
             name: s3d
-            defaultMode: 0755
+        - name: s3d-config
+          emptyDir:
+            medium: Memory
+            sizeLimit: 1Mi
         {{- if .Values.persistence.enabled }}
         - name: s3d-data
           persistentVolumeClaim:
