@@ -1,7 +1,7 @@
 image:
   repository: ghcr.io/siafoundation/s3d
   pullPolicy: IfNotPresent
-  tag: "bf33bf3"
+  tag: "0.2.1@sha256:9e5821b2539507e24e062bea234fd9e0c556aed50e7336ca803505c43fc3058f"
 
 imagePullSecrets: []
 
@@ -12,15 +12,26 @@ serviceAccount:
   create: false
   name: ""
 
+# secretName is the name of the Secret holding S3D_ADMIN_PASSWORD (the admin API password, required by s3d)
 secretName: "s3d"
+# createSecret creates the Secret from secretContent; by default you create it yourself beforehand
 createSecret: false
 secretContent:
-  S3D_RECOVERY_PHRASE: ""
+  S3D_ADMIN_PASSWORD: ""
 
-apiAddress: "127.0.0.1:8000"
+# setupMode replaces s3d with "sleep infinity" so you can run the interactive
+# "kubectl exec -it s3d-0 -- s3d login" on first install. Set it back to false afterwards.
+setupMode: false
+
+# apiAddress is the address the S3 API listens on (passed as -api.s3)
+apiAddress: ":8000"
+# apiHTTPSAddress also serves the S3 API over HTTPS with a self-signed certificate, e.g. ":8443" (disabled when empty)
+apiHTTPSAddress: ""
+# adminAddress is the address of the admin API (metrics, status, flush); it must differ from the S3 API addresses
+adminAddress: "127.0.0.1:8001"
 
 persistence:
-  enabled: false
+  enabled: true
   size: 8Gi
   storageClassName: ""
   accessModes: ["ReadWriteOnce"]
@@ -39,11 +50,17 @@ log:
     path: ""
 
 sia:
-  indexerURL: "https://sia.storage"
+  # sia.hostBases are the bases for virtual-hosted-style addressing (rendered as s3.hostBases)
   hostBases: []
-  keyPairs: []
-  #  - accessKey: ""
-  #    secretKey: ""
+  # sia.diskUsageLimit is the max number of bytes buffered on disk pending upload (0 disables the limit).
+  # Keep it below persistence.size. Default 6 GiB.
+  diskUsageLimit: 6442450944
+  # sia.uploadThreads is the number of object groups uploaded to Sia concurrently
+  uploadThreads: 4
+  # sia.dataShards is the number of shards each slab is split into
+  dataShards: 10
+  # sia.parityShards is the number of recovery shards added to each slab
+  parityShards: 20
 
 resources: {}
   # limits:
@@ -57,7 +74,7 @@ nodeSelector: {}
 
 affinity: {}
 
-tolerations: {}
+tolerations: []
 
 topologySpreadConstraints: []
 
@@ -77,6 +94,8 @@ service:
   s3:
     type: ClusterIP
     port: 8000
+    # service.s3.httpsPort is used only when apiHTTPSAddress is set
+    httpsPort: 8443
     annotations: {}
 
 ingress:
