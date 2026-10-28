@@ -36,6 +36,21 @@ jobs:
       - name: Add dependency repositories
         run: helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
 
+      # Per-chart notes from the commits that touched charts/<chart>/ since its previous
+      # tag. The list goes into Chart.yaml as artifacthub.io/changes in the working tree
+      # only, so it is packaged into the .tgz and index.yaml without a commit to master.
+      # yq is preinstalled on ubuntu-latest.
+      - name: Generate release notes
+        run: |
+          for dir in charts/*/; do
+            chart=$(basename "$dir")
+            .github/scripts/release-notes.sh "$chart" "$RUNNER_TEMP/notes"
+            changes=$RUNNER_TEMP/notes/$chart.changes.yaml
+            if [ -f "$changes" ]; then
+              CHANGES=$(cat "$changes") yq -i '.annotations."artifacthub.io/changes" = strenv(CHANGES) | .annotations."artifacthub.io/changes" style="literal"' "$dir/Chart.yaml"
+            fi
+          done
+
       # Packages charts changed since the latest tag, creates a GitHub Release per
       # chart version and commits the package and index.yaml to gh-pages
       - name: Run chart-releaser
@@ -45,7 +60,21 @@ jobs:
           mark_as_latest: false
         env:
           CR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          CR_GENERATE_RELEASE_NOTES: true
+
+      # chart-releaser sets the chart description as the release body, replace it
+      - name: Set release notes
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          shopt -s nullglob
+          for pkg in .cr-release-packages/*.tgz; do
+            name=$(helm show chart "$pkg" | awk '/^name:/ {print $2}')
+            version=$(helm show chart "$pkg" | awk '/^version:/ {print $2}')
+            notes=$RUNNER_TEMP/notes/$name.md
+            if [ -f "$notes" ]; then
+              gh release edit "$name-$version" --notes-file "$notes"
+            fi
+          done
 
       - name: Log in to GHCR
         uses: docker/login-action@81c6f93d4bc991e510b342a00b419b3bb4efc5c6 # v4.7.0

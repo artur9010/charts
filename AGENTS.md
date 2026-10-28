@@ -25,6 +25,7 @@ renovate.json                   Renovate configuration
 .github/workflows/renovate-changelog.yml  AI summary comment on Renovate PRs
 .github/opencode/               opencode config and prompt for renovate-changelog
 .github/scripts/chart-diff.sh   rendered and upstream subchart diffs for renovate-changelog
+.github/scripts/release-notes.sh per-chart release notes and artifacthub.io/changes for release
 ```
 
 `gh-pages` branch (written by CI, not edited on master):
@@ -87,8 +88,10 @@ Releases are built by CI. Do not package charts by hand or commit `.tgz` files t
 2. Bump `version` in `charts/<name>/Chart.yaml` (SemVer: patch for fixes and dependency bumps, minor for new features, major for breaking value or resource changes). If the application version changed, update `appVersion` to match the image tag in `values.yaml` (without the digest).
 3. For `renterd`, add an entry at the top of `## Changelog` in its README. Mark breaking changes in the heading and give old and new value examples, following the existing entries.
 4. Merge or push to `master`. `.github/workflows/release.yml` then publishes the release:
+   - `.github/scripts/release-notes.sh` lists the master commits (merged PRs and direct pushes) that touched `charts/<name>/` since the previous `<name>-*` tag. The list is written into the working-tree `Chart.yaml` as the `artifacthub.io/changes` annotation, so it ends up in the `.tgz` and `index.yaml` without being committed. Preview it locally with `nix-shell -p yq-go --run 'FORCE=1 .github/scripts/release-notes.sh <name> <out> [rev]'`;
    - `helm/chart-releaser-action` finds charts changed since the latest git tag;
    - it packages them, creates a GitHub Release and tag `<name>-<version>` for each one, and commits the `.tgz` and the updated `index.yaml` to `gh-pages` (`packages_with_index: true`);
+   - each GitHub Release body is replaced with that chart's notes (`gh release edit`), instead of GitHub's repo-wide generated notes;
    - each new package is pushed to `oci://ghcr.io/artur9010/charts` and signed with `cosign sign` (keyless, GitHub OIDC). Versions already in GHCR are skipped.
 
 Rules:
@@ -97,6 +100,7 @@ Rules:
 - Do not edit `gh-pages` by hand, except for `index.html`, `CNAME` and `artifacthub-repo.yml`, and only when asked. `index.html` is static and does not list versions.
 - Every chart change merged to `master` must come with a version bump. chart-releaser keys releases by tag, so an unbumped change is either skipped or collides with an existing release.
 - Release tags are created by CI. Do not create or move `<name>-<version>` tags manually.
+- Do not add `artifacthub.io/changes` to `Chart.yaml` by hand. CI generates it from PR titles, so keep PR titles descriptive.
 - Dependency repositories used by subcharts must be added with `helm repo add` in `release.yml` and listed in `chart-repos` in `ct.yaml`.
 
 ## Renovate
