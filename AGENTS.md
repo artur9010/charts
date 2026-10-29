@@ -107,7 +107,7 @@ Rules:
 
 - Renovate runs hourly from `.github/workflows/renovate.yml` using `config:best-practices`. It opens one PR per update, with branch prefix `<chart>-` and a semantic commit `chore(<chart>): ...`.
 - The `bumpVersions` rule in `renovate.json` bumps the patch part of `version` in the chart's `Chart.yaml` in the same PR, so merging a Renovate PR publishes a release. `bumpVersions` is experimental in Renovate.
-- `appVersion` is not updated automatically. When Renovate bumps the main image, update `appVersion` in the PR before merging.
+- `appVersion` is updated by the `customManagers:helmChartYamlAppVersions` preset. It reads a `# renovate: image=<repository>` comment on the line directly above `appVersion` in `Chart.yaml`, which must name the same repository as `image.repository` in `values.yaml`. The tag and the `appVersion` then share a dependency name and land in the same PR. Digest pinning is turned off for this manager, so `appVersion` stays a plain version. Every chart needs this comment, including new ones.
 - Image tags are pinned as `tag@sha256:digest` (see `cloudflared` and `renterd` values). Keep that format so Renovate can update them, and never use floating tags such as `latest`.
 - Subchart versions in `Chart.yaml` are exact pins that Renovate updates together with `Chart.lock`. Do not switch them to ranges.
 - Chart versions are plain `X.Y.Z`, without pre-release or build suffixes.

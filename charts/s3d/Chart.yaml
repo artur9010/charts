@@ -3,6 +3,7 @@ name: s3d
 description: s3d is a S3-compatible storage service backed by Sia, developed by the Sia Foundation.
 type: application
 version: 2.0.0
+# renovate: image=ghcr.io/siafoundation/s3d
 appVersion: "0.2.1"
 home: https://sia.tech
 icon: https://avatars.githubusercontent.com/u/71667087

@@ -3,6 +3,7 @@ name: cloudflared
 description: A cloudflared with ingress-nginx stack
 type: application
 version: 1.0.10
+# renovate: image=cloudflare/cloudflared
 appVersion: "2026.3.0"
 dependencies:
   - name: ingress-nginx
