@@ -131,7 +131,7 @@ review_image() {
 }
 
 review_subchart() {
-  local chart=$1 name=$2 old=$3 new=$4 repo template
+  local chart=$1 name=$2 old=$3 new=$4 repo template old_tag new_tag
   repo=$(NAME=$name yq -r '.subcharts[strenv(NAME)].repo // ""' "$map")
   template=$(NAME=$name yq -r '.subcharts[strenv(NAME)].tag // ""' "$map")
   if [ -z "$repo" ] || [ -z "$template" ]; then
@@ -139,9 +139,9 @@ review_subchart() {
     return 1
   fi
   clone "$repo"
-  write_parts "$chart" "$repo" \
-    "$(resolve_tag "$repo" "${template//\{version\}/$old}")" \
-    "$(resolve_tag "$repo" "${template//\{version\}/$new}")"
+  old_tag=$(resolve_tag "$repo" "${template//\{version\}/$old}")
+  new_tag=$(resolve_tag "$repo" "${template//\{version\}/$new}")
+  write_parts "$chart" "$repo" "$old_tag" "$new_tag"
 }
 
 # Pair the old and new version of each key in two "key<TAB>version" lists and print
