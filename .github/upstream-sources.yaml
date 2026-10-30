@@ -1,0 +1,19 @@
+# Upstream source repositories of the software our charts ship, for the
+# renovate-changelog workflow (.github/scripts/upstream-source.sh).
+# A PR that changes an image or subchart missing from this file fails the review.
+#
+# images:    image repository in values.yaml -> GitHub repo. Git tags are looked up
+#            as "<tag>" and "v<tag>".
+# subcharts: dependency name in Chart.yaml -> GitHub repo and the git tag of a
+#            chart release ({version} is the subchart version).
+images:
+  cloudflare/cloudflared:
+    repo: cloudflare/cloudflared
+  ghcr.io/siafoundation/renterd:
+    repo: SiaFoundation/renterd
+  ghcr.io/siafoundation/s3d:
+    repo: SiaFoundation/s3d
+subcharts:
+  ingress-nginx:
+    repo: kubernetes/ingress-nginx
+    tag: helm-chart-{version}

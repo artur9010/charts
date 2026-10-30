@@ -16,6 +16,17 @@ When the PR changes a chart, there is also a directory per changed chart:
   (chart/version labels stripped)
 - `<chart>/objects.diff`: the objects and images added/removed in that output
 
+When the PR bumps an image or a subchart, CI has already fetched the upstream source:
+- `upstream.md`: the list of source files to review
+- `<chart>/upstream/<repo>/part-NNN.txt`: the commit list, changed files and source diff between
+  the old and new release tags
+- `repos/<repo>/`: the upstream clone, for context around a change (`git -C repos/<repo> show`, `log`)
+
+Reviewing that source is mandatory and is your main job, the release notes are only a hint.
+Read every file listed in `upstream.md`, each with its own `cat <file>` call, never several in one
+call and never partially (`head`, `tail`, `grep`). A single call's output must not be truncated.
+CI checks the session log and rejects your answer if any file was not read completely.
+
 Only when the PR bumps a subchart, that directory also has:
 - `<chart>/values.diff`: upstream `Chart.yaml`, `values.yaml`, `values.schema.json`
   (nested subcharts included). Our overrides sit under the subchart name in
@@ -27,8 +38,9 @@ Only when the PR bumps a subchart, that directory also has:
 
 You can run `git` and read-only `ls`, `cat`, `head`, `tail`, `grep`, `diff`, `find`, `wc`,
 `sort`, `uniq`, `echo` (pipes and `&&` between those work; no other commands: no `sed`, use `head -n`/`tail -n`;
-no `cd`, use relative paths from the working directory; no `/tmp`). When the release
-notes are missing, truncated or too vague (e.g. only PR titles), clone the upstream source repo into `repos/`
+no `cd`, use relative paths from the working directory; no `/tmp`). For a bump without
+`upstream.md` entries (e.g. a GitHub Actions bump), when the release notes are missing, truncated
+or too vague (e.g. only PR titles), clone the upstream source repo into `repos/`
 (`git clone --filter=blob:none https://github.com/<owner>/<repo> repos/<repo>`) and
 inspect the changes between the old and new release tags with `git -C repos/<repo> log`,
 `diff` and `show`. Clone only repos linked from `pr.md` or the chart's `Chart.yaml`
@@ -54,6 +66,11 @@ be terse and technical, no prose, no explanations of what something is.
 Format:
 
 **Risk: low|medium|high**: <reason, max 12 words>
+
+### Source changes
+What the upstream code changes actually do, from the source diff and not the release notes, per
+bumped component, citing commit hashes and upstream file paths. Flag behaviour the release notes
+don't mention. Leave this section out when `upstream.md` is empty.
 
 ### ⚠️ Breaking changes
 Changes in the updated dependency that can break a working install of our chart: removed or
@@ -94,6 +111,6 @@ Rules:
   steps: exactly "No manual steps.").
 - Without chart directories (e.g. a GitHub Actions bump), leave out "Chart maintenance",
   "Rendered manifest changes" and "New options" entirely (no heading, no "omitted" note).
-- Nothing after the Upgrade steps section.
+- Nothing after the Upgrade steps section, CI appends the list of checked sources itself.
 - Don't guess or invent anything that isn't in the files, the cloned repos or a cited web page.
 - Use `<details>` for lists longer than 10 bullets.

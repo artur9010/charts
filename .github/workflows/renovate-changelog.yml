@@ -6,6 +6,9 @@ name: Renovate changelog
 # The model (opencode, .github/opencode/) is a free OpenCode Zen model, so no API key.
 # It can read the diff dir and run git (to clone upstream repos and compare tags) plus
 # read-only ls/cat/head/tail/grep/wc/sort/uniq/echo, nothing else, and gets no GitHub token.
+# Reviewing the upstream source of every bumped image and subchart is mandatory: CI fetches
+# it (upstream-source.sh) and rejects a session that didn't read all of it (review-check.sh).
+# When that can't be done the PR gets a "not reviewed" comment and the job fails.
 
 on:
   pull_request:
@@ -73,6 +76,10 @@ jobs:
       - name: Diff charts
         run: .github/scripts/chart-diff.sh "${{ steps.pr.outputs.base }}" "${{ steps.pr.outputs.head }}" "$RUNNER_TEMP/diff"
 
+      # Fails the job when a bump can't be mapped to upstream source
+      - name: Fetch upstream source
+        run: .github/scripts/upstream-source.sh "${{ steps.pr.outputs.base }}" "${{ steps.pr.outputs.head }}" "$RUNNER_TEMP/diff" "$RUNNER_TEMP/upstream.tsv"
+
       # No GitHub token here: the input is untrusted upstream content
       - name: Summarize with opencode
         id: summarize
@@ -81,18 +88,41 @@ jobs:
           OPENCODE_CONFIG: ${{ github.workspace }}/.github/opencode/opencode.json
         run: |
           npm install -g "opencode-ai@$OPENCODE_VERSION"
-          # stdout has every text part, including "now I'll clone X" between tool calls;
-          # tool calls are logged to stderr
-          # a fixed --title skips opencode's title generation, which otherwise goes to a
-          # "small model" it guesses from the provider
-          opencode run --title "renovate-changelog PR $PR" --model "$MODEL" "$(cat "$GITHUB_WORKSPACE/.github/opencode/prompt.md")" >"$RUNNER_TEMP/opencode.log"
-          # fresh runner, so the latest session is ours
-          opencode export "$(opencode session list --format json | jq -r '.[0].id')" >"$RUNNER_TEMP/session.json"
-          # the answer is the text of the last step (each step is its own assistant message)
-          jq -r '[.messages[] | select(.info.role == "assistant")] | last | [.parts[] | select(.type == "text") | .text] | join("\n")' \
-            "$RUNNER_TEMP/session.json" >"$RUNNER_TEMP/summary.md"
-          if [ ! -s "$RUNNER_TEMP/summary.md" ]; then
-            echo "opencode produced no output" >&2
+          # The answer only counts if its session read the whole upstream source. Each attempt
+          # is a fresh session (own data dir), told what the previous one left unread.
+          reviewed=
+          retry=
+          for attempt in 1 2 3; do
+            echo "::group::opencode attempt $attempt"
+            export XDG_DATA_HOME=$RUNNER_TEMP/opencode-data-$attempt
+            # stdout has every text part, including "now I'll clone X" between tool calls;
+            # tool calls are logged to stderr
+            # a fixed --title skips opencode's title generation, which otherwise goes to a
+            # "small model" it guesses from the provider
+            if ! opencode run --title "renovate-changelog PR $PR" --model "$MODEL" "$(cat "$GITHUB_WORKSPACE/.github/opencode/prompt.md")$retry" >"$RUNNER_TEMP/opencode-$attempt.log"; then
+              echo "::endgroup::"
+              retry=
+              continue
+            fi
+            # own data dir, so the latest session is ours
+            opencode export "$(opencode session list --format json | jq -r '.[0].id')" >"$RUNNER_TEMP/session-$attempt.json"
+            echo "::endgroup::"
+            cp "$RUNNER_TEMP/session-$attempt.json" "$RUNNER_TEMP/session.json"
+            # the answer is the text of the last step (each step is its own assistant message)
+            jq -r '[.messages[] | select(.info.role == "assistant")] | last | [.parts[] | select(.type == "text") | .text] | join("\n")' \
+              "$RUNNER_TEMP/session.json" >"$RUNNER_TEMP/summary.md"
+            unread=$("$GITHUB_WORKSPACE/.github/scripts/review-check.sh" "$RUNNER_TEMP/session.json" "$RUNNER_TEMP/upstream.tsv" "$RUNNER_TEMP/sources.md") || true
+            if [ -z "$unread" ] && [ -s "$RUNNER_TEMP/summary.md" ]; then
+              reviewed=1
+              break
+            fi
+            echo "attempt $attempt rejected, empty answer or unread parts: $unread"
+            retry=$(printf '\n\nYour previous attempt was rejected because these files were not read completely. Read each one with its own `cat`, then answer:\n%s\n' "$unread")
+          done
+          if [ -z "$reviewed" ]; then
+            # without a summary the comment step reports the PR as not reviewed
+            rm -f "$RUNNER_TEMP/summary.md"
+            echo "upstream source was not reviewed after 3 attempts" >&2
             exit 1
           fi
           # drop any preamble before the risk line ("No chart directories, so ...")
@@ -104,6 +134,7 @@ jobs:
           # nothing after "No manual steps." (the model likes to append "Sources: ..." or "Note: ...")
           awk '{print} /^### Upgrade steps/{u=1} u && /^No manual steps\.$/{exit}' "$RUNNER_TEMP/summary.md" >"$RUNNER_TEMP/summary.tmp"
           mv "$RUNNER_TEMP/summary.tmp" "$RUNNER_TEMP/summary.md"
+          { echo; cat "$RUNNER_TEMP/sources.md"; } >>"$RUNNER_TEMP/summary.md"
           # session tokens, for the footer (the model is free, so no cost)
           jq -r '[.messages[].info | select(.role == "assistant")] |
             def k: . / 1000 | round | tostring + "k";
@@ -122,11 +153,13 @@ jobs:
             !${{ runner.temp }}/diff/repos
             !${{ runner.temp }}/diff/repo
             ${{ runner.temp }}/summary.md
-            ${{ runner.temp }}/session.json
-            ${{ runner.temp }}/opencode.log
+            ${{ runner.temp }}/session-*.json
+            ${{ runner.temp }}/opencode-*.log
           retention-days: 14
 
+      # Also on failure, so a PR that wasn't reviewed says so (and drops an older summary)
       - name: Post sticky comment
+        if: success() || failure()
         env:
           GH_TOKEN: ${{ github.token }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
@@ -137,8 +170,10 @@ jobs:
             echo "$MARKER"
             echo "## 🤖 Changelog"
             echo
+            if [ ! -s "$RUNNER_TEMP/summary.md" ]; then
+              echo "**⛔ Not reviewed**: the upstream source review failed, do not merge. See the [run]($RUN_URL)."
             # GitHub's comment limit is 65536 characters
-            if [ "$(wc -m <"$RUNNER_TEMP/summary.md")" -gt 60000 ]; then
+            elif [ "$(wc -m <"$RUNNER_TEMP/summary.md")" -gt 60000 ]; then
               head -c 60000 "$RUNNER_TEMP/summary.md"
               printf '\n\n_[truncated, see the run artifact]_\n'
             else

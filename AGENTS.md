@@ -24,7 +24,10 @@ renovate.json                   Renovate configuration
 .github/workflows/renovate.yml  self-hosted Renovate, runs hourly
 .github/workflows/renovate-changelog.yml  AI summary comment on Renovate PRs
 .github/opencode/               opencode config and prompt for renovate-changelog
+.github/upstream-sources.yaml    image and subchart to upstream GitHub repo map for renovate-changelog
 .github/scripts/chart-diff.sh   rendered and upstream subchart diffs for renovate-changelog
+.github/scripts/upstream-source.sh upstream source diffs of bumped images and subcharts for renovate-changelog
+.github/scripts/review-check.sh checks that the model read those diffs and writes the sources list
 .github/scripts/release-notes.sh per-chart release notes and artifacthub.io/changes for release
 ```
 
@@ -74,7 +77,10 @@ helm template test charts/<name> -f my-values.yaml    # also exercise the code p
 
 ## Renovate PR summaries
 
-- `.github/workflows/renovate-changelog.yml` posts an AI summary as a sticky comment (marker `<!-- renovate-changelog -->`) on every PR from a `renovate/` branch. It covers risk, breaking changes, impact on our chart, chart maintenance (version bump, `appVersion`), rendered manifest changes and upgrade steps.
+- `.github/workflows/renovate-changelog.yml` posts an AI summary as a sticky comment (marker `<!-- renovate-changelog -->`) on every PR from a `renovate/` branch. It covers risk, upstream source changes, breaking changes, impact on our chart, chart maintenance (version bump, `appVersion`), rendered manifest changes, upgrade steps and the sources checked.
+- Upstream source review is mandatory. `.github/scripts/upstream-source.sh` clones the upstream repo of every bumped image and subchart and writes the commit list, changed files and source diff between the release tags as `<chart>/upstream/<repo>/part-NNN.txt`. Each part has random start and end tokens, kept outside the model's directory in a manifest. `.github/scripts/review-check.sh` accepts a session only if one non-truncated tool output holds both tokens of every part. A rejected session is retried as a fresh one, up to 3 attempts in total. If the source can't be fetched or read, the PR gets a `⛔ Not reviewed` comment and the job fails. Diffs over `MAX_SOURCE_BYTES` are cut, and the comment says how much was reviewed.
+- Every image in `values.yaml` and every subchart must be listed in `.github/upstream-sources.yaml`, including those of new charts, or the review of its bumps fails.
+- The `### Sources checked` section is written by `review-check.sh` from the session's tool calls, not by the model.
 - The comment is written by opencode (npm `opencode-ai`, pinned in `OPENCODE_VERSION`) using the free OpenCode Zen model `opencode/deepseek-v4.1-flash-free`. No API key or provider secret is needed. Free Zen models are offered for a limited time, so when the model disappears, pick another one from `opencode models` (IDs ending in `-free`) and update both `MODEL` in the workflow and `model` in `.github/opencode/opencode.json`.
 - `.github/scripts/chart-diff.sh <base> <head> <out>` renders each changed chart at both revisions with default values and, for subchart bumps, pulls the old and new upstream subcharts with `helm pull` and diffs them. It runs locally too: `nix-shell -p kubernetes-helm yq-go --run '.github/scripts/chart-diff.sh <base> <head> <out>'`.
 - The model's tools (read, `git`, read-only `ls`/`cat`/`head`/`tail`/`grep`/`diff`/…, Exa web search MCP; no `$` or `../`) are set in `.github/opencode/opencode.json`, and the output format in `.github/opencode/prompt.md`. It gets no GitHub token.
