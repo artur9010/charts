@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # Fetch the upstream source changes of every image and subchart bumped between two
-# commits, for the renovate-changelog workflow. The review of a bump is mandatory, so
-# anything that can't be resolved (unmapped image, missing tag, failed clone) exits
-# non-zero instead of being skipped.
+# commits, for the renovate-changelog workflow. A bump whose source can't be fetched
+# (unmapped image, missing tag, failed clone) doesn't stop the review: it is recorded in
+# <manifest>.missing and <out>/upstream.md, and the PR comment reports it.
 #
 # Upstream repos come from .github/upstream-sources.yaml and are cloned to <out>/repos/.
 # Each bump is written to <out>/<chart>/upstream/<repo>/part-NNN.txt: the commit list,
@@ -12,6 +12,8 @@
 # <manifest> and <manifest>.parts must be kept out of <out>: every part starts and ends
 # with a random token listed there, and review-check.sh looks for those tokens in the
 # tool output to prove that the model read the whole part.
+#
+# review_image and friends run under `||`, where set -e is off, so they check each step.
 #
 # Usage: upstream-source.sh <base-rev> <head-rev> <out-dir> <manifest>   (from the repo root)
 set -euo pipefail
@@ -30,6 +32,7 @@ max_bytes=${MAX_SOURCE_BYTES:-1200000}
 mkdir -p "$out"
 : >"$manifest"
 : >"$manifest.parts"
+: >"$manifest.missing"
 : >"$out/upstream.md"
 
 # "repository<TAB>tag" of every image in a chart's values.yaml at a revision
@@ -71,23 +74,24 @@ write_parts() {
   mkdir -p "$dir"
   all=$(mktemp)
 
-  commits=$(git -C "$git_dir" rev-list --no-merges --count "$old..$new")
+  reason="git failed on $old..$new"
+  commits=$(git -C "$git_dir" rev-list --no-merges --count "$old..$new") || return 1
   files=$(git -C "$git_dir" diff --name-only "$old" "$new" | wc -l)
   {
     echo "# $repo $old..$new: $commits commits, $files files changed"
     echo
     echo "## Commits"
-    git -C "$git_dir" log --no-merges --format='%h %s' "$old..$new"
+    git -C "$git_dir" log --no-merges --format='%h %s' "$old..$new" || return 1
     echo
     echo "## Changed files (all)"
-    git -C "$git_dir" diff --stat=120 "$old" "$new"
+    git -C "$git_dir" diff --stat=120 "$old" "$new" || return 1
     echo
     echo "## Source diff (no vendored code, lockfiles or tests)"
     git -C "$git_dir" diff "$old" "$new" -- . \
       ':(exclude,glob)**/vendor/**' ':(exclude,glob)**/node_modules/**' ':(exclude,glob)**/testdata/**' \
       ':(exclude,glob)**/test/**' ':(exclude,glob)**/tests/**' ':(exclude,glob)**/*_test.go' \
       ':(exclude,glob)**/go.sum' ':(exclude,glob)**/package-lock.json' ':(exclude,glob)**/yarn.lock' \
-      ':(exclude,glob)**/pnpm-lock.yaml' ':(exclude,glob)**/*.pb.go' ':(exclude,glob)**/*.snap'
+      ':(exclude,glob)**/pnpm-lock.yaml' ':(exclude,glob)**/*.pb.go' ':(exclude,glob)**/*.snap' || return 1
   } >"$all"
 
   total=$(wc -c <"$all")
@@ -120,13 +124,14 @@ write_parts() {
 review_image() {
   local chart=$1 image=$2 old=$3 new=$4 repo old_tag new_tag
   repo=$(IMAGE=$image yq -r '.images[strenv(IMAGE)].repo // ""' "$map")
-  if [ -z "$repo" ]; then
-    echo "error: image $image of chart $chart is not in $map" >&2
-    return 1
-  fi
-  clone "$repo"
-  old_tag=$(resolve_tag "$repo" "$old" "v$old")
-  new_tag=$(resolve_tag "$repo" "$new" "v$new")
+  reason="not listed in $map"
+  [ -n "$repo" ] || return 1
+  reason="cloning $repo failed"
+  clone "$repo" || return 1
+  reason="no tag for $old in $repo"
+  old_tag=$(resolve_tag "$repo" "$old" "v$old") || return 1
+  reason="no tag for $new in $repo"
+  new_tag=$(resolve_tag "$repo" "$new" "v$new") || return 1
   write_parts "$chart" "$repo" "$old_tag" "$new_tag"
 }
 
@@ -134,28 +139,34 @@ review_subchart() {
   local chart=$1 name=$2 old=$3 new=$4 repo template old_tag new_tag
   repo=$(NAME=$name yq -r '.subcharts[strenv(NAME)].repo // ""' "$map")
   template=$(NAME=$name yq -r '.subcharts[strenv(NAME)].tag // ""' "$map")
-  if [ -z "$repo" ] || [ -z "$template" ]; then
-    echo "error: subchart $name of chart $chart is not in $map" >&2
-    return 1
-  fi
-  clone "$repo"
-  old_tag=$(resolve_tag "$repo" "${template//\{version\}/$old}")
-  new_tag=$(resolve_tag "$repo" "${template//\{version\}/$new}")
+  reason="not listed in $map"
+  [ -n "$repo" ] && [ -n "$template" ] || return 1
+  reason="cloning $repo failed"
+  clone "$repo" || return 1
+  reason="no tag for $old in $repo"
+  old_tag=$(resolve_tag "$repo" "${template//\{version\}/$old}") || return 1
+  reason="no tag for $new in $repo"
+  new_tag=$(resolve_tag "$repo" "${template//\{version\}/$new}") || return 1
   write_parts "$chart" "$repo" "$old_tag" "$new_tag"
 }
 
+# Record a bump whose source couldn't be fetched
+report_missing() {
+  echo "  source not available for $2 $3 -> $4: $reason"
+  printf '%s\t%s\t%s\t%s\t%s\n' "$1" "$2" "$3" "$4" "$reason" >>"$manifest.missing"
+  echo "- source NOT available for $2 $3 -> $4 ($1): $reason" >>"$out/upstream.md"
+}
+
 # Pair the old and new version of each key in two "key<TAB>version" lists and print
-# "key<TAB>old<TAB>new" for the changed ones. A key only in the new list (a renamed image
-# or a new subchart) has no old version to diff against, so it can't be reviewed.
+# "key<TAB>old<TAB>new" for the changed ones.
 changed() {
-  local tab added
-  tab=$(printf '\t')
-  added=$(join -t "$tab" -v2 <(sort -u "$1") <(sort -u "$2") | cut -f1)
-  if [ -n "$added" ]; then
-    echo "error: no previous version to compare for: $added" >&2
-    return 1
-  fi
-  join -t "$tab" <(sort -u "$1") <(sort -u "$2") | awk -F'\t' '$2 != $3'
+  join -t "$(printf '\t')" <(sort -u "$1") <(sort -u "$2") | awk -F'\t' '$2 != $3'
+}
+
+# Keys only in the new list (a renamed image, a new subchart) have no old version to diff
+# against, so they are reported as missing. Prints "key<TAB>version".
+added() {
+  join -t "$(printf '\t')" -v2 <(sort -u "$1") <(sort -u "$2")
 }
 
 mapfile -t charts < <(git diff --name-only "$base" "$head" -- 'charts/*' | cut -d/ -f2 | sort -u)
@@ -167,18 +178,23 @@ for chart in "${charts[@]}"; do
 
   images "$base" "$chart" >"$before"
   images "$head" "$chart" >"$after"
-  # Assigned first, a process substitution would hide a failure of `changed`
-  list=$(changed "$before" "$after")
   while IFS=$'\t' read -r image old new; do
-    [ -z "$image" ] || review_image "$chart" "$image" "$old" "$new"
-  done <<<"$list"
+    review_image "$chart" "$image" "$old" "$new" || report_missing "$chart" "$image" "$old" "$new"
+  done < <(changed "$before" "$after")
+  reason="no previous version to compare with"
+  while IFS=$'\t' read -r image new; do
+    report_missing "$chart" "$image" "none" "$new"
+  done < <(added "$before" "$after")
 
   subcharts "$base" "$chart" >"$before"
   subcharts "$head" "$chart" >"$after"
-  list=$(changed "$before" "$after")
   while IFS=$'\t' read -r name old new; do
-    [ -z "$name" ] || review_subchart "$chart" "$name" "$old" "$new"
-  done <<<"$list"
+    review_subchart "$chart" "$name" "$old" "$new" || report_missing "$chart" "$name" "$old" "$new"
+  done < <(changed "$before" "$after")
+  reason="no previous version to compare with"
+  while IFS=$'\t' read -r name new; do
+    report_missing "$chart" "$name" "none" "$new"
+  done < <(added "$before" "$after")
 
   rm "$before" "$after"
 done

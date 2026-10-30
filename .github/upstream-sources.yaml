@@ -1,6 +1,7 @@
 # Upstream source repositories of the software our charts ship, for the
 # renovate-changelog workflow (.github/scripts/upstream-source.sh).
-# A PR that changes an image or subchart missing from this file fails the review.
+# A bump of an image or subchart missing from this file is reviewed without its source,
+# and the PR comment says so.
 #
 # images:    image repository in values.yaml -> GitHub repo. Git tags are looked up
 #            as "<tag>" and "v<tag>".

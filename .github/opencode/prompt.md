@@ -26,6 +26,8 @@ Reviewing that source is mandatory and is your main job, the release notes are o
 Read every file listed in `upstream.md`, each with its own `cat <file>` call, never several in one
 call and never partially (`head`, `tail`, `grep`). A single call's output must not be truncated.
 CI checks the session log and rejects your answer if any file was not read completely.
+Lines in `upstream.md` starting with `- source NOT available` are bumps CI couldn't fetch: review
+those from the release notes and web search, and say so in Source changes.
 
 Only when the PR bumps a subchart, that directory also has:
 - `<chart>/values.diff`: upstream `Chart.yaml`, `values.yaml`, `values.schema.json`

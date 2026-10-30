@@ -6,9 +6,10 @@ name: Renovate changelog
 # The model (opencode, .github/opencode/) is a free OpenCode Zen model, so no API key.
 # It can read the diff dir and run git (to clone upstream repos and compare tags) plus
 # read-only ls/cat/head/tail/grep/wc/sort/uniq/echo, nothing else, and gets no GitHub token.
-# Reviewing the upstream source of every bumped image and subchart is mandatory: CI fetches
-# it (upstream-source.sh) and rejects a session that didn't read all of it (review-check.sh).
-# When that can't be done the PR gets a "not reviewed" comment and the job fails.
+# CI fetches the upstream source of every bumped image and subchart (upstream-source.sh)
+# and rejects a session that didn't read all of it (review-check.sh). Source that can't be
+# fetched doesn't stop the review, the comment says what is missing. If no session passes,
+# the PR gets a "not reviewed" comment and the job fails.
 
 on:
   pull_request:
@@ -76,7 +77,6 @@ jobs:
       - name: Diff charts
         run: .github/scripts/chart-diff.sh "${{ steps.pr.outputs.base }}" "${{ steps.pr.outputs.head }}" "$RUNNER_TEMP/diff"
 
-      # Fails the job when a bump can't be mapped to upstream source
       - name: Fetch upstream source
         run: .github/scripts/upstream-source.sh "${{ steps.pr.outputs.base }}" "${{ steps.pr.outputs.head }}" "$RUNNER_TEMP/diff" "$RUNNER_TEMP/upstream.tsv"
 
@@ -135,6 +135,11 @@ jobs:
           awk '{print} /^### Upgrade steps/{u=1} u && /^No manual steps\.$/{exit}' "$RUNNER_TEMP/summary.md" >"$RUNNER_TEMP/summary.tmp"
           mv "$RUNNER_TEMP/summary.tmp" "$RUNNER_TEMP/summary.md"
           { echo; cat "$RUNNER_TEMP/sources.md"; } >>"$RUNNER_TEMP/summary.md"
+          if [ -s "$RUNNER_TEMP/upstream.tsv.missing" ]; then
+            { printf '> [!WARNING]\n> Upstream source not available for %s bump(s), reviewed without it. See Sources checked.\n\n' "$(wc -l <"$RUNNER_TEMP/upstream.tsv.missing")"
+              cat "$RUNNER_TEMP/summary.md"; } >"$RUNNER_TEMP/summary.tmp"
+            mv "$RUNNER_TEMP/summary.tmp" "$RUNNER_TEMP/summary.md"
+          fi
           # session tokens, for the footer (the model is free, so no cost)
           jq -r '[.messages[].info | select(.role == "assistant")] |
             def k: . / 1000 | round | tostring + "k";
@@ -171,7 +176,7 @@ jobs:
             echo "## 🤖 Changelog"
             echo
             if [ ! -s "$RUNNER_TEMP/summary.md" ]; then
-              echo "**⛔ Not reviewed**: the upstream source review failed, do not merge. See the [run]($RUN_URL)."
+              echo "**⛔ Not reviewed**: the review failed, do not merge. See the [run]($RUN_URL)."
             # GitHub's comment limit is 65536 characters
             elif [ "$(wc -m <"$RUNNER_TEMP/summary.md")" -gt 60000 ]; then
               head -c 60000 "$RUNNER_TEMP/summary.md"

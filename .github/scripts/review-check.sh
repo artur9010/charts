@@ -32,6 +32,9 @@ done <"$manifest.parts"
     fi
     echo "$line"
   done <"$manifest"
+  while IFS=$'\t' read -r chart name old new reason; do
+    echo "- ⚠️ source not available: $name $old -> $new ($chart): $reason"
+  done <"$manifest.missing"
   # Repos the model cloned on its own, e.g. for a GitHub Actions bump
   jq -r '.messages[].parts[] | select(.type == "tool" and .tool == "bash" and .state.status == "completed")
     | .state.input.command // "" | capture("git clone .*https://github\\.com/(?<repo>[^ ]+)").repo? // empty
