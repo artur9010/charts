@@ -5,6 +5,38 @@ entries:
       artifacthub.io/category: networking
       artifacthub.io/changes: |-
         - kind: changed
+          description: 'chore(cloudflared): update cloudflare/cloudflared docker tag to v2026.10.7'
+          links:
+            - name: 'PR #49'
+              url: https://github.com/artur9010/charts/pull/49
+      artifacthub.io/maintainers: |
+        - name: artur9010
+          email: artur@motyka.pro
+    apiVersion: v2
+    appVersion: 2026.10.7
+    created: "2026-10-30T20:24:02.114625086Z"
+    dependencies:
+    - name: ingress-nginx
+      repository: https://kubernetes.github.io/ingress-nginx
+      version: 4.15.1
+    description: A cloudflared with ingress-nginx stack
+    digest: 03db26963e5eedef135e5e1476751df6cc99e5aa04f6a587fe007808b85e9ad6
+    keywords:
+    - networking
+    - cloudflare
+    - cloudflared
+    - ingress
+    - ingress-nginx
+    - ingress-controller
+    name: cloudflared
+    type: application
+    urls:
+    - cloudflared-1.0.12.tgz
+    version: 1.0.12
+  - annotations:
+      artifacthub.io/category: networking
+      artifacthub.io/changes: |-
+        - kind: changed
           description: 'chore(cloudflared): update cloudflare/cloudflared docker tag to v2026.10.6'
           links:
             - name: 'PR #45'
@@ -2648,4 +2680,4 @@ entries:
     urls:
     - https://charts.motyka.pro/s3d-1.0.0.tgz
     version: 1.0.0
-generated: "2026-10-30T17:21:11.146458788Z"
+generated: "2026-10-30T20:24:02.114742152Z"
