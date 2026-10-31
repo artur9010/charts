@@ -34,7 +34,7 @@ env:
   # Hidden marker identifying our comment, so reruns edit it instead of adding one
   MARKER: '<!-- renovate-changelog -->'
   MODEL: opencode/deepseek-v4.1-flash-free
-  OPENCODE_VERSION: 1.19.4 # renovate: datasource=npm depName=opencode-ai
+  OPENCODE_VERSION: 1.19.5 # renovate: datasource=npm depName=opencode-ai
 
 jobs:
   changelog:
